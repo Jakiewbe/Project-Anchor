@@ -1,0 +1,205 @@
+{
+  "schema": 1,
+  "kit_version": "1.0.0",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "name": "codex-rules",
+  "revision": 25,
+  "task_revision": 21,
+  "current_task_revision": 21,
+  "goal_version": 2,
+  "goal_approved": true,
+  "updated_at": "2026-10-08T08:04:32.430917+00:00",
+  "snapshot_keep": 20,
+  "log_max_bytes": 65536,
+  "hashes": {
+    "GOAL.md": "a7ccde99ed2f81e4f04bf5d51e2fe65a95b1e05bbb88fd8db004e227c7207520",
+    "CURRENT.md": "3a64aa7670d5bee938d2ef488a0fd45428c5b2d0f5901a1b2bd36d60119efe47",
+    "DECISIONS.md": "f82da9d893fddfee93a70e8454d28752b274480466cfd2e49d4f0c8112af0ce7",
+    "LESSONS.md": "4482decdf92000e708ce7732a7974d6c1882b0bb42bc438839c9bac0ba5174cc",
+    "tasks.json": "42b5ba139e25866668589167d7eb37aa40e0c73d6760c1038c35a5b8efedd6f1"
+  },
+  "history": [
+    {
+      "action": "document-version",
+      "file": "GOAL.md",
+      "previous_sha256": "5d0fd9b760def65c659c410ac4ec1692508c9d9772701b35d35d09fba4329f3e",
+      "content": "# codex-rules v1.0 项目目标\n\n## 核心目标\n交付可独立运行、可通过 Git 长期维护的本地 Codex 项目治理工具箱。\n\n## 项目背景\n依据用户 2026-10-08 的完整新项目开发要求，从空目录构建，文件作为长期状态来源。\n\n## 关键约束\nWindows 优先，Python 标准库，支持中文和空格路径；不修改真实用户配置，不自动推送，不创建分支或工作树；知识入库需要用户确认。\n\n## 非目标\n不构建数据库、网页、后台服务、付费 API 或自动多会话合并；不证明模型永远遵守规则，不自动提交业务项目。\n\n## 验收标准\n初始化和状态有效，任务及进度安全更新；Hook 官方协议合法；安装保留既有配置；doctor 区分已验证和未验证；测试通过，文档支持独立使用，真实客户端未验证层清楚记录。\n\n## 目标版本\n2（用户需求已明确；state.json 记录正式版本）\n",
+      "user_approved": true,
+      "timestamp": "2026-10-08T08:04:30.774048+00:00"
+    },
+    {
+      "revision": 1,
+      "action": "state:update",
+      "reason": "保存用户明确授权的 v1.0 开发目标",
+      "timestamp": "2026-10-08T08:04:30.783525+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "0369401d2d587a947fa6125e145e2f0a843896134b554d413f191514b3b52ee6",
+      "content": "# 重要决策\n\n## 2026-10-08：状态与写入\n背景：长期状态需要可靠恢复。备选：数据库、单纯 Prompt、文件加程序。选择：标准库文件管理、OS 锁、哈希、期望修订和事务；理由：满足确定性和轻量约束。适用：本地磁盘常规项目；不自动合并多会话。\n\n## 2026-10-08：Hook 与信任\n背景：不能编造生命周期或把未审核资料提升为规则。选择：按当前官方协议配置 SessionStart/PreCompact，恢复内容需要外部精确哈希审核；原生 Hook 信任由用户在 /hooks 完成。理由：保留原生安全边界。变化：文档已明确哪些只是模拟测试。\n\n## 2026-10-08：安装与迁移\n选择：管理块加 hooks.json 清单，不重写 config.toml；原始治理状态关闭 Git 换行转换。适用：Windows 和其他本地环境分别重新安装。真实用户安装由用户执行，开发只使用隔离配置。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T08:04:30.814521+00:00"
+    },
+    {
+      "revision": 2,
+      "action": "state:update",
+      "reason": "记录已实现并验证的架构选择",
+      "timestamp": "2026-10-08T08:04:30.824683+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "26b8cf42c33cfb2fc57993b2f40b3b832ff8336a12b9c4577202cd2f171fd6ac",
+      "content": "# 项目教训\n\n- Windows 文本读写会转换 CRLF。外部编辑登记必须比较文字并保留原字节；BOM/CRLF 快照及克隆测试通过。证据：tests/test_kit.py；适用：UTF-8 治理文档。\n- Git 自动换行会改变被哈希的状态字节。使用 .agent/** -text 保持原字节；实际本地克隆并启用 autocrlf 测试通过。\n- 当前沙箱阻止 Git for Windows 创建 signal pipe；这是执行环境阻塞。放宽权限后相同本地克隆测试通过，不能用模拟结果掩盖实际失败。\n- 配置识别、未信任跳过和直接运行 Windows 命令均已有实际证据；它们不能证明模型接收了恢复内容或已信任生命周期成功。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T08:04:30.857681+00:00"
+    },
+    {
+      "revision": 3,
+      "action": "state:update",
+      "reason": "保存本次验证过的失败模式与边界",
+      "timestamp": "2026-10-08T08:04:30.870681+00:00"
+    },
+    {
+      "revision": 4,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:30.923205+00:00"
+    },
+    {
+      "revision": 5,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:30.986820+00:00"
+    },
+    {
+      "revision": 6,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:31.053743+00:00"
+    },
+    {
+      "revision": 7,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:31.124729+00:00"
+    },
+    {
+      "revision": 8,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:31.200730+00:00"
+    },
+    {
+      "revision": 9,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:31.271730+00:00"
+    },
+    {
+      "revision": 10,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:31.357064+00:00"
+    },
+    {
+      "revision": 11,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:31.465317+00:00"
+    },
+    {
+      "revision": 12,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:31.558733+00:00"
+    },
+    {
+      "revision": 13,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:31.641367+00:00"
+    },
+    {
+      "revision": 14,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:31.721956+00:00"
+    },
+    {
+      "revision": 15,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:31.795956+00:00"
+    },
+    {
+      "revision": 16,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:31.867586+00:00"
+    },
+    {
+      "revision": 17,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:31.932868+00:00"
+    },
+    {
+      "revision": 18,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:31.998366+00:00"
+    },
+    {
+      "revision": 19,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:32.059813+00:00"
+    },
+    {
+      "revision": 20,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:32.125327+00:00"
+    },
+    {
+      "revision": 21,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:32.184025+00:00"
+    },
+    {
+      "revision": 22,
+      "action": "task:add",
+      "reason": "用户明确要求的开发阶段",
+      "timestamp": "2026-10-08T08:04:32.246496+00:00"
+    },
+    {
+      "revision": 23,
+      "action": "task:update",
+      "reason": "登记已实际执行的阶段",
+      "timestamp": "2026-10-08T08:04:32.309080+00:00"
+    },
+    {
+      "revision": 24,
+      "action": "task:update",
+      "reason": "阶段验证通过",
+      "timestamp": "2026-10-08T08:04:32.371973+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "86ffdad1e1d5c4dbd5f6909a291160081bb569a5b090f4773404bca30a39e103",
+      "content": "# 当前断点\n\n## 当前阶段\nv1.0 核心交付及最终 Git 保存。\n\n## 当前任务\n核对最终提交及干净工作区，向用户交付命令和验证边界。\n\n## 已完成工作\n状态管理、任务、Hook、安装诊断、复盘知识、文档；83 项自动测试与 3 项原生探针通过，失败 0，跳过 0。\n\n## 当前阻塞\n核心 CLI 无阻塞；真实已信任生命周期、模型上下文交付及 WSL 等客户端仍未验证，见 docs/VALIDATION.md。\n\n## 下一步动作\n用户主动执行 install-global，在实际客户端审核 Hook 并按 SMOKE_TEST.md 验收。\n\n## 状态修订\n状态及任务修订以 state.json 和 tasks.json 为准，阶段 A–G 已有证据。\n\n## Git 检查\n沿用 master，功能检查点 70f5a7c；仅提交相关文件，没有推送或新增分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T08:04:32.421916+00:00"
+    },
+    {
+      "revision": 25,
+      "action": "state:update",
+      "reason": "保存最终交付断点与未验证层",
+      "timestamp": "2026-10-08T08:04:32.430917+00:00"
+    }
+  ]
+}

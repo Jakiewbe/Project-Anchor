@@ -1,0 +1,495 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "revision": 21,
+  "tasks": [
+    {
+      "task_id": "A",
+      "title": "架构与原生机制核对",
+      "description": "架构与原生机制核对",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "官方文档核对，环境和限制已记录"
+      ],
+      "dependencies": [],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "docs/ARCHITECTURE.md；官方文档核对，环境和限制已记录"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:31.041154+00:00",
+      "completed_at": "2026-10-08T08:04:31.041154+00:00"
+    },
+    {
+      "task_id": "B",
+      "title": "独立状态管理",
+      "description": "独立状态管理",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "初始化、哈希、修订、任务与进度集成测试通过"
+      ],
+      "dependencies": [
+        "A"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "core/memory.py；初始化、哈希、修订、任务与进度集成测试通过"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:31.260730+00:00",
+      "completed_at": "2026-10-08T08:04:31.260730+00:00"
+    },
+    {
+      "task_id": "C",
+      "title": "记忆与 Hook",
+      "description": "记忆与 Hook",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过"
+      ],
+      "dependencies": [
+        "B"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "core/hook_runtime.py；四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:31.544734+00:00",
+      "completed_at": "2026-10-08T08:04:31.544734+00:00"
+    },
+    {
+      "task_id": "D",
+      "title": "全局安装及诊断",
+      "description": "全局安装及诊断",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "安装、合并、重复、故障回滚、卸载和诊断自动测试通过"
+      ],
+      "dependencies": [
+        "C"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "core/config.py；安装、合并、重复、故障回滚、卸载和诊断自动测试通过"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:31.782957+00:00",
+      "completed_at": "2026-10-08T08:04:31.782957+00:00"
+    },
+    {
+      "task_id": "E",
+      "title": "复盘与知识库",
+      "description": "复盘与知识库",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "复盘保留原稿、知识审核及重复入库测试通过"
+      ],
+      "dependencies": [
+        "D"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "knowledge/INDEX.md；复盘保留原稿、知识审核及重复入库测试通过"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:31.987365+00:00",
+      "completed_at": "2026-10-08T08:04:31.987365+00:00"
+    },
+    {
+      "task_id": "F",
+      "title": "完整自动验收",
+      "description": "完整自动验收",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0"
+      ],
+      "dependencies": [
+        "E"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "docs/VALIDATION.md；最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:32.173508+00:00",
+      "completed_at": "2026-10-08T08:04:32.173508+00:00"
+    },
+    {
+      "task_id": "G",
+      "title": "文档与交付",
+      "description": "文档与交付",
+      "milestone": "v1.0",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c"
+      ],
+      "dependencies": [
+        "F"
+      ],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "README.md；使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:04:32.361972+00:00",
+      "completed_at": "2026-10-08T08:04:32.361972+00:00"
+    }
+  ],
+  "history": [
+    {
+      "revision": 1,
+      "timestamp": "2026-10-08T08:04:30.911204+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "A",
+        "title": "架构与原生机制核对",
+        "description": "架构与原生机制核对",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "官方文档核对，环境和限制已记录"
+        ],
+        "dependencies": []
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 2,
+      "timestamp": "2026-10-08T08:04:30.976140+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "A",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 3,
+      "timestamp": "2026-10-08T08:04:31.041154+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "A",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "docs/ARCHITECTURE.md；官方文档核对，环境和限制已记录"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 4,
+      "timestamp": "2026-10-08T08:04:31.113735+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "B",
+        "title": "独立状态管理",
+        "description": "独立状态管理",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "初始化、哈希、修订、任务与进度集成测试通过"
+        ],
+        "dependencies": [
+          "A"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 5,
+      "timestamp": "2026-10-08T08:04:31.189730+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "B",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 6,
+      "timestamp": "2026-10-08T08:04:31.260730+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "B",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "core/memory.py；初始化、哈希、修订、任务与进度集成测试通过"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 7,
+      "timestamp": "2026-10-08T08:04:31.341064+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "C",
+        "title": "记忆与 Hook",
+        "description": "记忆与 Hook",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过"
+        ],
+        "dependencies": [
+          "B"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 8,
+      "timestamp": "2026-10-08T08:04:31.447857+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "C",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 9,
+      "timestamp": "2026-10-08T08:04:31.544734+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "C",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "core/hook_runtime.py；四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 10,
+      "timestamp": "2026-10-08T08:04:31.626519+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "D",
+        "title": "全局安装及诊断",
+        "description": "全局安装及诊断",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "安装、合并、重复、故障回滚、卸载和诊断自动测试通过"
+        ],
+        "dependencies": [
+          "C"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 11,
+      "timestamp": "2026-10-08T08:04:31.706956+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "D",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 12,
+      "timestamp": "2026-10-08T08:04:31.782957+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "D",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "core/config.py；安装、合并、重复、故障回滚、卸载和诊断自动测试通过"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 13,
+      "timestamp": "2026-10-08T08:04:31.853992+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "E",
+        "title": "复盘与知识库",
+        "description": "复盘与知识库",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "复盘保留原稿、知识审核及重复入库测试通过"
+        ],
+        "dependencies": [
+          "D"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 14,
+      "timestamp": "2026-10-08T08:04:31.922163+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "E",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 15,
+      "timestamp": "2026-10-08T08:04:31.987365+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "E",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "knowledge/INDEX.md；复盘保留原稿、知识审核及重复入库测试通过"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 16,
+      "timestamp": "2026-10-08T08:04:32.049812+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "F",
+        "title": "完整自动验收",
+        "description": "完整自动验收",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0"
+        ],
+        "dependencies": [
+          "E"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 17,
+      "timestamp": "2026-10-08T08:04:32.112328+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "F",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 18,
+      "timestamp": "2026-10-08T08:04:32.173508+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "F",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "docs/VALIDATION.md；最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    },
+    {
+      "revision": 19,
+      "timestamp": "2026-10-08T08:04:32.236496+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "G",
+        "title": "文档与交付",
+        "description": "文档与交付",
+        "milestone": "v1.0",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c"
+        ],
+        "dependencies": [
+          "F"
+        ]
+      },
+      "reason": "用户明确要求的开发阶段"
+    },
+    {
+      "revision": 20,
+      "timestamp": "2026-10-08T08:04:32.299078+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "G",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的阶段"
+    },
+    {
+      "revision": 21,
+      "timestamp": "2026-10-08T08:04:32.361972+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "G",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "README.md；使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c"
+          }
+        ]
+      },
+      "reason": "阶段验证通过"
+    }
+  ]
+}

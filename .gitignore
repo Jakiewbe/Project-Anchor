@@ -14,3 +14,14 @@ dist/
 *.key
 knowledge/.lock
 knowledge/.transaction.json
+
+# codex-rules runtime and secrets
+.agent/runtime/
+.agent/.lock
+.agent/.transaction.json
+__pycache__/
+*.py[cod]
+.env
+.env.*
+*.pem
+*.key

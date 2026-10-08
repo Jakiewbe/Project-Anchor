@@ -1,2 +1,5 @@
 * text=auto eol=lf
 .agent/** -text
+
+# codex-rules: preserve state bytes across computers
+.agent/** -text
