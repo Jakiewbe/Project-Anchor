@@ -1,6 +1,6 @@
 """Conservative global installation: no TOML rewriting and no trust bypass."""
 import base64
-import copy
+from contextlib import ExitStack
 import os
 from pathlib import Path
 import shlex
@@ -11,6 +11,7 @@ from . import VERSION
 from .atomic_io import (KitError, check_pending, digest, encode_json, locked,
                         raw, read_json, safe_path, transaction, atomic_write)
 from .memory import KIT_ROOT, load, paths
+from .skill_install import prepare_skill, skill_directory
 
 BEGIN = b"<!-- codex-rules:begin -->"
 END = b"<!-- codex-rules:end -->"
@@ -88,14 +89,17 @@ def _remove_groups(hooks, owned):
             hooks["hooks"].pop(event, None)
 
 
-def install(home):
+def install(home, skills_dir=None):
     home = Path(home).resolve()
     managed, lock, journal = locations(home)
-    with locked(lock):
+    with locked(lock), ExitStack() as stack:
         check_pending(journal)
         manifest_path = managed / "install.json"
         manifest_bytes = raw(manifest_path)
         manifest = read_json(manifest_path) if manifest_bytes is not None else None
+        target = Path(manifest["skill"]["path"]) if manifest and manifest.get("skill") else skill_directory(skills_dir)
+        stack.enter_context(locked(target.parent / ".codex-rules.lock"))
+        target, skill_updates, skill_expected, skill_info = prepare_skill(home, manifest, skills_dir)
         config = read_toml(safe_path(home / "config.toml", home))
         agents = safe_path(home / "AGENTS.md", home)
         hook_path = safe_path(home / "hooks.json", home)
@@ -119,39 +123,51 @@ def install(home):
             data += new_block
         groups = hook_groups()
         for event, group in groups.items():
-            target = hooks["hooks"].setdefault(event, [])
-            if group in target:
+            target_groups = hooks["hooks"].setdefault(event, [])
+            if group in target_groups:
                 raise KitError("发现没有归属记录的同名 Hook")
-            target.append(group)
+            target_groups.append(group)
         new_hook = old_hook if old_hook is not None and _hooks(hook_path) == hooks else encode_json(hooks)
         new_manifest = {"schema": 1, "version": VERSION, "kit_root": str(KIT_ROOT),
                         "python": str(Path(sys.executable).resolve()), "block": new_block.decode("utf-8"),
                         "groups": groups, "definition_hash": definition_hash(),
                         "agents_existed": manifest["agents_existed"] if manifest else old_agents is not None,
-                        "hooks_existed": manifest["hooks_existed"] if manifest else old_hook is not None}
+                        "hooks_existed": manifest["hooks_existed"] if manifest else old_hook is not None,
+                        "skill": skill_info}
         updates = {agents: data, hook_path: new_hook, manifest_path: encode_json(new_manifest)}
         expected = {agents: old_agents, hook_path: old_hook, manifest_path: manifest_bytes}
+        updates.update(skill_updates)
+        expected.update(skill_expected)
         if all(raw(p) == content for p, content in updates.items()):
-            return {"changed": False, "home": str(home), "trust": "UNVERIFIED"}
+            return {"changed": False, "home": str(home), "skill": str(target), "trust": "UNVERIFIED"}
         # Backup only edited files; never read or copy auth, config secrets or transcripts.
         backup = managed / "runtime/backups" / uuid.uuid4().hex
         for path in (agents, hook_path, manifest_path):
             if path.exists():
                 atomic_write(backup / path.name, path.read_bytes())
-        transaction(home, journal, updates, expected)
+        for path, old_data in skill_expected.items():
+            if old_data is not None:
+                atomic_write(backup / "skill" / path.relative_to(target), old_data)
+        transaction(home, journal, updates, expected, {"skill": target})
         return {"changed": True, "home": str(home), "backup": str(backup),
-                "trust": "UNVERIFIED", "inline_hooks_present": bool(config.get("hooks"))}
+                "skill": str(target), "trust": "UNVERIFIED", "inline_hooks_present": bool(config.get("hooks"))}
 
 
 def uninstall(home):
     home = Path(home).resolve()
     managed, lock, journal = locations(home)
-    with locked(lock):
+    with locked(lock), ExitStack() as stack:
         check_pending(journal)
         manifest_path = managed / "install.json"
         if not manifest_path.exists():
             raise KitError("未找到安装清单，拒绝删除未知文件")
         manifest = read_json(manifest_path)
+        skill_updates, skill_expected, extra = {}, {}, None
+        if manifest.get("skill"):
+            target = Path(manifest["skill"]["path"])
+            stack.enter_context(locked(target.parent / ".codex-rules.lock"))
+            target, skill_updates, skill_expected, _ = prepare_skill(home, manifest, uninstall=True)
+            extra = {"skill": target}
         agents = safe_path(home / "AGENTS.md", home)
         hook_path = safe_path(home / "hooks.json", home)
         data = agents.read_bytes()
@@ -166,7 +182,8 @@ def uninstall(home):
             hook_content = None
         if not manifest["agents_existed"] and remaining == b"":
             remaining = None
-        transaction(home, journal, {agents: remaining, hook_path: hook_content, manifest_path: None})
+        updates = {agents: remaining, hook_path: hook_content, manifest_path: None, **skill_updates}
+        transaction(home, journal, updates, skill_expected, extra)
         return {"uninstalled": True, "runtime_backups_retained": True, "project_trust_retained": True}
 
 

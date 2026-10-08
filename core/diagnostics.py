@@ -11,6 +11,7 @@ from .config import (BEGIN, END, _hooks, codex_home, definition_hash, hook_group
                      locations, read_toml)
 from .memory import KIT_ROOT, load, project_root, validate_snapshot, git_info
 from .tasks import progress
+from .skill_install import inspect_skill
 
 
 def doctor(home, cwd=None):
@@ -44,6 +45,8 @@ def doctor(home, cwd=None):
             add("PASS" if manifest.get("kit_root") == str(KIT_ROOT) and manifest.get("python") == str(Path(sys.executable).resolve()) else "FAIL", "安装位置与解释器", "迁移后必须重新安装")
             add("PASS" if manifest.get("definition_hash") == definition_hash() else "WARN", "Hook 脚本版本", "脚本变更后重新安装及审核 Hook")
             hooks = _hooks(home / "hooks.json")
+            for status, check, detail in inspect_skill(home, manifest):
+                add(status, check, detail)
             for event, group in hook_groups().items():
                 add("PASS" if hooks["hooks"].get(event, []).count(group) == 1 else "FAIL", f"{event} 已配置", "检查当前平台命令及匹配器")
         else:

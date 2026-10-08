@@ -1,8 +1,28 @@
-# codex-rules v1.0
+# codex-rules v1.1
 
 本地、文件式的 Codex 项目治理工具箱。项目目标、当前断点、决策、任务和经验保存在磁盘；Python 执行校验和安全写入。无数据库、后台服务、网页或付费 API，仅用 Python 标准库。
 
 当前项目目录名可以是 `codex-plus`，工具名称仍为 `codex-rules`；不需要改名。要求 Python **3.11+**，Git 可选；安装 Hook 需要支持相应机制的本地 Codex 客户端。
+
+## 自然语言使用
+
+安装一次后，日常在目标项目中直接告诉 Codex：
+
+- 帮我初始化项目管理。
+- 根据我的项目目标制定任务草案。
+- 现在项目进度如何？只查看，不修改。
+- 把 T1 标记为完成，验收证据是……
+- 记录我们确定的技术路线。
+- 整理工作状态，准备切换会话。
+- 检查当前工作是否偏离最初目标。
+- 检查全局规则和 Hook 是否正常。
+- 总结项目经验教训，生成复盘草案。
+
+Skill 选择流程并调用现有 Python 程序，用户不需要记住命令。自动触发由 Codex 根据描述判断，不能保证每次成功；可显式输入 `$codex-rules` 再说明需求。未初始化项目中的普通代码解释、局部修改和知识查询不应触发治理。
+
+Skill 不维护新账本，也不替代自动 Hook。任务完成仍需真实证据，目标变更和跨项目知识入库仍需用户确认。后面的 CLI 说明供排错及独立操作使用。
+
+本机验证及限制见 [Skill 验证记录](docs/SKILL_VALIDATION.md)。本轮按补充材料完成 [现成方案隔离评估](docs/ALTERNATIVES_EVALUATION.md)，保留现有实现，不继续扩展或替换项目状态系统。
 
 ## Windows 安装和初始化
 
@@ -13,9 +33,14 @@ py -3 --version
 py -3 kit.py --version
 py -3 kit.py install-global
 py -3 kit.py doctor
+py -3 kit.py doctor --native-skills
 ```
 
 `install-global` 是你明确修改真实用户配置的操作。开发测试不会替你执行这个操作。默认使用环境变量 CODEX_HOME；未设置时使用用户目录下的 `.codex`。也可通过 `--codex-home "路径"` 安装到指定目录。安装只修改 AGENTS.md 管理块、hooks.json 和工具自身的安装清单，不修改 config.toml。
+
+现在还会安装用户级 Skill 到用户目录下的 `.agents/skills/codex-rules/`。CODEX_HOME 与 Skill 目录分别解析；自定义 CODEX_HOME **不会**自动把用户 Skill 隔离。开发测试必须同时传入 `--skills-dir "临时父目录"`。相同命令可重复执行；更新前验证所有管理文件哈希，发现人工改动则拒绝覆盖并保留现场。其他 Skill 和后来新增的非管理文件不会被删除。
+
+Skill 只安装说明、参考文档和一个轻量适配器；runtime.json 保存实际 Python、kit.py 和 CODEX_HOME 的绝对路径。调用不依赖 cwd，也不复制核心代码。换电脑克隆工具箱后重新安装会生成新的定位文件；程序迁移或版本不同会明确失败。
 
 安装后重新启动本地 Codex，在 CLI 输入 `/hooks`，逐条审核并信任 SessionStart 和 PreCompact 的当前定义。**配置完成不等于已信任，信任不等于模型必定遵守。** 全局 AGENTS.override.md 可能覆盖全局 AGENTS.md，doctor 会提示。
 
@@ -143,6 +168,8 @@ py -3 -X utf8 tests\native_probe.py
 
 完整验收边界见 [VALIDATION.md](docs/VALIDATION.md)；模型切换后执行 [SMOKE_TEST.md](SMOKE_TEST.md)。
 
+Skill 的原生发现和真实自然语言验收见 [SKILL_VALIDATION.md](docs/SKILL_VALIDATION.md)。`doctor --native-skills` 使用公开 skills/list 检查当前客户端是否发现实际安装路径，不发送模型请求；自动触发与完整工作流仍需真实模型测试。
+
 ## 安全卸载、备份和迁移
 
 ```powershell
@@ -150,6 +177,8 @@ py -3 kit.py uninstall-global
 ```
 
 只删除清单中未被改动的全局管理块和工具 Hook 组，保留其他配置和后来新增规则；如果管理内容被修改则拒绝卸载。运行备份和项目信任登记保留供人工检查，不会清理整个 CODEX_HOME。备份位于 CODEX_HOME/codex-rules/runtime/backups，仅备份 AGENTS、hooks.json 和安装清单，不备份认证或 config.toml。
+
+卸载也只删除清单中未被修改的 Skill 管理文件，保留其他 Skill、用户新增文件和空目录。备份增加 `skill/` 子目录。全局配置与 Skill 可在不同目录或磁盘，通过同一事务记录协调；中断恢复必须核对两边的范围。首次安装到自定义 Skill 目录时，恢复使用原 `--skills-dir`，不能让事务日志自行授权任意路径。
 
 写入中断先检查事务记录，明确选择继续或回滚：
 

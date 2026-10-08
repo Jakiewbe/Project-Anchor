@@ -1,5 +1,15 @@
 # Codex-Rules v1.0 架构
 
+## v1.1 Skill 增量
+
+保留现有 memory/tasks/atomic_io/config 和 Hooks，新增 `skills/codex-rules` 作为自然语言流程入口。说明与工作流按需读取，唯一适配器只以参数数组执行现有 kit.py。用户级默认位置按照 [官方 Skill 文档](https://learn.chatgpt.com/docs/build-skills) 为用户目录/.agents/skills，自动选择允许但不保证确定性；显式 `$codex-rules` 保留。
+
+安装定位使用 runtime.json，记录实际解释器、工具箱路径和 CODEX_HOME，版本不同或路径缺失会拒绝调用。状态输入可从 stdin 提交，避免临时 JSON 拼入 shell。任务仍只在 tasks.json，所有状态逻辑仍在原核心。
+
+全局配置与用户 Skill 可能跨磁盘，事务仅增加具名 `skill` 写入范围；恢复须由调用方提供原范围，并与日志范围一致，不能仅凭日志授权外部路径。管理文件哈希验证、用户新增文件保留、备份与卸载共享现有确定性写入程序。旧 v1 安装清单可以安全升级，不复制 Python 核心。
+
+doctor 的可选原生检查使用公开 app-server skills/list，不推断模型调用结果。测试中 Windows 的 OS 用户目录不会随假 USERPROFILE 改变，因此隔离发现测试使用公开的进程级 extraRoots；默认用户路径另做临时安装验证，并单独记录。真实模型测试使用现有登录，ephemeral 临时项目，不复制认证或改变全局配置；测试 Skill 在结束后按清单卸载。
+
 核对日期：2026-10-08；开发环境：Windows、Python 3.11.5、Git 2.52.0、Codex CLI 0.162.0-alpha.2。
 
 ## 机制与来源

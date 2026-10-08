@@ -1,0 +1,6 @@
+interface:
+  display_name: "codex-rules"
+  short_description: "用自然语言管理项目目标、任务、进度、记忆、会话交接与复盘"
+  default_prompt: "使用 $codex-rules 检查当前项目状态，并执行我要求的项目治理操作。"
+policy:
+  allow_implicit_invocation: true

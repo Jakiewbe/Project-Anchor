@@ -9,6 +9,7 @@
 ```powershell
 py -3 -X utf8 -m unittest discover -s tests -q
 py -3 -X utf8 tests\native_probe.py
+py -3 -X utf8 tests\skill_native_probe.py
 ```
 
 自动测试检查：目标修改批准、任务依赖及证据、修订冲突、真实多进程竞争、原子写入故障、事务恢复、安装合并和回滚、中文空格路径、上下文长度、损坏检测、快照清理边界、Hook 模拟协议。原生探针另测配置识别、未信任跳过和 Windows 生成命令；不发出模型请求。
@@ -22,7 +23,7 @@ $kit = (Resolve-Path .\kit.py).Path
 $smoke = Join-Path (Get-Location) (".test-runtime\manual-" + [guid]::NewGuid().ToString())
 $env:CODEX_HOME = Join-Path $smoke "codex-home"
 $project = Join-Path $smoke "示例 项目"
-py -3 $kit install-global
+py -3 $kit install-global --skills-dir (Join-Path $project ".agents\skills")
 git init $project
 py -3 $kit init-project $project --name "手动验收" --git-init
 py -3 $kit trust-project $project --approved
@@ -43,3 +44,11 @@ codex -C $project
 10. 在测试项目故意破坏一份状态文件并 `/compact`。应清楚看到 Hook 失败，continue=true；不能把失败日志当成功。修复测试文件后重新 snapshot 验证。
 
 记录结果、模型、客户端版本、规则版本、日期、Hook session_id 和证据位置到 knowledge/model-log.md。自动压缩触发、IDE、Desktop 和 WSL 各自验收；手动 `/compact` 通过不代表所有客户端的自动压缩已经验证。
+
+## Skill 正反向验收
+
+上述隔离环境中的 Skill 安装在测试项目/.agents/skills，Codex 能按仓库发现；不要只改 CODEX_HOME 就误以为用户 Skill 也被隔离。使用自然语言分别测试初始化、计划、任务、记忆、进度、交接、复盘和诊断；再测试代码解释、局部脚本修改、知识问答、不相关文本处理和未初始化目录中的普通请求，后者不应触发治理。
+
+自动原生探针默认不调用模型。开发验收可明确运行 `py -3 -X utf8 tests/skill_native_probe.py --live --user-skill`：仅临时安装本 Skill 到真实用户默认目录，其他全局配置在隔离目录；使用现有登录、官方自动审批和 workspace 沙箱，测试后按清单卸载。已有同名未归属 Skill 会拒绝覆盖。该命令会使用模型额度；不会复制认证、关闭沙箱、绕过 Hook 信任或自动提交 Git。
+
+真实调用要检查实际脚本调用记录和项目文件结果，不能只听模型说“我使用了 Skill”。记录触发不稳定、审批阻断、自然语言歧义及当前客户端限制；显式 `$codex-rules` 作为可选入口保留。

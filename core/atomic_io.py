@@ -121,32 +121,47 @@ def check_pending(journal):
         raise KitError(f"有未完成的写入。先检查并执行 recover: {journal}")
 
 
-def transaction(root, journal, updates, expected=None):
+def _entry_path(entry, roots):
+    scope = entry.get("scope", "main")
+    if scope not in roots:
+        raise KitError("事务引用未授权的安装范围")
+    return safe_path(roots[scope] / entry["path"], roots[scope])
+
+
+def transaction(root, journal, updates, expected=None, additional_roots=None):
     """Caller holds lock. Roll back ordinary errors; journal survives a hard crash."""
     root, journal = Path(root).resolve(), Path(journal)
+    roots = {"main": root, **{k: Path(v).resolve() for k, v in (additional_roots or {}).items()}}
     check_pending(journal)
     entries = []
     for path, new in updates.items():
-        path = safe_path(path, root)
+        path = Path(path)
+        scope = next((key for key, folder in roots.items() if path.resolve().is_relative_to(folder)), None)
+        if scope is None:
+            raise KitError(f"路径超出管理范围: {path}")
+        path = safe_path(path, roots[scope])
         old = raw(path)
         if expected is not None and path in expected and old != expected[path]:
             raise KitError(f"文件在准备写入期间发生修改: {path}")
         if old != new:
-            entries.append({"path": path.relative_to(root).as_posix(),
+            entries.append({"path": path.relative_to(roots[scope]).as_posix(), "scope": scope,
                             "old": _pack(old), "new": _pack(new)})
     if not entries:
         return
-    atomic_write(journal, encode_json({"schema": 1, "entries": entries}))
+    record = {"schema": 1, "entries": entries}
+    if additional_roots:
+        record["roots"] = {key: str(folder) for key, folder in roots.items()}
+    atomic_write(journal, encode_json(record))
     try:
         for entry in entries:
-            path = safe_path(root / entry["path"], root)
+            path = _entry_path(entry, roots)
             if raw(path) != _unpack(entry["old"]):
                 raise KitError(f"写入期间文件被外部修改: {path}")
             _put(path, _unpack(entry["new"]))
     except Exception:
         # Never overwrite an unrelated external edit during rollback.
         for entry in reversed(entries):
-            path = safe_path(root / entry["path"], root)
+            path = _entry_path(entry, roots)
             current = raw(path)
             if current not in (_unpack(entry["old"]), _unpack(entry["new"])):
                 raise KitError("回滚冲突，保留事务记录供 recover 检查")
@@ -157,16 +172,19 @@ def transaction(root, journal, updates, expected=None):
     journal.unlink()
 
 
-def recover(root, journal, rollback=False):
+def recover(root, journal, rollback=False, additional_roots=None):
     """Explicit recovery, no guessing which user edits to retain."""
     root, journal = Path(root).resolve(), Path(journal)
     value = read_json(journal)
+    roots = {"main": root, **{k: Path(v).resolve() for k, v in (additional_roots or {}).items()}}
     if not isinstance(value, dict) or value.get("schema") != 1 or not isinstance(value.get("entries"), list):
         raise KitError("事务记录损坏")
+    if value.get("roots") is not None and value["roots"] != {key: str(folder) for key, folder in roots.items()}:
+        raise KitError("恢复范围与原安装范围不同；确认原 --skills-dir 后再恢复")
     prepared = []
     try:
         for entry in value["entries"]:
-            path = safe_path(root / entry["path"], root)
+            path = _entry_path(entry, roots)
             old, new = _unpack(entry["old"]), _unpack(entry["new"])
             if raw(path) not in (old, new):
                 raise KitError(f"恢复冲突，保留用户修改: {path}")

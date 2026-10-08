@@ -31,7 +31,7 @@ def probe():
     project.mkdir(parents=True)
     subprocess.run(["git", "init", str(project)], check=True, capture_output=True)
     init_project(project, "原生接口测试")
-    install(home)
+    install(home, folder / ".agents/skills")
     env = dict(os.environ, CODEX_HOME=str(home), PYTHONUTF8="1")
     process = subprocess.Popen([executable, "app-server", "--stdio"], cwd=project, env=env,
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

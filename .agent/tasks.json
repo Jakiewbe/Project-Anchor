@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 21,
+  "revision": 36,
   "tasks": [
     {
       "task_id": "A",
@@ -168,6 +168,116 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:32.361972+00:00",
       "completed_at": "2026-10-08T08:04:32.361972+00:00"
+    },
+    {
+      "task_id": "S1",
+      "title": "Skill 工作流和轻量适配器",
+      "plan": "approved",
+      "milestone": "1.1 Skill",
+      "acceptance_criteria": [
+        "工作流完整，适配器调用唯一 CLI，不依赖 cwd"
+      ],
+      "description": "Skill 工作流和轻量适配器",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "官方格式校验通过；18 项适配器与安装测试通过；真实显式调用已完成只读进度查询"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:50:06.089309+00:00",
+      "completed_at": "2026-10-08T08:50:06.089309+00:00"
+    },
+    {
+      "task_id": "S2",
+      "title": "用户级 Skill 安装与诊断",
+      "plan": "approved",
+      "milestone": "1.1 Skill",
+      "acceptance_criteria": [
+        "幂等、备份、升级、卸载和跨范围事务安全"
+      ],
+      "description": "用户级 Skill 安装与诊断",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "101 项完整回归通过；幂等、跨目录回滚、旧版升级、未知文件保留、漂移拒绝均有测试证据"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T08:50:06.236617+00:00",
+      "completed_at": "2026-10-08T08:50:06.236617+00:00"
+    },
+    {
+      "task_id": "S3",
+      "title": "测试与原生行为验证",
+      "plan": "approved",
+      "milestone": "1.1 Skill",
+      "acceptance_criteria": [
+        "自动化、模拟、原生发现和真实自然语言行为有独立结果"
+      ],
+      "description": "测试与原生行为验证",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "docs/SKILL_VALIDATION.md；最终自动回归 102/102、原生 Hook 3/3、真实显式/自然语言正反向 14/14；实际默认用户发现通过，临时管理文件已卸载。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T09:13:43.651744+00:00",
+      "completed_at": "2026-10-08T09:13:43.651744+00:00"
+    },
+    {
+      "task_id": "S4",
+      "title": "文档与状态交付",
+      "plan": "approved",
+      "milestone": "1.1 Skill",
+      "acceptance_criteria": [
+        "使用无需手工命令，已验证和未验证层准确报告"
+      ],
+      "description": "文档与状态交付",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "README、SMOKE_TEST、Skill 参考、SKILL_VALIDATION 和 ALTERNATIVES_EVALUATION 已完成；安装与未验证范围清楚记录，状态通过原程序保存。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T09:13:44.175238+00:00",
+      "completed_at": "2026-10-08T09:13:44.175238+00:00"
+    },
+    {
+      "task_id": "E1",
+      "title": "现成方案隔离评估",
+      "plan": "approved",
+      "milestone": "现成方案评估",
+      "acceptance_criteria": [
+        "来源及版本核实，隔离实测结果、失败和未验证范围清楚记录"
+      ],
+      "description": "现成方案隔离评估",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "docs/ALTERNATIVES_EVALUATION.md；GSD 151 自动测试、2 本地查询、3 真实流程通过；发现 2 项安装/Hook问题并记录；意外新建配置已撤销。PMM 404 且用户确认已不可用，未冒充完成实测。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T09:13:43.930109+00:00",
+      "completed_at": "2026-10-08T09:13:43.930109+00:00"
     }
   ],
   "history": [
@@ -490,6 +600,216 @@
         ]
       },
       "reason": "阶段验证通过"
+    },
+    {
+      "revision": 22,
+      "timestamp": "2026-10-08T08:24:21.674855+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "S1",
+        "title": "Skill 工作流和轻量适配器",
+        "plan": "approved",
+        "milestone": "1.1 Skill",
+        "acceptance_criteria": [
+          "工作流完整，适配器调用唯一 CLI，不依赖 cwd"
+        ]
+      },
+      "reason": "用户明确要求的 Skill 开发子任务"
+    },
+    {
+      "revision": 23,
+      "timestamp": "2026-10-08T08:24:21.745335+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "S2",
+        "title": "用户级 Skill 安装与诊断",
+        "plan": "approved",
+        "milestone": "1.1 Skill",
+        "acceptance_criteria": [
+          "幂等、备份、升级、卸载和跨范围事务安全"
+        ]
+      },
+      "reason": "用户明确要求的 Skill 开发子任务"
+    },
+    {
+      "revision": 24,
+      "timestamp": "2026-10-08T08:24:21.820906+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "S3",
+        "title": "测试与原生行为验证",
+        "plan": "approved",
+        "milestone": "1.1 Skill",
+        "acceptance_criteria": [
+          "自动化、模拟、原生发现和真实自然语言行为有独立结果"
+        ]
+      },
+      "reason": "用户明确要求的 Skill 开发子任务"
+    },
+    {
+      "revision": 25,
+      "timestamp": "2026-10-08T08:24:21.895520+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "S4",
+        "title": "文档与状态交付",
+        "plan": "approved",
+        "milestone": "1.1 Skill",
+        "acceptance_criteria": [
+          "使用无需手工命令，已验证和未验证层准确报告"
+        ]
+      },
+      "reason": "用户明确要求的 Skill 开发子任务"
+    },
+    {
+      "revision": 26,
+      "timestamp": "2026-10-08T08:24:21.963798+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S1",
+        "status": "doing"
+      },
+      "reason": "开始实际实现"
+    },
+    {
+      "revision": 27,
+      "timestamp": "2026-10-08T08:50:06.089309+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "官方格式校验通过；18 项适配器与安装测试通过；真实显式调用已完成只读进度查询"
+          }
+        ]
+      },
+      "reason": "验收通过"
+    },
+    {
+      "revision": 28,
+      "timestamp": "2026-10-08T08:50:06.161208+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S2",
+        "status": "doing"
+      },
+      "reason": "登记已实际执行的开发阶段"
+    },
+    {
+      "revision": 29,
+      "timestamp": "2026-10-08T08:50:06.236617+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S2",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "101 项完整回归通过；幂等、跨目录回滚、旧版升级、未知文件保留、漂移拒绝均有测试证据"
+          }
+        ]
+      },
+      "reason": "验收通过"
+    },
+    {
+      "revision": 30,
+      "timestamp": "2026-10-08T08:50:06.312674+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S3",
+        "status": "doing"
+      },
+      "reason": "开始真实自然语言正反向测试"
+    },
+    {
+      "revision": 31,
+      "timestamp": "2026-10-08T09:13:43.651744+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S3",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "docs/SKILL_VALIDATION.md；最终自动回归 102/102、原生 Hook 3/3、真实显式/自然语言正反向 14/14；实际默认用户发现通过，临时管理文件已卸载。"
+          }
+        ]
+      },
+      "reason": "验收证据实际完成"
+    },
+    {
+      "revision": 32,
+      "timestamp": "2026-10-08T09:13:43.725782+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S4",
+        "status": "doing"
+      },
+      "reason": "完成文档与交接状态收尾"
+    },
+    {
+      "revision": 33,
+      "timestamp": "2026-10-08T09:13:43.797382+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "E1",
+        "title": "现成方案隔离评估",
+        "plan": "approved",
+        "milestone": "现成方案评估",
+        "acceptance_criteria": [
+          "来源及版本核实，隔离实测结果、失败和未验证范围清楚记录"
+        ]
+      },
+      "reason": "按用户补充材料转向现成方案实际评估"
+    },
+    {
+      "revision": 34,
+      "timestamp": "2026-10-08T09:13:43.864566+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "E1",
+        "status": "doing"
+      },
+      "reason": "登记实际执行的评估阶段"
+    },
+    {
+      "revision": 35,
+      "timestamp": "2026-10-08T09:13:43.930109+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "E1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "docs/ALTERNATIVES_EVALUATION.md；GSD 151 自动测试、2 本地查询、3 真实流程通过；发现 2 项安装/Hook问题并记录；意外新建配置已撤销。PMM 404 且用户确认已不可用，未冒充完成实测。"
+          }
+        ]
+      },
+      "reason": "评估完成不等于第三方方案全部通过"
+    },
+    {
+      "revision": 36,
+      "timestamp": "2026-10-08T09:13:44.175238+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "S4",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "README、SMOKE_TEST、Skill 参考、SKILL_VALIDATION 和 ALTERNATIVES_EVALUATION 已完成；安装与未验证范围清楚记录，状态通过原程序保存。"
+          }
+        ]
+      },
+      "reason": "文档与证据收尾完成"
     }
   ]
 }

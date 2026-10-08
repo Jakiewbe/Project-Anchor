@@ -3,20 +3,20 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "codex-rules",
-  "revision": 25,
-  "task_revision": 21,
-  "current_task_revision": 21,
-  "goal_version": 2,
+  "revision": 48,
+  "task_revision": 36,
+  "current_task_revision": 36,
+  "goal_version": 3,
   "goal_approved": true,
-  "updated_at": "2026-10-08T08:04:32.430917+00:00",
+  "updated_at": "2026-10-08T09:20:42.936981+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
-    "GOAL.md": "a7ccde99ed2f81e4f04bf5d51e2fe65a95b1e05bbb88fd8db004e227c7207520",
-    "CURRENT.md": "3a64aa7670d5bee938d2ef488a0fd45428c5b2d0f5901a1b2bd36d60119efe47",
-    "DECISIONS.md": "f82da9d893fddfee93a70e8454d28752b274480466cfd2e49d4f0c8112af0ce7",
-    "LESSONS.md": "4482decdf92000e708ce7732a7974d6c1882b0bb42bc438839c9bac0ba5174cc",
-    "tasks.json": "42b5ba139e25866668589167d7eb37aa40e0c73d6760c1038c35a5b8efedd6f1"
+    "GOAL.md": "240a2d0e28a3e68fff3b2e8698669ded1b49c589efed9f356c363424c38895c8",
+    "CURRENT.md": "370b45d5fc0bc4b64e7035cf9da91ec1e3705dec488337d61d44501d2c113711",
+    "DECISIONS.md": "c691af500c244c406c5f9d468fb099e49783de7efc1517ca80cadece4a14cba9",
+    "LESSONS.md": "0f9c6148b3c9ce6cd77ed3793c7e7e3f65f77b24d976ba606e4ec7fe8236a7d6",
+    "tasks.json": "1efb985254f8958cc1bba4d9b6037352cef2790b9759650b01e71ef04ab71ac9"
   },
   "history": [
     {
@@ -200,6 +200,208 @@
       "action": "state:update",
       "reason": "保存最终交付断点与未验证层",
       "timestamp": "2026-10-08T08:04:32.430917+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "GOAL.md",
+      "previous_sha256": "a7ccde99ed2f81e4f04bf5d51e2fe65a95b1e05bbb88fd8db004e227c7207520",
+      "content": "# codex-rules v1.0 项目目标\n\n## 核心目标\n交付可独立运行、可通过 Git 长期维护的本地 Codex 项目治理工具箱。\n\n## 项目背景\n依据用户 2026-10-08 的完整新项目开发要求，从空目录构建，文件作为长期状态来源。\n\n## 关键约束\nWindows 优先，Python 标准库，支持中文和空格路径；不修改真实用户配置，不自动推送，不创建分支或工作树；知识入库需要用户确认。\n\n## 非目标\n不构建数据库、网页、后台服务、付费 API 或自动多会话合并；不证明模型永远遵守规则，不自动提交业务项目。\n\n## 验收标准\n初始化和状态有效，任务及进度安全更新；Hook 官方协议合法；安装保留既有配置；doctor 区分已验证和未验证；测试通过，文档支持独立使用，真实客户端未验证层清楚记录。\n\n新增验收：原生 codex-rules Skill 复用现有 CLI；安全安装/更新；支持自然语言治理；自动化、模拟、真实客户端验证分别记录。\n\n## 目标版本\n3（用户需求已明确；state.json 记录正式版本）\n",
+      "user_approved": true,
+      "timestamp": "2026-10-08T08:24:21.612856+00:00"
+    },
+    {
+      "revision": 26,
+      "action": "state:update",
+      "reason": "用户明确批准增加 Skill 自然语言入口；保留既有核心和 Hook",
+      "timestamp": "2026-10-08T08:24:21.622855+00:00"
+    },
+    {
+      "revision": 27,
+      "action": "task:add",
+      "reason": "用户明确要求的 Skill 开发子任务",
+      "timestamp": "2026-10-08T08:24:21.686857+00:00"
+    },
+    {
+      "revision": 28,
+      "action": "task:add",
+      "reason": "用户明确要求的 Skill 开发子任务",
+      "timestamp": "2026-10-08T08:24:21.755841+00:00"
+    },
+    {
+      "revision": 29,
+      "action": "task:add",
+      "reason": "用户明确要求的 Skill 开发子任务",
+      "timestamp": "2026-10-08T08:24:21.834905+00:00"
+    },
+    {
+      "revision": 30,
+      "action": "task:add",
+      "reason": "用户明确要求的 Skill 开发子任务",
+      "timestamp": "2026-10-08T08:24:21.907240+00:00"
+    },
+    {
+      "revision": 31,
+      "action": "task:update",
+      "reason": "开始实际实现",
+      "timestamp": "2026-10-08T08:24:21.975315+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "3a64aa7670d5bee938d2ef488a0fd45428c5b2d0f5901a1b2bd36d60119efe47",
+      "content": "# 当前断点\n\n## 当前阶段\nv1.1 Skill 开发。\n\n## 当前任务\n增加自然语言工作流、安装及真实测试；复用 Python 核心。\n\n## 已完成工作\n状态管理、任务、Hook、安装诊断、复盘知识、文档；83 项自动测试与 3 项原生探针通过，失败 0，跳过 0。\n\n## 当前阻塞\n核心 CLI 无阻塞；真实已信任生命周期、模型上下文交付及 WSL 等客户端仍未验证，见 docs/VALIDATION.md。\n\n## 下一步动作\n完成 Skill 安装和适配器测试，分别验证原生发现与模型调用。\n\n## 状态修订\n状态及任务修订以 state.json 和 tasks.json 为准，阶段 A–G 已有证据。\n\n## Git 检查\n沿用 master，功能检查点 70f5a7c；仅提交相关文件，没有推送或新增分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T08:24:22.033319+00:00"
+    },
+    {
+      "revision": 32,
+      "action": "state:update",
+      "reason": "保存当前 Skill 开发阶段",
+      "timestamp": "2026-10-08T08:24:22.044320+00:00"
+    },
+    {
+      "revision": 33,
+      "action": "task:update",
+      "reason": "验收通过",
+      "timestamp": "2026-10-08T08:50:06.101307+00:00"
+    },
+    {
+      "revision": 34,
+      "action": "task:update",
+      "reason": "登记已实际执行的开发阶段",
+      "timestamp": "2026-10-08T08:50:06.174209+00:00"
+    },
+    {
+      "revision": 35,
+      "action": "task:update",
+      "reason": "验收通过",
+      "timestamp": "2026-10-08T08:50:06.249636+00:00"
+    },
+    {
+      "revision": 36,
+      "action": "task:update",
+      "reason": "开始真实自然语言正反向测试",
+      "timestamp": "2026-10-08T08:50:06.325676+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "6c212dd026d754fc7297f807c1b267a64186375d44ba4f308cab27662d368221",
+      "content": "# 当前断点\n\n## 当前阶段\nv1.1 Skill 开发。\n\n## 当前任务\n运行真实自然语言触发及误触发测试；整理交付证据。\n\n## 已完成工作\n状态管理、任务、Hook、安装诊断、复盘知识、文档；101 项自动测试与 3 项原生 Hook 探针通过；原生用户 Skill 发现和显式调用通过。\n\n## 当前阻塞\n核心 CLI 无阻塞；真实已信任生命周期、模型上下文交付及 WSL 等客户端仍未验证，见 docs/VALIDATION.md。\n\n## 下一步动作\n完成 Skill 安装和适配器测试，分别验证原生发现与模型调用。\n\n## 状态修订\n状态及任务修订以 state.json 和 tasks.json 为准，阶段 A–G 已有证据。\n\n## Git 检查\n沿用 master，功能检查点 70f5a7c；仅提交相关文件，没有推送或新增分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T08:50:06.390510+00:00"
+    },
+    {
+      "revision": 37,
+      "action": "state:update",
+      "reason": "保存已验证结果与进行中的真实模型测试",
+      "timestamp": "2026-10-08T08:50:06.404252+00:00"
+    },
+    {
+      "revision": 38,
+      "action": "task:update",
+      "reason": "验收证据实际完成",
+      "timestamp": "2026-10-08T09:13:43.663745+00:00"
+    },
+    {
+      "revision": 39,
+      "action": "task:update",
+      "reason": "完成文档与交接状态收尾",
+      "timestamp": "2026-10-08T09:13:43.737792+00:00"
+    },
+    {
+      "revision": 40,
+      "action": "task:add",
+      "reason": "按用户补充材料转向现成方案实际评估",
+      "timestamp": "2026-10-08T09:13:43.809103+00:00"
+    },
+    {
+      "revision": 41,
+      "action": "task:update",
+      "reason": "登记实际执行的评估阶段",
+      "timestamp": "2026-10-08T09:13:43.874463+00:00"
+    },
+    {
+      "revision": 42,
+      "action": "task:update",
+      "reason": "评估完成不等于第三方方案全部通过",
+      "timestamp": "2026-10-08T09:13:43.941109+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "f82da9d893fddfee93a70e8454d28752b274480466cfd2e49d4f0c8112af0ce7",
+      "content": "# 重要决策\n\n## 2026-10-08：状态与写入\n背景：长期状态需要可靠恢复。备选：数据库、单纯 Prompt、文件加程序。选择：标准库文件管理、OS 锁、哈希、期望修订和事务；理由：满足确定性和轻量约束。适用：本地磁盘常规项目；不自动合并多会话。\n\n## 2026-10-08：Hook 与信任\n背景：不能编造生命周期或把未审核资料提升为规则。选择：按当前官方协议配置 SessionStart/PreCompact，恢复内容需要外部精确哈希审核；原生 Hook 信任由用户在 /hooks 完成。理由：保留原生安全边界。变化：文档已明确哪些只是模拟测试。\n\n## 2026-10-08：安装与迁移\n选择：管理块加 hooks.json 清单，不重写 config.toml；原始治理状态关闭 Git 换行转换。适用：Windows 和其他本地环境分别重新安装。真实用户安装由用户执行，开发只使用隔离配置。\n\n## 2026-10-08：原生 Skill 单入口\n选择：Skill 只做意图路由，轻量适配器通过安装时记录的绝对 Python/kit/CODEX_HOME 调用原 CLI；不复制核心，不新增账本，不取代 Hooks。理由：用户无需记忆命令，确定性校验继续由 Python 完成。用户默认 Skill 目录与 CODEX_HOME 分开，跨范围写入与恢复共享锁、清单、备份和事务。\n\n## 2026-10-08：先验证现成方案\n用户补充材料转向复用评估；保留已完成 v1.1，停止新增功能，不更名或迁移账本。GSD 选用资料最贴近的 Oisinwang 分支，源码与测试都放入隔离目录；当前安装边界和 Hook 发现存在实测失败，尚不替换原系统。PMM 下载返回 404，用户确认“这个没了”，结束该项试装。真正上下文压缩与长期行为仍无验收证据。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T09:13:44.006320+00:00"
+    },
+    {
+      "revision": 43,
+      "action": "state:update",
+      "reason": "持久化已确认职责与阶段方向",
+      "timestamp": "2026-10-08T09:13:44.029087+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "4482decdf92000e708ce7732a7974d6c1882b0bb42bc438839c9bac0ba5174cc",
+      "content": "# 项目教训\n\n- Windows 文本读写会转换 CRLF。外部编辑登记必须比较文字并保留原字节；BOM/CRLF 快照及克隆测试通过。证据：tests/test_kit.py；适用：UTF-8 治理文档。\n- Git 自动换行会改变被哈希的状态字节。使用 .agent/** -text 保持原字节；实际本地克隆并启用 autocrlf 测试通过。\n- 当前沙箱阻止 Git for Windows 创建 signal pipe；这是执行环境阻塞。放宽权限后相同本地克隆测试通过，不能用模拟结果掩盖实际失败。\n- 配置识别、未信任跳过和直接运行 Windows 命令均已有实际证据；它们不能证明模型接收了恢复内容或已信任生命周期成功。\n\n- Windows 的原生用户 Skill 发现不受模拟 USERPROFILE/HOME 控制；extraRoots 发现与默认用户目录发现必须分开验证。实际默认目录已临时安装、原生发现并按清单卸载；证据见 docs/SKILL_VALIDATION.md。\n- GSD 1.37.3 的 --local --no-sdk 仍写真实 ~/.gsd/defaults.json。应审查安装末尾与辅助目录，不能仅凭 local 参数判定隔离；本次新建文件已核对、保存证据并撤销。原生 hooks/list 为 0，安装日志成功不等于 Hook 被当前客户端识别；证据见 docs/ALTERNATIVES_EVALUATION.md。\n- 原生触发测试需要真实文件结果和实际工具记录；首次策略阻断记为 FAIL，允许官方审批后再测，不能用模型自述冒充通过。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T09:13:44.104572+00:00"
+    },
+    {
+      "revision": 44,
+      "action": "state:update",
+      "reason": "只记录本轮可核对经验，不写入跨项目知识库",
+      "timestamp": "2026-10-08T09:13:44.117416+00:00"
+    },
+    {
+      "revision": 45,
+      "action": "task:update",
+      "reason": "文档与证据收尾完成",
+      "timestamp": "2026-10-08T09:13:44.187239+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "116f9c1a472059b36b44eb734e4ba01f4f3b734b5988593ca10300ea87381f97",
+      "content": "# 当前断点\n\n## 当前阶段\nv1.1 实现与现成方案隔离评估收尾；不再新增功能。\n\n## 当前任务\n本轮交付已完成；保留现有实现与评估结果。\n\n## 已完成工作\n原核心、AGENTS 与 Hook 保留，新增 Skill 工作流/适配器/安装诊断；102 项自动回归、3 项原生 Hook 探针、14 项真实 Skill 测试通过。\nGSD 151 项聚焦自动测试、2 项本地查询、3 项真实流程通过；发现安装隔离和 Hook 识别两项失败。PMM 不可用，用户已确认结束试装。\n\n## 当前阻塞\n没有待继续执行的开发任务。真实上下文压缩、已信任生命周期、其他系统和长期行为未验证；GSD 暂不能直接替代。\n\n## 下一步动作\n等待用户确定后续路线；不自动扩展、迁移账本或安装第三方到用户环境。\n\n## 状态修订\n账本与 state.json 已经程序校验；详细证据见 docs/SKILL_VALIDATION.md、docs/ALTERNATIVES_EVALUATION.md。\n\n## Git 检查\n沿用 master，v1.0 检查点 70f5a7c/11d9381；v1.1 改动未提交，未创建分支/worktree、未推送。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T09:13:44.252654+00:00"
+    },
+    {
+      "revision": 46,
+      "action": "state:update",
+      "reason": "保存最终事实、阶段边界和下一步",
+      "timestamp": "2026-10-08T09:13:44.264655+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "99ca6ff782ba6501d0022794ba8f437f01674a5eccae3143eb49dc2c0ec9c30b",
+      "content": "# 重要决策\n\n## 2026-10-08：状态与写入\n背景：长期状态需要可靠恢复。备选：数据库、单纯 Prompt、文件加程序。选择：标准库文件管理、OS 锁、哈希、期望修订和事务；理由：满足确定性和轻量约束。适用：本地磁盘常规项目；不自动合并多会话。\n\n## 2026-10-08：Hook 与信任\n背景：不能编造生命周期或把未审核资料提升为规则。选择：按当前官方协议配置 SessionStart/PreCompact，恢复内容需要外部精确哈希审核；原生 Hook 信任由用户在 /hooks 完成。理由：保留原生安全边界。变化：文档已明确哪些只是模拟测试。\n\n## 2026-10-08：安装与迁移\n选择：管理块加 hooks.json 清单，不重写 config.toml；原始治理状态关闭 Git 换行转换。适用：Windows 和其他本地环境分别重新安装。真实用户安装由用户执行，开发只使用隔离配置。\n\n## 2026-10-08：原生 Skill 单入口\n选择：Skill 只做意图路由，轻量适配器通过安装时记录的绝对 Python/kit/CODEX_HOME 调用原 CLI；不复制核心，不新增账本，不取代 Hooks。理由：用户无需记忆命令，确定性校验继续由 Python 完成。用户默认 Skill 目录与 CODEX_HOME 分开，跨范围写入与恢复共享锁、清单、备份和事务。\n\n## 2026-10-08：先验证现成方案\n用户补充材料转向复用评估；保留已完成 v1.1，停止新增功能，不更名或迁移账本。GSD 选用资料最贴近的 Oisinwang 分支，源码与测试都放入隔离目录；当前安装边界和 Hook 发现存在实测失败，尚不替换原系统。PMM 下载返回 404，用户确认“这个没了”，结束该项试装。真正上下文压缩与长期行为仍无验收证据。\n\n## 2026-10-08：候选稳定基线与开发边界\n用户确认：PMM 已排除，本阶段不采用 GSD，保留评估结论；保存本轮已验证改动为 Git 候选稳定基线，停止外部方案引入和功能扩展。保留 Skill、Python、AGENTS.md 与 Hook 的当前职责。允许在现有 master 创建本地提交，不推送、不创建分支或工作树、不正式安装。\n候选稳定基线只代表主要功能已通过受测范围验证，不表示所有长期可靠性问题解决。真实自动压缩未来只在隔离项目补验：压缩前保存最新状态，压缩后恢复目标/任务/决策，旧快照不得覆盖新状态，Hook 未执行应能诊断发现；本轮不开展该测试。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T09:20:42.861789+00:00"
+    },
+    {
+      "revision": 47,
+      "action": "state:update",
+      "reason": "用户明确确认基线保存与停止扩展的边界",
+      "timestamp": "2026-10-08T09:20:42.875031+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "3e9a80e8ca21d937946a43e7c7a8f609d11a2c9bfa0e84cda7c42b2a2e15bf71",
+      "content": "# 当前断点\n\n## 当前阶段\n候选稳定基线；暂停外部方案引入和功能扩展。\n\n## 当前任务\n主要功能验证与现成方案评估完成，按用户授权保存本轮 Git 基线。\n\n## 已完成工作\n保留 Python、AGENTS、Hook；新增原生 Skill 与安装诊断。102 项自动回归、14 项真实调用、3 项 Hook 探针已通过。\nGSD 评估结论保留，本阶段不采用；PMM 已排除。任务账本仍由原 Python 程序统一管理。\n\n## 当前阻塞\n真实自动压缩恢复、已信任 Hook 完整生命周期和长期行为仍未验证；当前不视为已正式部署。\n\n## 下一步动作\n停止扩展；未来仅按实际需求处理使用问题与隔离项目中的真实自动压缩恢复验证，本轮不继续测试该项。\n\n## 状态修订\n以 state.json 和 tasks.json 为准。证据见 docs/SKILL_VALIDATION.md、docs/ALTERNATIVES_EVALUATION.md。\n\n## Git 检查\n用户已授权在 master 保存候选稳定基线；本文件与源码纳入同一提交，准确提交号以 Git 历史为准。\n测试缓存、第三方测试源码、日志及快照保持忽略；不推送，不创建分支/worktree，不正式安装。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-08T09:20:42.926982+00:00"
+    },
+    {
+      "revision": 48,
+      "action": "state:update",
+      "reason": "保存基线的开发边界与尚未验证范围",
+      "timestamp": "2026-10-08T09:20:42.936981+00:00"
     }
   ]
 }

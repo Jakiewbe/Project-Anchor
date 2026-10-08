@@ -18,6 +18,12 @@
 | 快照异常或数量偏多 | 损坏、不明或其他项目快照被保留 | 人工检查再处理；工具只清理校验通过的本项目快照 |
 | Hook 非零但压缩继续 | 默认不阻断压缩 | 读取 systemMessage、stderr、运行日志，先修复状态，再手动 snapshot 验证 |
 | 日志写入失败 | 沙箱/权限、容量或单条日志超过上限 | 日志失败本身会使 Hook 报错，不能用旧日志证明本次成功；检查写权限和保留配置 |
+| Skill 未发现 | 未安装、被禁用、路径或客户端发现范围不同 | doctor --native-skills 核对真实路径；重启客户端或显式 $codex-rules；不把文件存在当成已加载 |
+| 自然语言没选中 Skill | 描述匹配由模型决定 | 明确说明治理需求或显式 $codex-rules；不能承诺每次自动触发 |
+| run.py 找不到程序/版本不同 | 克隆、迁移或升级后定位信息过期 | 从当前工具箱重新 install-global；不能猜另一个 Python 或复制核心代码兜底 |
+| Skill 管理文件有修改 | 安装哈希与实际内容不一致 | 先审阅差异；更新/卸载拒绝覆盖，保留用户内容 |
+| Skill 调用被执行策略拒绝 | 客户端审批或沙箱阻断程序调用 | 保留错误证据，使用实际允许的授权机制；不能把已选择 Skill 当成操作成功 |
+| 自定义 CODEX_HOME 测试影响用户 Skill | 两个安装目录是独立来源 | 测试明确传 --skills-dir 临时目录；Windows 原生用户目录不会因假 USERPROFILE 改变 |
 | Windows/WSL 路径失效 | 各环境的解释器和绝对路径不同 | 在各环境单独 clone/安装，不共享已生成 Hook 命令 |
 
 日志：CODEX_HOME/codex-rules/runtime/hooks.jsonl 与 hooks.jsonl.1。快照：项目/.agent/runtime/snapshots。安装备份：CODEX_HOME/codex-rules/runtime/backups。运行数据不应提交到 Git。

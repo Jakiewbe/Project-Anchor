@@ -1,9 +1,10 @@
-<!-- codex-rules:version=1.0.0 -->
+<!-- codex-rules:version=1.1.0 -->
 # Codex-Rules 全局约定
 
 - 中文、简洁、基于真实文件报告；区分事实、判断与未验证事项。
 - 简单任务直接处理；复杂项目先确认目标、阶段和验收条件，避免过度工程。
 - 对已初始化项目，开始重要工作或压缩后先用 kit.py status 读取 .agent/GOAL.md、CURRENT.md、tasks.json；磁盘为状态来源。未初始化的项目不强制采用工具箱。
+- 当项目已启用 codex-rules，且任务涉及项目初始化、进度管理、长期记忆、会话交接、规则诊断或复盘时，优先考虑使用 codex-rules Skill，并通过其指定程序执行状态操作。
 - 顶层目标由用户决定。不得擅自变更 GOAL；获准后通过 state update --approved 保存目标版本、原因与历史。
 - 任务以 .agent/tasks.json 为唯一来源，只通过 kit.py task 修改。草案需用户批准才可开始；done 必须有对应验收标准的真实证据，程序只验证证据结构，不能代替验收。
 - 用户确认重要变更、架构决策、任务完成或重大错误修正时，及时通过 state update 更新 CURRENT、DECISIONS 或 LESSONS。CURRENT 保持 50 行以内；教训必须有验证依据。

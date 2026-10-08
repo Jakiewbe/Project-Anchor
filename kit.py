@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Single CLI entrypoint; runtime dependency: Python standard library only."""
 import argparse
+from contextlib import ExitStack
 import json
 from pathlib import Path
 import sys
@@ -25,9 +26,12 @@ def parser():
     for command in ("install-global", "uninstall-global", "doctor"):
         child = sub.add_parser(command)
         child.add_argument("--codex-home")
+        if command == "install-global":
+            child.add_argument("--skills-dir", help="Skill 父目录；默认用户目录/.agents/skills")
         if command == "doctor":
             child.add_argument("path", nargs="?", default=".")
             child.add_argument("--json", action="store_true")
+            child.add_argument("--native-skills", action="store_true", help="通过真实 Codex skills/list 核对发现情况（不调用模型）")
     child = sub.add_parser("init-project")
     child.add_argument("path")
     child.add_argument("--name", required=True)
@@ -46,14 +50,18 @@ def parser():
     child = sub.add_parser("task")
     child.add_argument("action", choices=["add", "update"])
     child.add_argument("path")
-    child.add_argument("--file", required=True, help="包含任务或修改字段的 UTF-8 JSON")
+    inputs = child.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--file", help="包含任务或修改字段的 UTF-8 JSON")
+    inputs.add_argument("--json-input", action="store_true", help="从 stdin 读取 UTF-8 JSON")
     child.add_argument("--expected-revision", type=int, required=True)
     child.add_argument("--reason", required=True)
     child = sub.add_parser("state")
     child.add_argument("action", choices=["update", "adopt"])
     child.add_argument("path")
     child.add_argument("document", choices=["GOAL.md", "CURRENT.md", "DECISIONS.md", "LESSONS.md"])
-    child.add_argument("--file", required=True)
+    inputs = child.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--file")
+    inputs.add_argument("--text-input", action="store_true", help="从 stdin 读取 UTF-8 Markdown")
     child.add_argument("--expected-revision", type=int, required=True)
     child.add_argument("--reason", required=True)
     child.add_argument("--approved", action="store_true")
@@ -69,6 +77,7 @@ def parser():
     child.add_argument("--global", dest="global_install", action="store_true")
     child.add_argument("--knowledge", action="store_true")
     child.add_argument("--codex-home")
+    child.add_argument("--skills-dir", help="恢复首次安装时使用的 Skill 父目录")
     child.add_argument("--rollback", action="store_true")
     return p
 
@@ -78,11 +87,14 @@ def main(argv=None):
     try:
         result = None
         if args.command == "install-global":
-            result = install(codex_home(args.codex_home))
+            result = install(codex_home(args.codex_home), args.skills_dir)
         elif args.command == "uninstall-global":
             result = uninstall(codex_home(args.codex_home))
         elif args.command == "doctor":
             checks = doctor(codex_home(args.codex_home), args.path)
+            if args.native_skills:
+                from core.native import skill_discovery
+                checks.extend(skill_discovery(codex_home(args.codex_home), args.path))
             if args.json:
                 result = checks
             else:
@@ -107,8 +119,17 @@ def main(argv=None):
                 # Works even before init transaction installed state.json.
                 root = Path(args.path).resolve()
                 _, lock, journal = paths(root)
-            with locked(lock):
-                recover(root, journal, args.rollback)
+            with locked(lock), ExitStack() as stack:
+                extra = None
+                if args.global_install:
+                    from core.skill_install import skill_directory
+                    manifest_path = root / "codex-rules/install.json"
+                    manifest = read_json(manifest_path) if manifest_path.exists() else {}
+                    target = Path(manifest["skill"]["path"]) if manifest.get("skill") else skill_directory(args.skills_dir)
+                    if read_json(journal).get("roots"):
+                        extra = {"skill": target}
+                        stack.enter_context(locked(target.parent / ".codex-rules.lock"))
+                recover(root, journal, args.rollback, extra)
             result = {"recovered": True, "rollback": args.rollback}
         elif args.command == "knowledge-add":
             result = {"knowledge": str(knowledge_add(args.file, args.approved))}
@@ -130,9 +151,10 @@ def main(argv=None):
             elif args.command == "retro":
                 result = {"retro": str(retro(root))}
             elif args.command == "task":
-                result = {"revision": task_change(root, args.expected_revision, args.action, read_json(args.file), args.reason)}
+                payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
+                result = {"revision": task_change(root, args.expected_revision, args.action, payload, args.reason)}
             elif args.command == "state":
-                value = Path(args.file).read_text(encoding="utf-8-sig")
+                value = sys.stdin.buffer.read().decode("utf-8-sig") if args.text_input else Path(args.file).read_text(encoding="utf-8-sig")
                 result = {"revision": doc_change(root, args.expected_revision, args.document, value, args.reason,
                                                 args.approved, args.action == "adopt")}
             elif args.command == "trust-project":

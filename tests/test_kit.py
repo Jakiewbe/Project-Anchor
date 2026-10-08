@@ -43,6 +43,8 @@ class Environment(unittest.TestCase):
         return memory.task_change(self.project, state["revision"], "update", {"task_id": tid, **fields}, "测试更新")
 
     def cli(self, *args, cwd=None):
+        if args[0] == "install-global":
+            args = (*args, "--skills-dir", str(self.base / ".agents/skills"))
         return subprocess.run([sys.executable, "-X", "utf8", str(ROOT / "kit.py"), *map(str, args)],
                               cwd=cwd or self.base, env=self.env, capture_output=True,
                               encoding="utf-8", timeout=30)
@@ -468,15 +470,15 @@ class MemoryTests(Environment):
 
 class InstallTests(Environment):
     def test_first_install(self):
-        result = config.install(self.home)
+        result = config.install(self.home, self.base / ".agents/skills")
         self.assertTrue(result["changed"])
         self.assertTrue((self.home / "hooks.json").exists())
         self.assertFalse((self.home / "config.toml").exists())
 
     def test_repeat_install_bytes_unchanged(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         first = (self.home / "hooks.json").read_bytes()
-        self.assertFalse(config.install(self.home)["changed"])
+        self.assertFalse(config.install(self.home, self.base / ".agents/skills")["changed"])
         self.assertEqual(first, (self.home / "hooks.json").read_bytes())
 
     def test_user_config_agents_and_hooks_preserved(self):
@@ -486,7 +488,7 @@ class InstallTests(Environment):
         (self.home / "AGENTS.md").write_bytes(b"user rules\r\n")
         group = {"hooks": [{"type": "command", "command": "echo user"}]}
         (self.home / "hooks.json").write_bytes(io.encode_json({"description": "User", "hooks": {"SessionStart": [group]}}))
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         self.assertEqual((self.home / "config.toml").read_bytes(), original)
         self.assertIn(group, io.read_json(self.home / "hooks.json")["hooks"]["SessionStart"])
         self.assertTrue((self.home / "AGENTS.md").read_bytes().startswith(b"user rules\r\n"))
@@ -502,7 +504,7 @@ class InstallTests(Environment):
             original(path, data)
         with patch("core.atomic_io.atomic_write", side_effect=fail):
             with self.assertRaises(OSError):
-                config.install(self.home)
+                config.install(self.home, self.base / ".agents/skills")
         self.assertEqual((self.home / "AGENTS.md").read_bytes(), original_agents)
         self.assertFalse((self.home / "codex-rules/install.json").exists())
 
@@ -511,7 +513,7 @@ class InstallTests(Environment):
             self.assertEqual(config.codex_home(), self.home)
 
     def test_uninstall_preserves_later_additions(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         agents = self.home / "AGENTS.md"
         agents.write_bytes(agents.read_bytes() + b"\nLater user rules\n")
         hooks = io.read_json(self.home / "hooks.json")
@@ -523,34 +525,34 @@ class InstallTests(Environment):
         self.assertEqual(io.read_json(self.home / "hooks.json")["hooks"], {"Stop": [added]})
 
     def test_uninstall_pristine(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         config.uninstall(self.home)
         self.assertFalse((self.home / "AGENTS.md").exists())
         self.assertFalse((self.home / "hooks.json").exists())
 
     def test_uninstall_drift_refused(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         path = self.home / "AGENTS.md"
-        changed = path.read_bytes().replace(b"1.0.0", b"9.9.9")
+        changed = path.read_bytes().replace(config.VERSION.encode(), b"9.9.9")
         path.write_bytes(changed)
         with self.assertRaises(io.KitError):
             config.uninstall(self.home)
         self.assertEqual(path.read_bytes(), changed)
 
     def test_hook_drift_refused(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         path = self.home / "hooks.json"
         value = io.read_json(path)
         value["hooks"]["PreCompact"][0]["matcher"] = "wrong"
         path.write_bytes(io.encode_json(value))
         with self.assertRaises(io.KitError):
-            config.install(self.home)
+            config.install(self.home, self.base / ".agents/skills")
 
     def test_malformed_user_config_refused(self):
         self.home.mkdir()
         (self.home / "config.toml").write_text("not valid toml")
         with self.assertRaises(io.KitError):
-            config.install(self.home)
+            config.install(self.home, self.base / ".agents/skills")
         self.assertFalse((self.home / "AGENTS.md").exists())
 
     def test_encoded_windows_command_literal(self):
@@ -605,7 +607,7 @@ class HookAndDoctorTests(Environment):
         self.assertNotIn("SECRET-DO-NOT-SAVE", log)
 
     def test_doctor_unverified_trust_and_execution(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         checks = doctor(self.home, self.project)
         for name in ("Hook 已信任", "SessionStart 曾执行", "模型实际遵守规则"):
             self.assertEqual(next(c["status"] for c in checks if c["check"] == name), "UNVERIFIED")
@@ -617,19 +619,19 @@ class HookAndDoctorTests(Environment):
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "SessionStart 最近执行"), "FAIL")
 
     def test_doctor_rule_version_drift(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         path = self.home / "codex-rules/install.json"
         manifest = io.read_json(path)
         manifest["version"] = "0.0.1"
         path.write_bytes(io.encode_json(manifest))
         rules = self.home / "AGENTS.md"
-        rules.write_bytes(rules.read_bytes().replace(b"1.0.0", b"2.0.0"))
+        rules.write_bytes(rules.read_bytes().replace(config.VERSION.encode(), b"2.0.0"))
         checks = doctor(self.home, self.project)
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "规则版本"), "WARN")
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "全局规则一致性"), "FAIL")
 
     def test_doctor_config_and_override_conflicts(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         (self.home / "AGENTS.override.md").write_text("override")
         local = self.project / ".codex"
         local.mkdir()
@@ -639,19 +641,19 @@ class HookAndDoctorTests(Environment):
         self.assertTrue(any(c["check"] == "项目配置关闭 Hook" for c in checks))
 
     def test_doctor_size_limit(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         (self.home / "config.toml").write_text("project_doc_max_bytes = 10", encoding="utf-8")
         checks = doctor(self.home, self.project)
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "已知指令大小"), "WARN")
 
     def test_doctor_selected_override_size(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         (self.home / "AGENTS.override.md").write_text("x" * 40000, encoding="utf-8")
         checks = doctor(self.home, self.project)
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "已知指令大小"), "WARN")
 
     def test_doctor_fallback_file(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         (self.home / "config.toml").write_text('project_doc_fallback_filenames = ["PROJECT_RULES.md"]', encoding="utf-8")
         (self.project / "AGENTS.md").unlink()
         (self.project / "PROJECT_RULES.md").write_text("fallback", encoding="utf-8")
@@ -677,7 +679,7 @@ class HookAndDoctorTests(Environment):
                 self.assertIsInstance(json.loads(line), dict)
 
     def test_doctor_script_hash_change(self):
-        config.install(self.home)
+        config.install(self.home, self.base / ".agents/skills")
         with patch("core.diagnostics.definition_hash", return_value="changed"):
             checks = doctor(self.home, self.project)
         self.assertEqual(next(c["status"] for c in checks if c["check"] == "Hook 脚本版本"), "WARN")
