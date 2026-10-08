@@ -1,0 +1,10 @@
+[project]
+name = "codex-rules"
+version = "1.0.0"
+description = "File-based local project governance for Codex"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.codex-rules]
+entrypoint = "kit.py"
+test-command = "py -3 -m unittest discover -s tests"

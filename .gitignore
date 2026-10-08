@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.egg-info/
+.test-runtime/
+.agent/runtime/
+.agent/.lock
+.agent/.transaction.json
+.env
+.env.*
+*.pem
+*.key
+knowledge/.lock
+knowledge/.transaction.json
