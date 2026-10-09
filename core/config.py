@@ -53,10 +53,13 @@ def windows_command(arguments):
     return "powershell.exe -NoProfile -NonInteractive -EncodedCommand " + encoded
 
 
+HOOK_EVENTS = [("SessionStart", "session_context.py", "^(startup|resume|clear|compact)$"),
+               ("PreCompact", "pre_compact.py", "^(manual|auto)$")]
+
+
 def hook_groups():
     result = {}
-    for event, script, matcher in [("SessionStart", "session_context.py", "^(startup|resume|clear|compact)$"),
-                                    ("PreCompact", "pre_compact.py", "^(manual|auto)$")]:
+    for event, script, matcher in HOOK_EVENTS:
         arguments = [str(Path(sys.executable).resolve()), "-X", "utf8", str(KIT_ROOT / "hooks" / script)]
         unix = shlex.join(arguments)
         win = windows_command(arguments)
@@ -205,8 +208,12 @@ def uninstall(home):
         return {"uninstalled": True, "runtime_backups_retained": True, "project_trust_retained": True}
 
 
-def trust_project(root, home):
-    managed, lock, journal = locations(home)
+def trust_project(root, home, managed=None):
+    if managed is None:
+        managed, lock, journal = locations(home)
+    else:
+        managed = home = Path(managed)
+        lock, journal = managed / ".lock", managed / ".transaction.json"
     _, project_lock, _ = paths(root)
     with locked(lock), locked(project_lock):
         check_pending(journal)
@@ -218,8 +225,12 @@ def trust_project(root, home):
         atomic_write(safe_path(path, home), encode_json(registry))
 
 
-def trusted(root, home, state):
-    managed, _, journal = locations(home)
+def trusted(root, home, state, managed=None):
+    if managed is None:
+        managed, _, journal = locations(home)
+    else:
+        managed = home = Path(managed)
+        journal = managed / ".transaction.json"
     check_pending(journal)
     path = safe_path(managed / "trusted-projects.json", home)
     if not path.exists():

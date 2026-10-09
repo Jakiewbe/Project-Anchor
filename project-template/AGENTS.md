@@ -1,7 +1,7 @@
 <!-- codex-rules:project=1.0.0 -->
 # 项目状态约定
 
-重要工作前读取 .agent/GOAL.md、CURRENT.md 和 tasks.json。
+重要工作前、新会话接续或上下文压缩后，读取最新 .agent/GOAL.md、CURRENT.md 和 tasks.json；写入使用最新 revision，冲突时重新读取，不覆盖他人更新。
 目标模板中的“待确认”不代表用户已经批准。禁止自行扩大目标或开始草案任务。
 tasks.json 只通过工具箱 kit.py task 修改；PROGRESS.md 是程序生成的展示。
 重要决策、任务完成、用户确认变更、重大修复后，及时通过 kit.py state 更新对应状态文件。

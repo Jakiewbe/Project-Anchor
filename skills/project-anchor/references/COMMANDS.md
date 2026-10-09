@@ -15,6 +15,7 @@
 | 状态更新 | state update PATH GOAL.md/CURRENT.md/DECISIONS.md/LESSONS.md --file MARKDOWN --expected-revision N --reason TEXT [--approved] |
 | 检查/保存快照 | snapshot PATH [--check SNAPSHOT_FILE] |
 | 诊断 | doctor PATH --json --native-hooks --native-skills |
+| 非 Codex 安装诊断 | doctor PATH --json --client agents/claude [--client-home DIR] |
 | 本会话 Hook 检查 | doctor PATH --json --session-id ID [--expect-event SessionStart/PreCompact] |
 | 复盘 | retro PATH |
 | 知识入库 | knowledge-add --file JSON --approved |
@@ -37,6 +38,8 @@ todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；block
 
 state update 接收完整文档。GOAL 必须有核心目标、项目背景、关键约束、非目标、验收标准、目标版本；CURRENT 必须有当前阶段、当前任务、已完成工作、当前阻塞、下一步动作、状态修订、Git 检查，50 行以内。普通更新禁止直接改原文件；外部既有编辑必须单独审核后 state adopt 登记，不用于绕过冲突。
 
-全局安装/升级及跨电脑迁移由 install-global 统一生成定位文件和哈希；脚本移位或安装版本不同则停止并明确报告。适配器不修改 Hook 配置，移除 Skill 后 CLI 与 Hook 仍可独立执行。
+全局安装/升级及跨电脑迁移由 install-global 或 install-client 统一生成定位文件和哈希；脚本移位或安装版本不同则停止并明确报告。适配器不修改 Hook 配置，移除 Skill 后 CLI 与 Hook 仍可独立执行。
+
+适配器按 runtime.json 的安装来源设置环境：Codex 安装传 CODEX_HOME；`install-client` 安装传 PROJECT_ANCHOR_CLIENT 与 PROJECT_ANCHOR_CLIENT_HOME，此时 doctor 默认检查对应客户端安装，不读取 Codex 配置。`--native-*` 只适用于 Codex。安装、卸载、信任和恢复属于用户操作：`install-client/uninstall-client agents|claude`、`trust-project PATH --client claude --approved`、`recover --client agents|claude [--rollback]`，Skill 不自行执行。
 
 `--expect-event` 可重复，仅用于客户端证据已确认应触发的事件，必须同时传 `--session-id`。普通 doctor 的历史成功不能代替本会话检查；本会话缺失但未确认应触发时为 UNVERIFIED，模拟记录不证明客户端执行。

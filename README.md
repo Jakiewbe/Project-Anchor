@@ -24,8 +24,8 @@ Project Anchor 为 AI 辅助开发提供一套**随项目保存、可以校验�
 
 你表达意图，Skill 选择工作流，Python 执行状态操作；全局规则持续约束行为，Hook 在受支持的生命周期事件中自动运行。
 
-> **当前定位 · v1.2.0**<br>
-> Python 核心可以独立运行；现有 Skill 安装、全局规则和原生 Hook 集成面向 **Codex**。其他 Agent 尚未完成适配与真实验收。支持范围以实际验证为准。
+> **当前定位 · v1.2.0 + 未发布的通用 Skill 适配（Draft）**<br>
+> Python 核心可以独立运行，不需要安装 Codex。Codex 集成保持不变；新增通用 Skill 安装和 Claude Code 适配。各客户端能力以[能力矩阵](#clients)中的真实验证为准，未验证项不代表可用。
 
 <a id="why"></a>
 ## 为长项目保留六个锚点
@@ -91,6 +91,16 @@ py -3 kit.py install-global
 
 工具目录需要继续保留：Skill 中的 `runtime.json` 指向实际 Python 和 `kit.py`，没有复制核心程序。移动目录或换电脑后需要重新安装。
 
+**不使用 Codex 时**，按客户端选择一个入口（都复用同一 `kit.py` 和项目 `.agent/`）：
+
+```powershell
+py -3 kit.py install-client agents   # 通用 Skill：~/.agents/skills，Cursor、OpenCode 可发现；不写规则或 Hook
+py -3 kit.py install-client claude   # Claude Code：~/.claude 下 Skill、rules/project-anchor.md 与两个 Hook
+py -3 kit.py doctor --client claude  # 只检查对应安装，不读取 Codex 配置
+```
+
+已用 `install-global` 安装到 `~/.agents/skills` 时，Cursor、OpenCode 可直接使用这份 Skill，不要再装 agents。同一目录只允许一个管理方，冲突时拒绝覆盖。卸载用 `uninstall-client`，中断后用 `recover --client`。细节见 [客户端机制](skills/project-anchor/references/CLIENTS.md)。
+
 ### 2. 审核 Hook，核对安装
 
 重新打开 Codex 会话，在支持 Hook 的 CLI 中输入 `/hooks`，审核当前 **SessionStart** 和 **PreCompact** 定义，然后运行：
@@ -115,7 +125,7 @@ py -3 kit.py doctor --native-hooks --native-skills
 根据我的项目目标制定任务草案。
 ```
 
-自动选择没有确定性保证，需要时可以显式输入：
+自动选择没有确定性保证，需要时可以显式输入（Codex 用 `$project-anchor`，Claude Code、Cursor 用 `/project-anchor`，OpenCode 点名 project-anchor skill）：
 
 ```text
 $project-anchor 查看当前项目进度，只读，不修改。
@@ -150,6 +160,21 @@ $project-anchor 查看当前项目进度，只读，不修改。
 
 Hook 绑定会话工作目录。在 A 项目的会话里处理 B 项目，不能据此认定 B 的生命周期保护已执行。模型自动选择 Skill、及时记录决定以及长期遵守规则，仍需要实际使用检验。
 
+<a id="clients"></a>
+## 客户端能力矩阵
+
+2026-10-09 记录；“已验证”只指有真实客户端证据，来源、版本和原始失败见 [通用适配验证记录](docs/CLIENT_VALIDATION.md)。
+
+| 客户端 | Skill 发现 | 自然语言调用 | 持久规则 | 主动交接 | 生命周期自动化 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Codex | 已验证（历史） | 已验证（历史） | 已验证（全局 AGENTS.md） | 已验证（历史） | 启动/手动压缩历史已验证；本版本需重新审核 Hook，未验证 |
+| Claude Code 2.1.153 | 已验证 | 未验证（本机 API 401） | 未验证（规则文件已安装） | 未验证 | SessionStart 启动/恢复、手动 PreCompact 已验证；压缩后接续、自动压缩未验证 |
+| OpenCode 1.14.29 | 已验证 | 已验证 | 已验证（项目 AGENTS.md） | 已验证 | 不支持 |
+| Cursor 3.23.12 | 已验证 | 未验证 | 未验证（项目 AGENTS.md） | 未验证 | 不支持 |
+| WorkBuddy | 未验证 | 未验证 | 未验证 | 未验证 | 不支持 |
+
+持久规则来自 `init-project` 追加到项目的 AGENTS.md，以及 Claude Code 的用户规则文件；它们不依赖 Skill 每次被选中。“不支持”的客户端没有自动启动读盘或压缩前快照，只能靠规则要求新会话先读最新状态。
+
 <a id="validation"></a>
 ## 验证状态与已知边界
 
@@ -157,12 +182,14 @@ Hook 绑定会话工作目录。在 A 项目的会话里处理 B 项目，不能
 
 | 验证层 | 结果 | 说明 |
 | :--- | :--- | :--- |
+| 通用适配自动回归 | **151 通过 / 0 失败** | 原 131 项加 20 项客户端安装、脱离 Codex 运行、Hook 模拟和双入口旧修订保护 |
+| 通用适配真实客户端 | **OpenCode 8/0；Claude Hook 3/0** | OpenCode 历史运行 4/3、5/2 原样保留；Claude 自然语言因本机 401 未执行 |
 | v1.2.0 自动回归 | **131 通过 / 0 失败** | 包含安装迁移、冲突拒绝、回滚、崩溃恢复和名称校验 |
 | v1.2.0 真实 CLI 工作流 | **9 通过 / 1 失败** | 新会话恢复请求发生客户端连接失败，保留原始失败 |
 | 隔离原生 Hook 探针 | **3 通过 / 0 失败** | 验证发现、未信任跳过和 Windows 调用协议；不是受信生命周期验收 |
 | 独立状态与锁补验 | **4 通过 / 1 失败** | 重复提交相同任务状态仍会成功并增加修订，尚未修复 |
 | 历史 Desktop 生命周期 | **有真实执行证据** | 改名前版本验证过启动、手动压缩及一个自然自动压缩样本 |
-| 其他 Agent / 跨平台 / 第二台电脑 | **尚未验证** | 不以通用名称或本机临时克隆代替真实集成测试 |
+| Cursor 调用、WorkBuddy、真实双客户端交替 / 跨平台 / 第二台电脑 | **尚未验证** | 不以通用名称、结构检查或模拟代替真实集成测试 |
 
 **当前需特别注意：**
 
@@ -179,7 +206,7 @@ Hook 绑定会话工作目录。在 A 项目的会话里处理 B 项目，不能
 | :--- | :--- |
 | [使用与维护手册](docs/USAGE.md) | CLI 示例、任务证据、快照、备份、迁移、卸载和恢复 |
 | [Skill 工作流](skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](skills/project-anchor/references/COMMANDS.md) | 自然语言意图到正式程序的执行路径 |
-| [客户端边界](skills/project-anchor/references/CLIENTS.md) | 当前 Codex 适配与后续通用化范围 |
+| [客户端机制](skills/project-anchor/references/CLIENTS.md) · [通用适配验证](docs/CLIENT_VALIDATION.md) | 各客户端安装位置、规则与生命周期差异，及验证证据 |
 | [架构说明](docs/ARCHITECTURE.md) · [故障排查](docs/TROUBLESHOOTING.md) | 实现约束与错误处理 |
 | [验证记录](docs/VALIDATION.md) · [Skill 验证](docs/SKILL_VALIDATION.md) · [冒烟检查](SMOKE_TEST.md) | 不同阶段的测试方法与证据 |
 
@@ -189,7 +216,7 @@ core/                     状态、任务、事务、安装与诊断
 skills/project-anchor/    Skill、参考资料与轻量执行入口
 global/AGENTS.md           全局行为约定
 project-template/         项目治理模板
-hooks/                    当前 Codex 生命周期适配
+hooks/                    Codex 与 Claude Code 共用的生命周期脚本
 knowledge/                经确认的跨项目知识
 tests/                    自动测试与客户端验收工具
 docs/                     使用、架构、验证与排错文档
@@ -201,7 +228,7 @@ docs/                     使用、架构、验证与排错文档
 py -3 -X utf8 -m unittest discover -s tests -q
 ```
 
-提交前检查差异、执行相关检查，并保留失败证据。运行时日志、快照、认证信息和密钥不应提交。后续客户端适配继续复用现有核心与账本；目前不承诺其他 Agent 的安装、全局规则或 Hook 已可用。
+提交前检查差异、执行相关检查，并保留失败证据。运行时日志、快照、认证信息和密钥不应提交。客户端适配继续复用现有核心与账本；能力矩阵之外的客户端不承诺可用。
 
 ## 许可证
 

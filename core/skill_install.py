@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 from . import VERSION, NAME, LEGACY_NAME
-from .atomic_io import KitError, digest, encode_json, raw, safe_path
+from .atomic_io import KitError, digest, encode_json, raw, read_json, safe_path
 from .memory import KIT_ROOT
 
 
@@ -11,18 +11,30 @@ def skill_directory(parent=None):
     return safe_path(parent / NAME, parent)
 
 
-def skill_payload(home):
+def skill_payload(home, client="codex"):
     source = KIT_ROOT / "skills" / NAME
     files = {p.relative_to(source).as_posix(): p.read_bytes() for p in source.rglob("*")
              if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc"}
-    files["runtime.json"] = encode_json({"schema": 1, "version": VERSION,
-                                        "kit": str(KIT_ROOT / "kit.py"),
-                                        "python": str(Path(sys.executable).resolve()),
-                                        "codex_home": str(Path(home).resolve())})
+    runtime = {"schema": 1, "version": VERSION, "kit": str(KIT_ROOT / "kit.py"),
+               "python": str(Path(sys.executable).resolve())}
+    # Codex keeps its original locator bytes; other clients never receive CODEX_HOME.
+    if client == "codex":
+        runtime["codex_home"] = str(Path(home).resolve())
+    else:
+        runtime.update(client=client, home=str(Path(home).resolve()))
+    files["runtime.json"] = encode_json(runtime)
     return files
 
 
-def prepare_skill(home, old_manifest, parent=None, uninstall=False):
+def _owner(target):
+    try:
+        runtime = read_json(target / "runtime.json")
+        return f"{runtime['client']} ({runtime['home']})" if "client" in runtime else f"codex ({runtime['codex_home']})"
+    except (KitError, OSError, KeyError, TypeError):
+        return "未知来源"
+
+
+def prepare_skill(home, old_manifest, parent=None, uninstall=False, client="codex"):
     old = (old_manifest or {}).get("skill")
     previous_target = Path(old["path"]) if old else None
     migrating = bool(old and previous_target.name == LEGACY_NAME and not uninstall)
@@ -30,10 +42,11 @@ def prepare_skill(home, old_manifest, parent=None, uninstall=False):
     safe_path(target, target.parent)
     if old and parent is not None and skill_directory(parent) != target:
         raise KitError("不能在更新时改变 Skill 目录；先安全卸载，再安装到新位置")
-    files = {} if uninstall else skill_payload(home)
+    files = {} if uninstall else skill_payload(home, client)
     previous = old["hashes"] if old and not migrating else {}
     if (not old or migrating) and target.exists() and any(p.is_file() or p.is_symlink() for p in target.rglob("*")):
-        raise KitError("同名 Skill 已存在但不属于本安装；拒绝覆盖")
+        raise KitError(f"同名 Skill 已存在但不属于本安装，当前定位来源: {_owner(target)}；拒绝覆盖。"
+                       "扫描同一目录的客户端可直接使用已安装 Skill；如需更换管理方，先用原安装命令卸载")
     expected, updates = {}, {}
     for name in sorted(set(files) | set(previous)):
         path = safe_path(target / name, target)
@@ -76,12 +89,12 @@ def skill_scopes(manifest, target, legacy=False):
     return roots
 
 
-def inspect_skill(home, manifest):
+def inspect_skill(home, manifest, client="codex"):
     info = manifest.get("skill")
     if not info:
         return [("UNVERIFIED", "Skill 安装", "旧版本未安装 Skill；重新 install-global")]
     target = Path(info["path"])
-    expected = skill_payload(home)
+    expected = skill_payload(home, client)
     checks = [("PASS", "Skill 安装位置", str(target))]
     intact = all(raw(safe_path(target / name, target)) is not None and
                  digest(raw(target / name)) == value for name, value in info["hashes"].items())

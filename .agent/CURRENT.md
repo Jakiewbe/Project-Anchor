@@ -1,35 +1,30 @@
 # 当前断点
 
 ## 当前阶段
-本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。
+通用Agent Skills适配实现与验收完成至可审查状态；准备Draft PR，真实集成验收未全部完成。
 
 ## 当前任务
-BRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。
+UNI1 doing：feat/universal-agent-skills分支，提交、推送并创建Draft PR。BRAND1 blocked、DPL6 doing保持原状。
 
 ## 已完成工作
-README重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。
-本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。
-1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。
-自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。
-快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。
-改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。
-新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。
-原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。
-Project Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。
-原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。
-新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。
-隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。
+新增core/clients.py、global/CLIENT_RULES.md；kit.py增加install-client/uninstall-client及doctor/trust-project/recover的--client。
+Hook运行时支持--managed-dir；run.py按runtime.json来源设置环境，非Codex安装不设CODEX_HOME。
+Skill说明、CLIENTS/COMMANDS、项目模板改为客户端中立；README能力矩阵、USAGE、CHANGELOG、docs/CLIENT_VALIDATION.md已更新。
+自动回归151通过0失败（原131+新增20）；含中文空格路径、幂等、配置保留、更新备份、拒绝覆盖、卸载、回滚恢复、双入口旧修订保护。
+OpenCode 1.14.29真实运行第3次8/0；第1次4/3（模型下线）、第2次5/2（目标未批准，场景补步骤）原样保留。
+Claude Code 2.1.153真实Hook：SessionStart startup/resume与PreCompact manual 3/0，init事件列出Skill。
+Cursor 3.23.12本机会话发现~/.agents/skills/project-anchor；本仓库doctor对现有Codex安装0 FAIL。
 
 ## 当前阻塞
-同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。
-多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。
-Hook定义改名后应在客户端重新审核当前定义，不代签信任。
+本机Claude Code所有模型请求401，自然语言流程与真实双客户端交替未执行；不处理认证。
+Codex CLI未安装；Cursor调用与WorkBuddy未测；压缩后接续与自动压缩未验证。
+现有Codex安装需重新install-global（Hook脚本版本与Skill模板WARN），属用户操作。
 
 ## 下一步动作
-等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。
+提交相关文件、推送分支、创建Draft PR；再把PR链接写入CURRENT。人工验收步骤见docs/CLIENT_VALIDATION.md第6节。
 
 ## 状态修订
-以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。
+以state.json/tasks.json为准；原始运行记录.agent/runtime/universal。
 
 ## Git 检查
-master跟踪origin/main；图文文档已验证并获准发布，提交及同步结果以Git记录为准；无新分支/工作树。
+分支feat/universal-agent-skills自2e17040；仅提交本轮相关文件，不推main、不强推、不建工作树。

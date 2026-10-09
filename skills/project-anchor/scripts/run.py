@@ -12,19 +12,27 @@ def main():
         runtime = json.loads((folder / "runtime.json").read_text(encoding="utf-8-sig"))
         if not isinstance(runtime, dict) or runtime.get("schema") != 1:
             raise ValueError("不支持的定位文件版本")
-        kit, interpreter, home = (Path(runtime[key]) for key in ("kit", "python", "codex_home"))
+        codex = "codex_home" in runtime
+        if not codex and runtime.get("client") not in ("agents", "claude"):
+            raise ValueError("定位文件缺少安装来源")
+        kit, interpreter, home = (Path(runtime[key]) for key in ("kit", "python", "codex_home" if codex else "home"))
         if not kit.is_absolute() or not interpreter.is_absolute() or not home.is_absolute():
             raise ValueError("安装定位信息必须使用绝对路径")
         if not kit.is_file() or not interpreter.is_file():
-            raise ValueError("工具箱或 Python 已迁移/缺失，请重新 install-global")
+            raise ValueError("工具箱或 Python 已迁移/缺失，请重新运行原安装命令")
         version = subprocess.run([str(interpreter), "-X", "utf8", str(kit), "--version"],
                                  capture_output=True, encoding="utf-8", timeout=10)
         if version.returncode or version.stdout.strip() != runtime["version"]:
-            raise ValueError("安装定位版本与实际工具箱不同，请重新 install-global")
+            raise ValueError("安装定位版本与实际工具箱不同，请重新运行原安装命令")
         if len(sys.argv) > 1 and sys.argv[1] == "--locate":
             print(json.dumps(runtime, ensure_ascii=False))
             return 0
-        env = dict(os.environ, CODEX_HOME=str(home), PYTHONUTF8="1")
+        if codex:
+            env = dict(os.environ, CODEX_HOME=str(home), PYTHONUTF8="1")
+            env.pop("PROJECT_ANCHOR_CLIENT", None)
+        else:
+            env = dict(os.environ, PROJECT_ANCHOR_CLIENT=runtime["client"],
+                       PROJECT_ANCHOR_CLIENT_HOME=str(home), PYTHONUTF8="1")
         # Preserve the target project's cwd, UTF-8 stdin and native return code.
         return subprocess.run([str(interpreter), "-X", "utf8", str(kit), *sys.argv[1:]], env=env).returncode
     except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:

@@ -41,3 +41,5 @@
 - 2026-10-09：用户确定对外名称Project Anchor，并授权将当前项目推送至Jakiewbe/Project-Anchor、编写README。当前仅更新介绍与公开验收摘要，保留codex-rules 1.1.4的CLI、Skill、配置和运行路径；通用智能体适配是未来方向，本轮不实现。远端初始提交及MIT许可证保留，不改写已有历史。
 
 - 2026-10-09：用户要求本机也统一Project Anchor名称，并逐步改成通用Skill，先补未验证项再推送。本轮将主Skill改为project-anchor、支持清单校验后的同父目录迁移，保留底层codex-rules存储标识以共享已有信任、日志、备份和锁；旧历史不抹除。不擅自完成其他客户端适配或原生Hook审核。
+
+- 2026-10-09：用户授权通用Agent Skills适配并在独立分支feat/universal-agent-skills提交、推送及创建PR（不推main、不合并、不强推、不建工作树）。架构：保留唯一kit.py与.agent账本；新增install-client agents（不依赖CODEX_HOME，清单PROJECT_ANCHOR_HOME）与claude（Skill、rules/project-anchor.md、settings.json两组Hook，管理目录<配置>/project-anchor），复用所有权、备份、锁、事务和卸载。Codex Hook命令、全局规则与runtime.json字节不变，VERSION不升级。Cursor/OpenCode/WorkBuddy不写空壳适配器，持久规则依靠项目AGENTS.md，生命周期标为不支持或未验证。GOAL未修改。

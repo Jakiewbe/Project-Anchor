@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 58,
+  "revision": 60,
   "tasks": [
     {
       "task_id": "A",
@@ -421,6 +421,24 @@
       "evidence": [],
       "blocker": "名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。",
       "updated_at": "2026-10-09T08:36:30.342745+00:00"
+    },
+    {
+      "task_id": "UNI1",
+      "title": "通用 Agent Skills 适配与可审查 PR",
+      "description": "复用唯一 Python 核心与 .agent 账本，提供脱离 Codex 的通用 Skill 入口和必要的客户端轻量适配；保留 Codex 集成；隔离合成项目验收后提交 Draft PR。",
+      "milestone": "1.3 通用客户端",
+      "plan": "approved",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "核对 Agent Skills 规范及 Cursor、Claude Code、OpenCode、WorkBuddy 官方文档，记录来源、版本、发现目录、显式调用、规则、脚本权限和生命周期能力",
+        "通用入口脱离 CODEX_HOME 运行；客户端适配复用唯一核心；幂等安装、配置保留、安全更新、卸载、事务恢复及中文空格路径自动测试通过；现有 Codex 回归通过",
+        "隔离合成项目中自动化、模拟、真实客户端结果分别记录：发现与显式调用、自然语言正反向、初始化/任务/决策/交接、新会话恢复、双客户端交替及旧修订保护；不能执行的保留未验证并给出步骤",
+        "README、安装说明、客户端能力矩阵和项目状态更新；分支提交推送并创建 PR，未完成真实集成验收时为 Draft"
+      ],
+      "status": "doing",
+      "evidence": [],
+      "blocker": "",
+      "updated_at": "2026-10-09T11:40:41.167758+00:00"
     }
   ],
   "history": [
@@ -1251,6 +1269,36 @@
         "blocker": "名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。"
       },
       "reason": "保留真实未完成审核与需用户操作的验收，不因发布标为全部完成"
+    },
+    {
+      "revision": 59,
+      "timestamp": "2026-10-09T11:40:28.868509+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "UNI1",
+        "title": "通用 Agent Skills 适配与可审查 PR",
+        "description": "复用唯一 Python 核心与 .agent 账本，提供脱离 Codex 的通用 Skill 入口和必要的客户端轻量适配；保留 Codex 集成；隔离合成项目验收后提交 Draft PR。",
+        "milestone": "1.3 通用客户端",
+        "plan": "approved",
+        "dependencies": [],
+        "acceptance_criteria": [
+          "核对 Agent Skills 规范及 Cursor、Claude Code、OpenCode、WorkBuddy 官方文档，记录来源、版本、发现目录、显式调用、规则、脚本权限和生命周期能力",
+          "通用入口脱离 CODEX_HOME 运行；客户端适配复用唯一核心；幂等安装、配置保留、安全更新、卸载、事务恢复及中文空格路径自动测试通过；现有 Codex 回归通过",
+          "隔离合成项目中自动化、模拟、真实客户端结果分别记录：发现与显式调用、自然语言正反向、初始化/任务/决策/交接、新会话恢复、双客户端交替及旧修订保护；不能执行的保留未验证并给出步骤",
+          "README、安装说明、客户端能力矩阵和项目状态更新；分支提交推送并创建 PR，未完成真实集成验收时为 Draft"
+        ]
+      },
+      "reason": "用户授权通用 Agent Skills 适配及 PR"
+    },
+    {
+      "revision": 60,
+      "timestamp": "2026-10-09T11:40:41.167758+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "status": "doing"
+      },
+      "reason": "开始实施"
     }
   ]
 }

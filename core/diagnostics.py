@@ -114,7 +114,43 @@ def doctor(home, cwd=None, session_id=None, expected_events=()):
                 add("WARN", "指令替代文件", str(selected))
     total = sum(p.stat().st_size for p in instruction_paths if p.exists())
     add("WARN" if total > limit else "PASS", "已知指令大小", f"按已知文件加载链总计 {total} 字节；已知上限 {limit}；项目层是否信任及 CLI 覆盖仍需客户端核对")
-    log = managed / "runtime/hooks.jsonl"
+    _hook_checks(add, managed / "runtime/hooks.jsonl", session_id, expected_events)
+    _project_checks(add, root)
+    return checks
+
+
+def client_doctor(client, home, cwd=None, session_id=None, expected_events=()):
+    from .clients import client_locations, inspect_client
+    home, cwd = Path(home).resolve(), Path(cwd or Path.cwd()).resolve()
+    if expected_events and not session_id:
+        raise KitError("检查预期 Hook 事件必须指定 --session-id")
+    checks = []
+    def add(status, check, detail):
+        checks.append({"status": status, "check": check, "detail": detail})
+    add("PASS" if sys.version_info >= (3, 11) else "FAIL", "Python", sys.version.split()[0])
+    add("PASS" if shutil.which("git") else "WARN", "Git", "可用" if shutil.which("git") else "未找到")
+    add("PASS", "客户端安装目录", f"{client}: {home}")
+    try:
+        for status, check, detail in inspect_client(client, home):
+            add(status, check, detail)
+    except (KitError, OSError, KeyError, TypeError, AttributeError, ValueError) as exc:
+        add("FAIL", "安装完整性", str(exc))
+    add("UNVERIFIED", "模型实际遵守规则", "文件存在或脚本日志不能证明；按 docs/CLIENT_VALIDATION.md 在真实客户端验收")
+    if client == "claude":
+        managed, _, _ = client_locations(client, home)
+        _hook_checks(add, managed / "runtime/hooks.jsonl", session_id, expected_events)
+    root = None
+    if (cwd / ".agent/.transaction.json").exists():
+        add("FAIL", "项目未完成事务", "执行 recover，初始化中断时也必须先恢复")
+    try:
+        root = project_root(cwd)
+    except (KitError, OSError):
+        pass
+    _project_checks(add, root)
+    return checks
+
+
+def _hook_checks(add, log, session_id, expected_events):
     records = []
     if log.exists():
         try:
@@ -143,6 +179,9 @@ def doctor(home, cwd=None, session_id=None, expected_events=()):
             latest = matching[-1]
             status = "FAIL" if latest.get("status") == "FAIL" else "PASS" if latest.get("status") == "PASS" else "WARN"
             add(status, f"{event} 最近执行", f"{latest.get('timestamp')}；{latest.get('origin')}；仅证明脚本记录，不能证明客户端或模型遵从")
+
+
+def _project_checks(add, root):
     if root:
         try:
             state, content, ledger = load(root)
@@ -173,4 +212,3 @@ def doctor(home, cwd=None, session_id=None, expected_events=()):
             add("FAIL", "项目状态", str(exc))
     else:
         add("UNVERIFIED", "项目状态", "当前路径未初始化")
-    return checks
