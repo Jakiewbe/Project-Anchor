@@ -1,8 +1,10 @@
-# codex-rules v1.1
+# codex-rules v1.1.4
 
 本地、文件式的 Codex 项目治理工具箱。项目目标、当前断点、决策、任务和经验保存在磁盘；Python 执行校验和安全写入。无数据库、后台服务、网页或付费 API，仅用 Python 标准库。
 
 当前项目目录名可以是 `codex-plus`，工具名称仍为 `codex-rules`；不需要改名。要求 Python **3.11+**，Git 可选；安装 Hook 需要支持相应机制的本地 Codex 客户端。
+
+本机1.1.4已正式安装，两项Hook保留官方审核信任。1.1.3的真实手动和自动压缩验收及六项初衷对照见 [PURPOSE_REVIEW.md](docs/PURPOSE_REVIEW.md)，受控测试不代表所有客户端或长期运行都已验证。
 
 ## 自然语言使用
 
@@ -18,7 +20,9 @@
 - 检查全局规则和 Hook 是否正常。
 - 总结项目经验教训，生成复盘草案。
 
-Skill 选择流程并调用现有 Python 程序，用户不需要记住命令。自动触发由 Codex 根据描述判断，不能保证每次成功；可显式输入 `$codex-rules` 再说明需求。未初始化项目中的普通代码解释、局部修改和知识查询不应触发治理。
+Skill 选择流程并调用现有 Python 程序，用户不需要记住命令。全局安装后，首次在明确项目目录开展实际工作时默认检查并接入项目管理；已有状态先读取，不重新初始化，不扫描批量修改其他目录。只读代码解释、知识查询或用户要求仅改指定文件时不初始化。新目标模板仍需用户确认，接入不授权自动 Git 初始化或提交。自动触发由 Codex 根据描述判断，不能保证每次成功；可显式输入 `$codex-rules` 再说明需求。
+
+新增治理记录与重建业务项目分开：接入会创建 `.agent/`，保留并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`，不改业务代码和依赖。旧要求“不要重新初始化项目”应根据原文判断是否针对业务工程；明确禁止治理文件或限定文件范围仍须遵守，审批拒绝也不能绕过。
 
 Skill 不维护新账本，也不替代自动 Hook。任务完成仍需真实证据，目标变更和跨项目知识入库仍需用户确认。后面的 CLI 说明供排错及独立操作使用。
 
@@ -34,6 +38,7 @@ py -3 kit.py --version
 py -3 kit.py install-global
 py -3 kit.py doctor
 py -3 kit.py doctor --native-skills
+py -3 kit.py doctor --native-hooks --native-skills
 ```
 
 `install-global` 是你明确修改真实用户配置的操作。开发测试不会替你执行这个操作。默认使用环境变量 CODEX_HOME；未设置时使用用户目录下的 `.codex`。也可通过 `--codex-home "路径"` 安装到指定目录。安装只修改 AGENTS.md 管理块、hooks.json 和工具自身的安装清单，不修改 config.toml。
@@ -43,6 +48,8 @@ py -3 kit.py doctor --native-skills
 Skill 只安装说明、参考文档和一个轻量适配器；runtime.json 保存实际 Python、kit.py 和 CODEX_HOME 的绝对路径。调用不依赖 cwd，也不复制核心代码。换电脑克隆工具箱后重新安装会生成新的定位文件；程序迁移或版本不同会明确失败。
 
 安装后重新启动本地 Codex，在 CLI 输入 `/hooks`，逐条审核并信任 SessionStart 和 PreCompact 的当前定义。**配置完成不等于已信任，信任不等于模型必定遵守。** 全局 AGENTS.override.md 可能覆盖全局 AGENTS.md，doctor 会提示。
+
+Hook 是 Codex 在指定时机自动运行的本地脚本。一次审核启用后，进入/恢复/压缩后的会话提醒读取磁盘状态，压缩前保存已经落盘的状态快照，不依赖模型选择 Skill。重要决定仍需先保存，脚本不能替代聊天内容的总结。自然语言诊断会只读查询原生定义及信任状态；不会替用户写入信任数据库。初始化程序拒绝用户主目录和磁盘根目录，已有具体项目状态继续保留。
 
 初始化一个新项目：
 
@@ -142,7 +149,9 @@ PROGRESS.md 是唯一账本生成的视图。取消任务计入总任务，但�
 py -3 $kit trust-project $project --approved
 ```
 
-这是项目内容审核，和 Codex `/hooks` 的原生 Hook 信任是两件事。GOAL/CURRENT 的内容变化后需要重新登记；未审核时 Hook 只提供固定提醒，提示读取磁盘项目资料。审核后恢复摘要是带边界说明的 JSON 数据，最长 6000 字符；不能把数据中的指令当成规则。CURRENT 落后于任务修订或目标未确认，会给出警告。
+这是项目内容审核，和 Codex `/hooks` 的原生 Hook 信任是两件事。GOAL/CURRENT 内容变化后，直接注入摘要需要重新登记；日常接续不要求重新登记，Hook 和全局规则要求先用 Skill 的 status 读取最新磁盘状态。未审核时不注入文档内容，读取的项目资料不成为高权限规则。审核后摘要是带边界说明的 JSON 数据，最长 6000 字符。CURRENT 落后于任务修订或目标未确认，会给出警告。
+
+核对某个实际会话的 Hook 时，使用 `doctor <项目路径> --session-id <会话ID>`。客户端证据确认某事件应触发时，再加 `--expect-event SessionStart` 或 `--expect-event PreCompact`；缺少该会话真实调用记录将报告 FAIL。未确认压缩发生时不要求 PreCompact，模拟记录不证明原生调用。普通 doctor 的“最近执行”只是历史记录。
 
 PreCompact 只保存已经持久化的白名单状态，不解析聊天、不提交 Git、不修改业务代码，也不自动恢复。失败返回非零、stderr 和 systemMessage，并保持 continue=true；实际客户端对失败的呈现需手动验收。默认保留 20 个有效本项目快照，日志最大 64 KiB 加一份轮转。
 

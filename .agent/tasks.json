@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 36,
+  "revision": 52,
   "tasks": [
     {
       "task_id": "A",
@@ -278,6 +278,116 @@
       "blocker": "",
       "updated_at": "2026-10-08T09:13:43.930109+00:00",
       "completed_at": "2026-10-08T09:13:43.930109+00:00"
+    },
+    {
+      "task_id": "DPL1",
+      "title": "部署策略和诊断修正",
+      "plan": "approved",
+      "milestone": "本机全局部署",
+      "acceptance_criteria": [
+        "默认首次实际项目工作接入；保留旧状态；授权边界和会话诊断回归通过"
+      ],
+      "description": "部署策略和诊断修正",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "109 自动回归通过，0 失败；先前 1 项 Git 克隆沙箱管道失败已在授权执行环境复测通过。全局接入、Git 授权、会话缺失和模拟隔离已核对。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T16:41:41.624333+00:00",
+      "completed_at": "2026-10-08T16:41:41.624333+00:00"
+    },
+    {
+      "task_id": "DPL2",
+      "title": "本机安装与真实使用验证",
+      "plan": "approved",
+      "milestone": "本机全局部署",
+      "acceptance_criteria": [
+        "原配置保留、安装完整且原生发现成功；真实模型治理操作和反向场景结果记录"
+      ],
+      "description": "本机安装与真实使用验证",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "正式默认用户 Skill 原生发现通过；原规则、config.toml、其他17个Skill保留；10项真实CLI使用核查通过。计划测试1次断言误报已核实修正，原始失败日志保留。证据 .agent/runtime/deployment/result.json。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T16:59:30.246523+00:00",
+      "completed_at": "2026-10-08T16:59:30.246523+00:00"
+    },
+    {
+      "task_id": "DPL3",
+      "title": "原生 Hook 生命周期验收",
+      "plan": "approved",
+      "milestone": "本机全局部署",
+      "acceptance_criteria": [
+        "用户审核当前 Hook 后，真实启动及压缩保存恢复有客户端与磁盘证据"
+      ],
+      "description": "原生 Hook 生命周期验收",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "用户OK后官方界面逐项启用，原生当前定义trusted/enabled；真实手动/自动基础及旧快照新断点共存4项验收通过，其中手动最新状态原断言误报按正确条件复核；事件、快照、回复及无覆盖证据 .agent/runtime/deployment/lifecycle/summary.json。测试器2次超时和1次误报保留，Desktop/IDE和默认长周期仍未验证。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-09T01:45:53.102475+00:00",
+      "completed_at": "2026-10-09T01:45:53.102475+00:00"
+    },
+    {
+      "task_id": "DPL4",
+      "title": "六项初衷复核和使用问题修正",
+      "plan": "approved",
+      "milestone": "本机全局部署",
+      "acceptance_criteria": [
+        "六项初衷有实际文件和行为证据；明确目录边界和原生 Hook 诊断修正通过相关回归；保留真实压缩未验证状态"
+      ],
+      "description": "六项初衷复核和使用问题修正",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "docs/PURPOSE_REVIEW.md；117自动回归通过；1项真实诊断通过且实际调用--native-hooks；原生审核查询及配置恢复哈希确认；真实压缩明确未验证，未代签信任。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-08T17:25:55.162770+00:00",
+      "completed_at": "2026-10-08T17:25:55.162770+00:00"
+    },
+    {
+      "task_id": "DPL5",
+      "title": "修正旧业务约束与默认治理接入的歧义",
+      "plan": "approved",
+      "milestone": "本机全局部署",
+      "acceptance_criteria": [
+        "全局规则与Skill明确业务初始化/治理接入边界及四处写入；正式更新保留配置和其他Skill；隔离真实会话验证旧业务限制允许接入、明确禁止治理时不接入。"
+      ],
+      "description": "修正旧业务约束与默认治理接入的歧义",
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "1.1.4正式安装；122回归及2个真实CLI场景通过，原业务及Git保留、明确禁止治理不接入。配置/Hook/其他Skill/原规则核对未变；.agent/runtime/deployment/onboarding/summary.json，测试启动参数错误原始记录保留。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-09T03:25:59.846855+00:00",
+      "completed_at": "2026-10-09T03:25:59.846855+00:00"
     }
   ],
   "history": [
@@ -810,6 +920,228 @@
         ]
       },
       "reason": "文档与证据收尾完成"
+    },
+    {
+      "revision": 37,
+      "timestamp": "2026-10-08T16:37:12.191922+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL1",
+        "title": "部署策略和诊断修正",
+        "plan": "approved",
+        "milestone": "本机全局部署",
+        "acceptance_criteria": [
+          "默认首次实际项目工作接入；保留旧状态；授权边界和会话诊断回归通过"
+        ]
+      },
+      "reason": "用户已明确授权部署和实测"
+    },
+    {
+      "revision": 38,
+      "timestamp": "2026-10-08T16:37:12.384901+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL2",
+        "title": "本机安装与真实使用验证",
+        "plan": "approved",
+        "milestone": "本机全局部署",
+        "acceptance_criteria": [
+          "原配置保留、安装完整且原生发现成功；真实模型治理操作和反向场景结果记录"
+        ]
+      },
+      "reason": "用户已明确授权部署和实测"
+    },
+    {
+      "revision": 39,
+      "timestamp": "2026-10-08T16:37:12.579358+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL3",
+        "title": "原生 Hook 生命周期验收",
+        "plan": "approved",
+        "milestone": "本机全局部署",
+        "acceptance_criteria": [
+          "用户审核当前 Hook 后，真实启动及压缩保存恢复有客户端与磁盘证据"
+        ]
+      },
+      "reason": "用户已明确授权部署和实测"
+    },
+    {
+      "revision": 40,
+      "timestamp": "2026-10-08T16:37:12.783872+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL1",
+        "status": "doing"
+      },
+      "reason": "开始部署准备"
+    },
+    {
+      "revision": 41,
+      "timestamp": "2026-10-08T16:41:41.624333+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "109 自动回归通过，0 失败；先前 1 项 Git 克隆沙箱管道失败已在授权执行环境复测通过。全局接入、Git 授权、会话缺失和模拟隔离已核对。"
+          }
+        ]
+      },
+      "reason": "规则与会话诊断修正验收通过"
+    },
+    {
+      "revision": 42,
+      "timestamp": "2026-10-08T16:41:41.853927+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL2",
+        "status": "doing"
+      },
+      "reason": "开始本机安装和真实调用"
+    },
+    {
+      "revision": 43,
+      "timestamp": "2026-10-08T16:59:30.246523+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL2",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "正式默认用户 Skill 原生发现通过；原规则、config.toml、其他17个Skill保留；10项真实CLI使用核查通过。计划测试1次断言误报已核实修正，原始失败日志保留。证据 .agent/runtime/deployment/result.json。"
+          }
+        ]
+      },
+      "reason": "本机安装和真实使用验证完成"
+    },
+    {
+      "revision": 44,
+      "timestamp": "2026-10-08T16:59:30.659789+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL3",
+        "status": "blocked",
+        "blocker": "原生接口两项 Hook 为 untrusted；等待用户在 /hooks 审核当前定义，不能绕过。真实启动、压缩及自动恢复仍未验证。"
+      },
+      "reason": "原生生命周期验收需要用户完成官方信任审核"
+    },
+    {
+      "revision": 45,
+      "timestamp": "2026-10-08T17:16:30.306659+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL4",
+        "title": "六项初衷复核和使用问题修正",
+        "plan": "approved",
+        "milestone": "本机全局部署",
+        "acceptance_criteria": [
+          "六项初衷有实际文件和行为证据；明确目录边界和原生 Hook 诊断修正通过相关回归；保留真实压缩未验证状态"
+        ]
+      },
+      "reason": "用户要求重新对照初衷并做得好用"
+    },
+    {
+      "revision": 46,
+      "timestamp": "2026-10-08T17:16:30.701684+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL4",
+        "status": "doing"
+      },
+      "reason": "核对原始问题并修复具体使用缺口"
+    },
+    {
+      "revision": 47,
+      "timestamp": "2026-10-08T17:25:55.162770+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL4",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "docs/PURPOSE_REVIEW.md；117自动回归通过；1项真实诊断通过且实际调用--native-hooks；原生审核查询及配置恢复哈希确认；真实压缩明确未验证，未代签信任。"
+          }
+        ]
+      },
+      "reason": "六项初衷复核及具体使用修正验收通过"
+    },
+    {
+      "revision": 48,
+      "timestamp": "2026-10-09T01:19:28.797395+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL3",
+        "status": "doing",
+        "blocker": ""
+      },
+      "reason": "用户已授权，开始原生生命周期实测"
+    },
+    {
+      "revision": 49,
+      "timestamp": "2026-10-09T01:45:53.102475+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL3",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "用户OK后官方界面逐项启用，原生当前定义trusted/enabled；真实手动/自动基础及旧快照新断点共存4项验收通过，其中手动最新状态原断言误报按正确条件复核；事件、快照、回复及无覆盖证据 .agent/runtime/deployment/lifecycle/summary.json。测试器2次超时和1次误报保留，Desktop/IDE和默认长周期仍未验证。"
+          }
+        ]
+      },
+      "reason": "官方启用后真实生命周期及新断点接续验收完成"
+    },
+    {
+      "revision": 50,
+      "timestamp": "2026-10-09T03:19:56.446610+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL5",
+        "title": "修正旧业务约束与默认治理接入的歧义",
+        "plan": "approved",
+        "milestone": "本机全局部署",
+        "acceptance_criteria": [
+          "全局规则与Skill明确业务初始化/治理接入边界及四处写入；正式更新保留配置和其他Skill；隔离真实会话验证旧业务限制允许接入、明确禁止治理时不接入。"
+        ]
+      },
+      "reason": "用户改吧授权修复实际接入歧义"
+    },
+    {
+      "revision": 51,
+      "timestamp": "2026-10-09T03:19:57.607895+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL5",
+        "status": "doing"
+      },
+      "reason": "开始修订及真实验收"
+    },
+    {
+      "revision": 52,
+      "timestamp": "2026-10-09T03:25:59.846855+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL5",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "1.1.4正式安装；122回归及2个真实CLI场景通过，原业务及Git保留、明确禁止治理不接入。配置/Hook/其他Skill/原规则核对未变；.agent/runtime/deployment/onboarding/summary.json，测试启动参数错误原始记录保留。"
+          }
+        ]
+      },
+      "reason": "接入边界和真实正反场景验收完成"
     }
   ]
 }

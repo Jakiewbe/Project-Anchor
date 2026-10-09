@@ -32,6 +32,10 @@ def parser():
             child.add_argument("path", nargs="?", default=".")
             child.add_argument("--json", action="store_true")
             child.add_argument("--native-skills", action="store_true", help="通过真实 Codex skills/list 核对发现情况（不调用模型）")
+            child.add_argument("--native-hooks", action="store_true", help="查询 Codex 实际 Hook 配置与当前定义审核状态；不设置信任")
+            child.add_argument("--session-id", help="只核对指定会话的 Hook 调用记录")
+            child.add_argument("--expect-event", action="append", choices=["SessionStart", "PreCompact"], default=[],
+                               help="已确认应触发的事件；缺少该会话记录时报告 FAIL，需要 --session-id")
     child = sub.add_parser("init-project")
     child.add_argument("path")
     child.add_argument("--name", required=True)
@@ -91,10 +95,14 @@ def main(argv=None):
         elif args.command == "uninstall-global":
             result = uninstall(codex_home(args.codex_home))
         elif args.command == "doctor":
-            checks = doctor(codex_home(args.codex_home), args.path)
+            checks = doctor(codex_home(args.codex_home), args.path, args.session_id, args.expect_event)
             if args.native_skills:
                 from core.native import skill_discovery
                 checks.extend(skill_discovery(codex_home(args.codex_home), args.path))
+            if args.native_hooks:
+                from core.native import hook_discovery
+                actual = hook_discovery(codex_home(args.codex_home), args.path)
+                checks = [c for c in checks if c["check"] != "Hook 已信任"] + actual
             if args.json:
                 result = checks
             else:

@@ -37,6 +37,14 @@ def read_toml(path):
         raise KitError(f"配置不是有效 UTF-8 TOML: {path}") from exc
 
 
+def has_inline_hooks(config):
+    hooks = config.get("hooks", {})
+    if not isinstance(hooks, dict):
+        raise KitError("TOML hooks 必须为表")
+    # Native trust metadata is a nested state table, not lifecycle handlers.
+    return any(isinstance(groups, list) and groups for groups in hooks.values())
+
+
 def windows_command(arguments):
     # Explicit PowerShell expression, each argument is a literal; no interpolation.
     expression = "& " + " ".join("'" + str(arg).replace("'", "''") + "'" for arg in arguments)
@@ -101,6 +109,7 @@ def install(home, skills_dir=None):
         stack.enter_context(locked(target.parent / ".codex-rules.lock"))
         target, skill_updates, skill_expected, skill_info = prepare_skill(home, manifest, skills_dir)
         config = read_toml(safe_path(home / "config.toml", home))
+        inline_present = has_inline_hooks(config)
         agents = safe_path(home / "AGENTS.md", home)
         hook_path = safe_path(home / "hooks.json", home)
         old_agents = raw(agents)
@@ -150,7 +159,7 @@ def install(home, skills_dir=None):
                 atomic_write(backup / "skill" / path.relative_to(target), old_data)
         transaction(home, journal, updates, expected, {"skill": target})
         return {"changed": True, "home": str(home), "backup": str(backup),
-                "skill": str(target), "trust": "UNVERIFIED", "inline_hooks_present": bool(config.get("hooks"))}
+                "skill": str(target), "trust": "UNVERIFIED", "inline_hooks_present": inline_present}
 
 
 def uninstall(home):

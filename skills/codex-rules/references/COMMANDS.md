@@ -13,11 +13,14 @@
 | 任务创建/更新 | task add/update PATH --file JSON --expected-revision N --reason TEXT |
 | 状态更新 | state update PATH GOAL.md/CURRENT.md/DECISIONS.md/LESSONS.md --file MARKDOWN --expected-revision N --reason TEXT [--approved] |
 | 检查/保存快照 | snapshot PATH [--check SNAPSHOT_FILE] |
-| 诊断 | doctor PATH --json |
+| 诊断 | doctor PATH --json --native-hooks --native-skills |
+| 本会话 Hook 检查 | doctor PATH --json --session-id ID [--expect-event SessionStart/PreCompact] |
 | 复盘 | retro PATH |
 | 知识入库 | knowledge-add --file JSON --approved |
 
 写入 task 可用 `--json-input` 代替 --file，将 UTF-8 JSON 通过 stdin 输入；state 用 `--text-input` 提交 Markdown。两者不允许与 --file 同时使用。revision 是 status 中的项目 revision，不是 task_revision。每次写入后重新读取；冲突需看新状态并重新判断，不能自动覆盖。
+
+`init-project` 的“初始化”指新增治理记录：创建 `.agent/`，保留并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`；默认不初始化Git，不改业务代码或依赖。审批和用户说明必须包含这四处写入范围；传入 `--git-init` 需要另有明确授权。
 
 task add 输入：
 ```json
@@ -34,3 +37,5 @@ todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；block
 state update 接收完整文档。GOAL 必须有核心目标、项目背景、关键约束、非目标、验收标准、目标版本；CURRENT 必须有当前阶段、当前任务、已完成工作、当前阻塞、下一步动作、状态修订、Git 检查，50 行以内。普通更新禁止直接改原文件；外部既有编辑必须单独审核后 state adopt 登记，不用于绕过冲突。
 
 全局安装/升级及跨电脑迁移由 install-global 统一生成定位文件和哈希；脚本移位或安装版本不同则停止并明确报告。适配器不修改 Hook 配置，移除 Skill 后 CLI 与 Hook 仍可独立执行。
+
+`--expect-event` 可重复，仅用于客户端证据已确认应触发的事件，必须同时传 `--session-id`。普通 doctor 的历史成功不能代替本会话检查；本会话缺失但未确认应触发时为 UNVERIFIED，模拟记录不证明客户端执行。

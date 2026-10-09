@@ -102,6 +102,8 @@ def load(root, supplied_state=None):
 
 def init_project(path, name, git_init=False, snapshot_keep=20, log_max_bytes=65536):
     root = Path(path).resolve()
+    if root == Path.home().resolve() or root == Path(root.anchor):
+        raise KitError("用户主目录和磁盘根目录不能作为项目初始化；请选择具体项目目录")
     root.mkdir(parents=True, exist_ok=True)
     agent, lock, journal = paths(root)
     with locked(lock):

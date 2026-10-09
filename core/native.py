@@ -8,6 +8,7 @@ import subprocess
 import threading
 import time
 from .atomic_io import KitError, read_json
+from . import VERSION
 
 
 class CodexClient:
@@ -28,7 +29,7 @@ class CodexClient:
         threading.Thread(target=read, args=(self.process.stdout, True), daemon=True).start()
         threading.Thread(target=read, args=(self.process.stderr, False), daemon=True).start()
         try:
-            self.request("initialize", {"clientInfo": {"name": "codex_rules", "version": "1.1.0"},
+            self.request("initialize", {"clientInfo": {"name": "codex_rules", "version": VERSION},
                                         "capabilities": {"experimentalApi": True}})
             self.send({"method": "initialized"})
         except Exception:
@@ -90,3 +91,52 @@ def skill_discovery(home, cwd):
     except (KitError, OSError, ValueError, KeyError, TypeError) as exc:
         checks.append({"status": "UNVERIFIED", "check": "Skill 原生发现", "detail": str(exc)})
     return checks
+
+
+def inspect_native_hooks(value, home, manifest):
+    """Match only this install's exact native definitions, never unrelated hooks."""
+    entries = value["data"]
+    handlers = [h for entry in entries for h in entry["hooks"]]
+    checks, owned = [], []
+    events = {"SessionStart": "sessionStart", "PreCompact": "preCompact"}
+    for event, name in events.items():
+        group = manifest["groups"][event]
+        handler = group["hooks"][0]
+        command = handler.get("commandWindows", handler["command"]) if os.name == "nt" else handler["command"]
+        found = [h for h in handlers if h["eventName"] == name and h.get("sourcePath")
+                 and Path(h["sourcePath"]).resolve() == (Path(home) / "hooks.json").resolve()
+                 and h.get("command") == command and h.get("matcher") == group["matcher"]
+                 and h.get("handlerType") == "command" and h.get("async") == handler.get("async", False)
+                 and h.get("statusMessage") == handler.get("statusMessage")
+                 and h.get("timeoutSec") == handler["timeout"]
+                 and h.get("additionalContextLimit") == handler.get("additionalContextLimit")]
+        if len(found) != 1:
+            checks.append({"status": "FAIL", "check": f"{event} 原生定义", "detail": "未找到唯一、与本安装清单一致的定义"})
+        else:
+            owned.append(found[0])
+            checks.append({"status": "PASS", "check": f"{event} 原生定义", "detail": str(Path(home) / "hooks.json")})
+    errors = [error for entry in entries for error in entry.get("errors", [])]
+    if errors:
+        checks.append({"status": "FAIL", "check": "原生 Hook 配置解析", "detail": "Codex 报告配置错误；未验证生命周期"})
+    if len(owned) != 2 or errors:
+        status, detail = "UNVERIFIED", "当前定义核对未通过，不能证明审核或执行"
+    elif any(not h.get("enabled") for h in owned):
+        status, detail = "WARN", "工具 Hook 被禁用，不能自动执行"
+    elif any(h.get("trustStatus") != "trusted" for h in owned):
+        status, detail = "WARN", "当前工具 Hook 尚未全部审核信任；在原生 /hooks 审核后才能自动执行"
+    elif any(not h.get("currentHash") for h in owned):
+        status, detail = "UNVERIFIED", "原生接口未给出当前定义哈希"
+    else:
+        status, detail = "PASS", "原生接口确认两项当前定义已信任；仍需独立核对实际执行和压缩效果"
+    checks.append({"status": status, "check": "Hook 已信任", "detail": detail})
+    return checks
+
+
+def hook_discovery(home, cwd):
+    try:
+        manifest = read_json(Path(home) / "codex-rules/install.json")
+        with CodexClient(home, str(Path(cwd).resolve())) as client:
+            value = client.request("hooks/list", {"cwds": [str(Path(cwd).resolve())]})
+        return inspect_native_hooks(value, home, manifest)
+    except (KitError, OSError, ValueError, KeyError, TypeError) as exc:
+        return [{"status": "UNVERIFIED", "check": "Hook 已信任", "detail": "原生查询未成功：" + str(exc)}]

@@ -1,5 +1,7 @@
 # v1.1 Skill 验证记录
 
+以下保留1.1.0开发验收历史；本机1.1.3已安装，已信任Hook及真实压缩的最新验收见 [PURPOSE_REVIEW.md](PURPOSE_REVIEW.md)。
+
 日期：2026-10-08。环境：Windows 10、Python 3.11.5、Node 24.12.0、Git 2.52.0.windows.1、Codex CLI 0.162.0-alpha.2。
 
 ## 验证层次

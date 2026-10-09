@@ -8,14 +8,16 @@ import sys
 from . import VERSION
 from .atomic_io import KitError, digest, read_json
 from .config import (BEGIN, END, _hooks, codex_home, definition_hash, hook_groups,
-                     locations, read_toml)
+                     locations, read_toml, has_inline_hooks)
 from .memory import KIT_ROOT, load, project_root, validate_snapshot, git_info
 from .tasks import progress
 from .skill_install import inspect_skill
 
 
-def doctor(home, cwd=None):
+def doctor(home, cwd=None, session_id=None, expected_events=()):
     home, cwd = Path(home).resolve(), Path(cwd or Path.cwd()).resolve()
+    if expected_events and not session_id:
+        raise KitError("检查预期 Hook 事件必须指定 --session-id")
     checks = []
     def add(status, check, detail):
         checks.append({"status": status, "check": check, "detail": detail})
@@ -85,7 +87,7 @@ def doctor(home, cwd=None):
             features = config.get("features", {})
             if features.get("hooks") is False or features.get("codex_hooks") is False:
                 add("WARN", f"{scope}配置关闭 Hook", str(path))
-            if config.get("hooks") and path.with_name("hooks.json").exists():
+            if has_inline_hooks(config) and path.with_name("hooks.json").exists():
                 add("WARN", f"{scope}双 Hook 来源", "JSON 和 TOML 同时存在；匹配 Hook 都可能执行")
             if config.get("allow_managed_hooks_only") or config.get("hooks", {}).get("allow_managed_hooks_only"):
                 add("WARN", f"{scope}管理限制", "可能只允许运行管理 Hook")
@@ -119,8 +121,22 @@ def doctor(home, cwd=None):
             records = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines() if line]
         except (OSError, ValueError, UnicodeError):
             add("FAIL", "Hook 日志", "日志损坏，无法推断执行结果")
+    current_definition = definition_hash()
     for event in ("SessionStart", "PreCompact"):
-        matching = [r for r in records if isinstance(r, dict) and r.get("event") == event and r.get("definition_hash") == definition_hash()]
+        matching = [r for r in records if isinstance(r, dict) and r.get("event") == event and r.get("definition_hash") == current_definition
+                    and (session_id is None or r.get("session_id") == session_id)]
+        if session_id:
+            # Simulated input cannot prove that the native client ran this event.
+            matching = [r for r in matching if r.get("origin") == "invocation"]
+            name = f"{event} 本会话执行"
+            if not matching:
+                add("FAIL" if event in expected_events else "UNVERIFIED", name,
+                    "已确认应触发，但没有本会话真实调用记录" if event in expected_events else "没有本会话记录；未确认该事件应触发")
+            else:
+                latest = matching[-1]
+                status = "FAIL" if latest.get("status") == "FAIL" else "PASS" if latest.get("status") == "PASS" else "WARN"
+                add(status, name, f"session_id={session_id}；{latest.get('timestamp')}；仅证明脚本记录，需与客户端事件核对")
+            continue
         if not matching:
             add("UNVERIFIED", f"{event} 曾执行", "当前脚本定义没有执行记录")
         else:

@@ -1,15 +1,15 @@
 ---
 name: codex-rules
-description: "用自然语言初始化项目管理、制定目标任务草案、查询项目进度、更新任务状态、记录技术决策与长期记忆、准备会话交接、检查目标偏离、诊断全局规则和 Hook、生成项目复盘。Use for explicit project governance initialization, task planning/status, project memory, session handoff, goal alignment, Codex rules/hook diagnostics, and retrospectives. 已启用项目的治理需求或用户明确要求初始化/诊断时使用；普通代码解释、局部脚本修改、知识问答和不相关文件处理不触发。"
+description: "用自然语言进行首次项目接入、初始化项目管理、制定目标任务草案、查询进度、更新任务、保存决策与长期记忆、会话交接、检查目标偏离、诊断规则和 Hook、项目复盘。Use for first project onboarding under an authorized global policy, project governance initialization, task planning/status, project memory, session handoff, goal alignment, rules/hook diagnostics, and retrospectives. 适用于已启用项目的治理需求、明确初始化/诊断请求，或全局规则已授权的首次实际项目工作；只读代码解释、知识问答、指定单文件修改不触发初始化。"
 metadata:
-  version: "1.1.0"
+  version: "1.1.4"
 ---
 
 # codex-rules
 
 根据用户意图选择治理工作流，用既有工具箱执行。日常用户不需要输入命令。
 
-1. 确认用户指向的项目目录，以当前工作目录为默认，不能把 Skill 或工具箱目录当成目标项目。先查 `.agent/state.json` 和 Git 根目录；未初始化时仅在用户明确要求初始化的情况下创建管理文件。
+1. 确认用户指向的项目目录，以当前工作目录为默认，不能把 Skill、工具箱、用户主目录或磁盘根目录当成目标项目。先查 `.agent/state.json` 和 Git 根目录；已有治理状态先只读加载。用户明确要求启用治理，或可信全局规则已授权首次实际项目工作接入时，调用 init-project 新增治理记录，不重建业务工程。依据原文区分“不要重新初始化业务项目”和“禁止新增治理记录”；明确禁止治理、禁止修改接入文件、只读及限定文件范围时不接入，含义无法确定才澄清。接入实际写入范围及审批说明见 [WORKFLOWS.md](references/WORKFLOWS.md) 首节。目标模板仍待用户确认，不猜测顶层目标。
 2. 读取本 Skill 同目录 `runtime.json` 获取安装的 Python、kit.py 和 CODEX_HOME。用其中 `python` 的绝对路径启动 `scripts/run.py` 调用已有 CLI；不要依赖 PATH 中的默认 Python 或启动器。路径必须是独立参数；PowerShell 用 `&` 和参数数组，Python 用 `subprocess.run([...], shell=False)`。适配器定位失败就报告，不猜路径、不复制业务实现。
 3. 已初始化项目先执行 `status <项目绝对路径>`，读取真实目标、断点、修订和任务。规划、记忆、交接、目标核对或复盘时按需读取相应决策/教训。状态损坏或修订冲突立即停止相关修改。
 4. 按意图读取 [WORKFLOWS.md](references/WORKFLOWS.md) 中对应流程；需要参数和数据格式时读取 [COMMANDS.md](references/COMMANDS.md)。只读请求使用 status/doctor，不能顺便改变任务或初始化项目。
