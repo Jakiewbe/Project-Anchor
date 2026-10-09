@@ -31,3 +31,11 @@
 - 2026-10-09：用户OK授权后仅通过官方审核启用既定SessionStart/PreCompact，不修改模型、权限或其他Hook。1.1.3真实客户端手动/自动压缩有原生事件、前置快照和后续读取证据；当前阶段停止扩展，保留默认项目接入、可选Skill和单一Python核心。受控阈值测试不升级为Desktop/IDE或长期保证；Git改动未提交。证据：docs/PURPOSE_REVIEW.md和.agent/runtime/deployment/lifecycle/summary.json。
 
 - 2026-10-09：用户“改吧”授权修正JEV旧业务约束与默认接入的歧义。1.1.4明确新增治理只创建.agent并追加AGENTS/.gitignore/.gitattributes，原业务工程不重建；限制按原文范围判断，明确禁止治理或限定文件仍不接入。已拒绝操作不因规则更新自动撤销；本轮不改JEV、不改审批设置。真实正反场景均通过，证据.agent/runtime/deployment/onboarding。
+
+- 2026-10-09：用户授权本地1.1.4提交与严格单轮验收。29个明确文件已提交b06588c，3e36159仍为祖先；不推送。测试失败保留原始现象，不在本轮修复或重复到通过。Desktop启动PASS；并发A/B按预期全部请求成功的标准为FAIL，但账本完整；残留锁C通过。JEV新接入因AGENTS只读失败并回滚，不解除只读重试。证据.agent/runtime/release-audit及临时单轮测试。
+
+- 2026-10-09 Desktop手动压缩实测：会话01a11ebf-dbd9-7f40-81c4-9172a002962d有客户端compacted记录，PreCompact(manual)与SessionStart(compact)均PASS；快照89低于最新磁盘90，正式校验stale=true、automatic_restore=false，未覆盖新状态。恢复提供固定读取提醒，最新目标断点由status重新读盘；doctor 22 PASS、0 WARN、0 FAIL、5 UNVERIFIED。真实自动压缩、未保存聊天决定恢复和长周期仍不能据此认定可靠。证据.agent/runtime/release-audit/desktop-compaction.json及desktop-compaction-reply.json。
+
+- 2026-10-09：用户要求补测N自然决定当回合落盘与O无背景新会话恢复。五个相同初始内容的独立合成项目已通过正式程序接入并登记目标/断点哈希；保留各自结果供O读取，不混用工具箱cwd。Desktop projectless创建接口会为已有目录生成-2副本，首次准备会话cwd错误，已停止且不计入样本。等待用户在界面添加五个已有项目后再从返回的projectId创建全新会话。P多轮衰减可选，本轮未做；不改规则/代码，不用CLI替代Desktop。证据.agent/runtime/release-audit/decision-NO。
+
+- 2026-10-09：用户确定对外名称Project Anchor，并授权将当前项目推送至Jakiewbe/Project-Anchor、编写README。当前仅更新介绍与公开验收摘要，保留codex-rules 1.1.4的CLI、Skill、配置和运行路径；通用智能体适配是未来方向，本轮不实现。远端初始提交及MIT许可证保留，不改写已有历史。

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 52,
+  "revision": 55,
   "tasks": [
     {
       "task_id": "A",
@@ -388,6 +388,22 @@
       "blocker": "",
       "updated_at": "2026-10-09T03:25:59.846855+00:00",
       "completed_at": "2026-10-09T03:25:59.846855+00:00"
+    },
+    {
+      "task_id": "DPL6",
+      "title": "本地发布检查点及严格独立验收",
+      "plan": "approved",
+      "milestone": "实际使用验收",
+      "acceptance_criteria": [
+        "保存本地1.1.4提交，按实际结果记录Desktop启动/手动压缩、并发单轮测试、JEV接入、盲测和未落盘漂移；失败不修复、不重试到通过。",
+        "按用户新增要求验证N自然决定主动落盘与O新会话恢复；五种措辞独立会话、正确项目cwd及Hook项目编号，保存当回合写入证据和未验证限制。"
+      ],
+      "description": "本地发布检查点及严格独立验收",
+      "status": "doing",
+      "dependencies": [],
+      "evidence": [],
+      "blocker": "",
+      "updated_at": "2026-10-09T06:22:12.985773+00:00"
     }
   ],
   "history": [
@@ -1142,6 +1158,44 @@
         ]
       },
       "reason": "接入边界和真实正反场景验收完成"
+    },
+    {
+      "revision": 53,
+      "timestamp": "2026-10-09T03:49:33.254096+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DPL6",
+        "title": "本地发布检查点及严格独立验收",
+        "plan": "approved",
+        "milestone": "实际使用验收",
+        "acceptance_criteria": [
+          "保存本地1.1.4提交，按实际结果记录Desktop启动/手动压缩、并发单轮测试、JEV接入、盲测和未落盘漂移；失败不修复、不重试到通过。"
+        ]
+      },
+      "reason": "用户给出六项验收与新的独立JEV授权"
+    },
+    {
+      "revision": 54,
+      "timestamp": "2026-10-09T03:49:34.233235+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL6",
+        "status": "doing"
+      },
+      "reason": "验收进行中，等待Desktop手动操作"
+    },
+    {
+      "revision": 55,
+      "timestamp": "2026-10-09T06:22:12.985773+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL6",
+        "acceptance_criteria": [
+          "保存本地1.1.4提交，按实际结果记录Desktop启动/手动压缩、并发单轮测试、JEV接入、盲测和未落盘漂移；失败不修复、不重试到通过。",
+          "按用户新增要求验证N自然决定主动落盘与O新会话恢复；五种措辞独立会话、正确项目cwd及Hook项目编号，保存当回合写入证据和未验证限制。"
+        ]
+      },
+      "reason": "用户要求补测自然决定主动落盘，原聊天保留测试不能代替"
     }
   ]
 }
