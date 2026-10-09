@@ -1,1 +1,3 @@
-VERSION = "1.1.4"
+VERSION = "1.2.0"
+NAME = "project-anchor"
+LEGACY_NAME = "codex-rules"

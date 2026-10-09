@@ -1,13 +1,13 @@
 ---
-name: codex-rules
+name: project-anchor
 description: "用自然语言进行首次项目接入、初始化项目管理、制定目标任务草案、查询进度、更新任务、保存决策与长期记忆、会话交接、检查目标偏离、诊断规则和 Hook、项目复盘。Use for first project onboarding under an authorized global policy, project governance initialization, task planning/status, project memory, session handoff, goal alignment, rules/hook diagnostics, and retrospectives. 适用于已启用项目的治理需求、明确初始化/诊断请求，或全局规则已授权的首次实际项目工作；只读代码解释、知识问答、指定单文件修改不触发初始化。"
 metadata:
-  version: "1.1.4"
+  version: "1.2.0"
 ---
 
-# codex-rules
+# project-anchor
 
-根据用户意图选择治理工作流，用既有工具箱执行。日常用户不需要输入命令。
+根据用户意图选择治理工作流，用唯一 Python 核心执行。状态与任务操作不依赖智能体品牌；生命周期和安装按客户端能力处理。当前安装器及原生 Hook 已适配 Codex，其他客户端按 [CLIENTS.md](references/CLIENTS.md) 核对，不假定支持相同事件。日常用户不需要输入命令。
 
 1. 确认用户指向的项目目录，以当前工作目录为默认，不能把 Skill、工具箱、用户主目录或磁盘根目录当成目标项目。先查 `.agent/state.json` 和 Git 根目录；已有治理状态先只读加载。用户明确要求启用治理，或可信全局规则已授权首次实际项目工作接入时，调用 init-project 新增治理记录，不重建业务工程。依据原文区分“不要重新初始化业务项目”和“禁止新增治理记录”；明确禁止治理、禁止修改接入文件、只读及限定文件范围时不接入，含义无法确定才澄清。接入实际写入范围及审批说明见 [WORKFLOWS.md](references/WORKFLOWS.md) 首节。目标模板仍待用户确认，不猜测顶层目标。
 2. 读取本 Skill 同目录 `runtime.json` 获取安装的 Python、kit.py 和 CODEX_HOME。用其中 `python` 的绝对路径启动 `scripts/run.py` 调用已有 CLI；不要依赖 PATH 中的默认 Python 或启动器。路径必须是独立参数；PowerShell 用 `&` 和参数数组，Python 用 `subprocess.run([...], shell=False)`。适配器定位失败就报告，不猜路径、不复制业务实现。
@@ -17,4 +17,4 @@ metadata:
 6. JSON/Markdown 输入草稿放入 `.agent/runtime/skill-input/`；未初始化项目使用系统临时目录。可用原生 `--json-input`/`--text-input` 从 stdin 提交，避免把 JSON 拼入 shell。CURRENT 更新保留必要章节并不超过 50 行。
 7. 成功后核对程序退出码、重新读取状态和进度；报告实际变更、证据和必要限制。FAIL 与 UNVERIFIED 如实报告；程序不可用时说明 CLI 也可能受影响，不能宣称已校验。此 Skill 不取代 SessionStart/PreCompact，不自动提交或推送 Git，不替用户批准知识入库。
 
-显式 `$codex-rules` 始终是可选入口；自动选择由 Codex 根据描述判断，没有确定性保证。
+显式 `$project-anchor` 始终是可选入口；自动选择由 Codex 根据描述判断，没有确定性保证。

@@ -27,7 +27,7 @@ class SkillTests(unittest.TestCase):
         self.project = self.root / "项目"
         self.project.mkdir()
         self.result = install(self.home, self.parent)
-        self.skill = self.parent / "codex-rules"
+        self.skill = self.parent / "project-anchor"
         self.runner = self.skill / "scripts/run.py"
         self.env = dict(os.environ, CODEX_HOME=str(self.root / "wrong-home"), PYTHONUTF8="1")
 
@@ -41,7 +41,7 @@ class SkillTests(unittest.TestCase):
 
     def test_defaults_use_real_user_agents_directory(self):
         with patch("core.skill_install.Path.home", return_value=self.root / "用户"):
-            self.assertEqual(skill_directory(), self.parent / "codex-rules")
+            self.assertEqual(skill_directory(), self.parent / "project-anchor")
 
     def test_install_has_only_one_business_implementation(self):
         self.assertTrue((self.skill / "SKILL.md").is_file())

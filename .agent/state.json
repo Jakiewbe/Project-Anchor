@@ -2,21 +2,21 @@
   "schema": 1,
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "name": "codex-rules",
-  "revision": 102,
-  "task_revision": 55,
-  "current_task_revision": 55,
-  "goal_version": 5,
+  "name": "Project Anchor",
+  "revision": 111,
+  "task_revision": 57,
+  "current_task_revision": 57,
+  "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T07:35:04.956190+00:00",
+  "updated_at": "2026-10-09T08:29:49.868553+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
-    "GOAL.md": "7c5223f6fa9261ae141d44094880bc5dea4573bb6f4c0a31c487056fea7c271d",
-    "CURRENT.md": "50c58f49efbf9bd5469f6a464524eef8049528666354b11f27fb0d0fcc75c40e",
-    "DECISIONS.md": "9dd50dac4b88e7189d82076c88582cb3a20b285e6d7cbf974eca66fd681d526e",
-    "LESSONS.md": "f3d63dd96770d413c84bd377e1a0d9593bc7c1cc661de66b841f1b09c93a8da2",
-    "tasks.json": "e03ed0b24836a72fe38ca5066c04e12f7ce6f3bdfa441add71f2e4f56d14930c"
+    "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
+    "CURRENT.md": "bc6e283b4a3a5c6ba65a1146d12587ee00650fe7ba174fb23d895a13149b1b36",
+    "DECISIONS.md": "214db4dc4bbe2e9fcd85b4fd306c916c9eb5e15c646a913ed7cf671b7a1e3325",
+    "LESSONS.md": "a1978ce5f398c3653439fb7f2973914558474c10e20ab0469e34a9d0887333dd",
+    "tasks.json": "6818fa56ebc4f64a0b759e9058f80fcc3c549f3a8ad73c71bdf4c5134e3d22e4"
   },
   "history": [
     {
@@ -1006,6 +1006,108 @@
       "action": "state:update",
       "reason": "远端发布实际成功后保存已核对结果，保留未验证项",
       "timestamp": "2026-10-09T07:35:04.956190+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "GOAL.md",
+      "previous_sha256": "7c5223f6fa9261ae141d44094880bc5dea4573bb6f4c0a31c487056fea7c271d",
+      "content": "# Project Anchor 项目目标\n\n## 核心目标\n交付可独立运行、可通过Git长期维护的文件式智能体项目治理工具箱Project Anchor；当前提供Codex适配，逐步通用化复用同一Python核心和任务账本。\n\n## 项目背景\n依据用户 2026-10-08 的完整新项目开发要求，从空目录构建，文件作为长期状态来源。\n\n## 关键约束\nWindows 优先，Python 标准库，支持中文和空格路径；开发默认使用隔离配置；本轮用户已明确要求本机全局部署，允许合并安装规则、Skill 和 Hook，不自动推送，不创建分支或工作树；知识入库需要用户确认。\n\n## 非目标\n不构建数据库、网页、后台服务、付费 API 或自动多会话合并；不证明模型永远遵守规则，不自动提交业务项目。\n\n## 验收标准\n初始化和状态有效，任务及进度安全更新；Hook 官方协议合法；安装保留既有配置；doctor 区分已验证和未验证；测试通过，文档支持独立使用，真实客户端未验证层清楚记录。\n\n新增验收：原生 codex-rules Skill 复用现有 CLI；安全安装/更新；支持自然语言治理；自动化、模拟、真实客户端验证分别记录。\n\n新增部署验收：本机全局规则与 Skill 安装完整；首次实际项目工作默认接入且保留旧状态；真实模型调用单独验收；原生 Hook 审核仍由用户完成，不把未信任或未实测的压缩描述为成功。\n\n## 目标版本\n6（用户授权统一Project Anchor名称、逐步通用化，并先补验后推送；本轮仅改名、迁移和能力边界，不宣称其他客户端已适配）\n",
+      "user_approved": true,
+      "timestamp": "2026-10-09T07:55:30.492153+00:00"
+    },
+    {
+      "revision": 103,
+      "action": "state:update",
+      "reason": "用户明确要求名称统一及逐步通用化，保留原始六项目的和实现约束",
+      "timestamp": "2026-10-09T07:55:30.503149+00:00"
+    },
+    {
+      "revision": 104,
+      "action": "project:rename",
+      "reason": "用户要求本项目名称统一为Project Anchor",
+      "timestamp": "2026-10-09T07:55:31.053946+00:00"
+    },
+    {
+      "revision": 105,
+      "action": "task:add",
+      "reason": "用户本轮改名、补验、推送授权",
+      "timestamp": "2026-10-09T07:55:31.650358+00:00"
+    },
+    {
+      "revision": 106,
+      "action": "task:update",
+      "reason": "按验收边界执行名称迁移与补验",
+      "timestamp": "2026-10-09T07:55:32.187970+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "9dd50dac4b88e7189d82076c88582cb3a20b285e6d7cbf974eca66fd681d526e",
+      "content": "# 重要决策\n\n## 2026-10-08：状态与写入\n背景：长期状态需要可靠恢复。备选：数据库、单纯 Prompt、文件加程序。选择：标准库文件管理、OS 锁、哈希、期望修订和事务；理由：满足确定性和轻量约束。适用：本地磁盘常规项目；不自动合并多会话。\n\n## 2026-10-08：Hook 与信任\n背景：不能编造生命周期或把未审核资料提升为规则。选择：按当前官方协议配置 SessionStart/PreCompact，恢复内容需要外部精确哈希审核；原生 Hook 信任由用户在 /hooks 完成。理由：保留原生安全边界。变化：文档已明确哪些只是模拟测试。\n\n## 2026-10-08：安装与迁移\n选择：管理块加 hooks.json 清单，不重写 config.toml；原始治理状态关闭 Git 换行转换。适用：Windows 和其他本地环境分别重新安装。真实用户安装由用户执行，开发只使用隔离配置。\n\n## 2026-10-08：原生 Skill 单入口\n选择：Skill 只做意图路由，轻量适配器通过安装时记录的绝对 Python/kit/CODEX_HOME 调用原 CLI；不复制核心，不新增账本，不取代 Hooks。理由：用户无需记忆命令，确定性校验继续由 Python 完成。用户默认 Skill 目录与 CODEX_HOME 分开，跨范围写入与恢复共享锁、清单、备份和事务。\n\n## 2026-10-08：先验证现成方案\n用户补充材料转向复用评估；保留已完成 v1.1，停止新增功能，不更名或迁移账本。GSD 选用资料最贴近的 Oisinwang 分支，源码与测试都放入隔离目录；当前安装边界和 Hook 发现存在实测失败，尚不替换原系统。PMM 下载返回 404，用户确认“这个没了”，结束该项试装。真正上下文压缩与长期行为仍无验收证据。\n\n## 2026-10-08：候选稳定基线与开发边界\n用户确认：PMM 已排除，本阶段不采用 GSD，保留评估结论；保存本轮已验证改动为 Git 候选稳定基线，停止外部方案引入和功能扩展。保留 Skill、Python、AGENTS.md 与 Hook 的当前职责。允许在现有 master 创建本地提交，不推送、不创建分支或工作树、不正式安装。\n候选稳定基线只代表主要功能已通过受测范围验证，不表示所有长期可靠性问题解决。真实自动压缩未来只在隔离项目补验：压缩前保存最新状态，压缩后恢复目标/任务/决策，旧快照不得覆盖新状态，Hook 未执行应能诊断发现；本轮不开展该测试。\n\n## 2026-10-09：本机全局部署\n用户明确要求本机 Codex 配置这套规则和工具，所有项目默认接入，安装后实测。按首次进入明确项目开展实际工作时接入；不扫描批量覆盖既有目录。保留目标批准、Git 提交、跨项目知识入库及原生 Hook 审核边界。全局规则负责默认接入，Skill 复用 Python 工作流；未审核摘要仍通过程序读取磁盘资料，不自动扩大内容信任。真实 Hook 信任由用户审核当前定义，不由安装程序代签。\n\n## 2026-10-09：六项初衷复核和Hook日常使用\n坚持定位为agent工具使用优化：复用既有程序，不新增平台。1.1.2将主目录/磁盘根目录排除落实到程序，Skill诊断增加只读原生审核查询。117回归、1新增真实诊断通过。官方审核界面可操作，但两项Hook仍未信任，待用户对当前定义授权后才通过原生入口启用；不写信任数据库。CLI自动新增显示检测设置已按原配置完整哈希精确撤回，不当作安全降级。真实自动压缩验收仍未完成。\n\n## 2026-10-09：原生Hook启用授权\n用户回复OK，批准通过官方入口启用前述SessionStart和PreCompact两项当前定义，并继续隔离项目压缩恢复实测。启用前已重新核对两项原生定义哈希一致；不启用其他Hook，不写信任数据库，不使用绕过信任参数。\n\n- 2026-10-09：用户OK授权后仅通过官方审核启用既定SessionStart/PreCompact，不修改模型、权限或其他Hook。1.1.3真实客户端手动/自动压缩有原生事件、前置快照和后续读取证据；当前阶段停止扩展，保留默认项目接入、可选Skill和单一Python核心。受控阈值测试不升级为Desktop/IDE或长期保证；Git改动未提交。证据：docs/PURPOSE_REVIEW.md和.agent/runtime/deployment/lifecycle/summary.json。\n\n- 2026-10-09：用户“改吧”授权修正JEV旧业务约束与默认接入的歧义。1.1.4明确新增治理只创建.agent并追加AGENTS/.gitignore/.gitattributes，原业务工程不重建；限制按原文范围判断，明确禁止治理或限定文件仍不接入。已拒绝操作不因规则更新自动撤销；本轮不改JEV、不改审批设置。真实正反场景均通过，证据.agent/runtime/deployment/onboarding。\n\n- 2026-10-09：用户授权本地1.1.4提交与严格单轮验收。29个明确文件已提交b06588c，3e36159仍为祖先；不推送。测试失败保留原始现象，不在本轮修复或重复到通过。Desktop启动PASS；并发A/B按预期全部请求成功的标准为FAIL，但账本完整；残留锁C通过。JEV新接入因AGENTS只读失败并回滚，不解除只读重试。证据.agent/runtime/release-audit及临时单轮测试。\n\n- 2026-10-09 Desktop手动压缩实测：会话01a11ebf-dbd9-7f40-81c4-9172a002962d有客户端compacted记录，PreCompact(manual)与SessionStart(compact)均PASS；快照89低于最新磁盘90，正式校验stale=true、automatic_restore=false，未覆盖新状态。恢复提供固定读取提醒，最新目标断点由status重新读盘；doctor 22 PASS、0 WARN、0 FAIL、5 UNVERIFIED。真实自动压缩、未保存聊天决定恢复和长周期仍不能据此认定可靠。证据.agent/runtime/release-audit/desktop-compaction.json及desktop-compaction-reply.json。\n\n- 2026-10-09：用户要求补测N自然决定当回合落盘与O无背景新会话恢复。五个相同初始内容的独立合成项目已通过正式程序接入并登记目标/断点哈希；保留各自结果供O读取，不混用工具箱cwd。Desktop projectless创建接口会为已有目录生成-2副本，首次准备会话cwd错误，已停止且不计入样本。等待用户在界面添加五个已有项目后再从返回的projectId创建全新会话。P多轮衰减可选，本轮未做；不改规则/代码，不用CLI替代Desktop。证据.agent/runtime/release-audit/decision-NO。\n\n- 2026-10-09：用户确定对外名称Project Anchor，并授权将当前项目推送至Jakiewbe/Project-Anchor、编写README。当前仅更新介绍与公开验收摘要，保留codex-rules 1.1.4的CLI、Skill、配置和运行路径；通用智能体适配是未来方向，本轮不实现。远端初始提交及MIT许可证保留，不改写已有历史。\n\n- 2026-10-09：用户要求本机也统一Project Anchor名称，并逐步改成通用Skill，先补未验证项再推送。本轮将主Skill改为project-anchor、支持清单校验后的同父目录迁移，保留底层codex-rules存储标识以共享已有信任、日志、备份和锁；旧历史不抹除。不擅自完成其他客户端适配或原生Hook审核。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:55:32.697326+00:00"
+    },
+    {
+      "revision": 107,
+      "action": "state:update",
+      "reason": "保存Project Anchor名称迁移及渐进通用化边界",
+      "timestamp": "2026-10-09T07:55:32.707327+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "50c58f49efbf9bd5469f6a464524eef8049528666354b11f27fb0d0fcc75c40e",
+      "content": "# 当前断点\n\n## 当前阶段\nProject Anchor 1.2.0名称迁移及未验证项补验进行中；不修改业务状态流转。\n\n## 当前任务\nBRAND1 doing：迁移、验证、文档与推送。DPL6保持doing，失败不因改名消失。\n\n## 已完成工作\n上一发布d98d24b已远端核对，3e36159和b06588c历史保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\n源Skill及公共名称已改project-anchor；安装迁移、回归与正式安装待验收。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n完成迁移回归与正式入口验证，按真实结果更新README后提交推送。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；当前有本轮源文件及治理记录修改，不开分支或工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:55:33.241713+00:00"
+    },
+    {
+      "revision": 108,
+      "action": "state:update",
+      "reason": "保存补验事实、迁移阶段与未完成边界",
+      "timestamp": "2026-10-09T07:55:33.255712+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "bab643f06b0c0ab0df91b00a0877838294d7f196f10f419a56275886b5ab792d",
+      "content": "# 当前断点\n\n## 当前阶段\nProject Anchor 1.2.0名称迁移及未验证项补验进行中；不修改业务状态流转。\n\n## 当前任务\nBRAND1 doing：迁移、验证、文档与推送。DPL6保持doing，失败不因改名消失。\n\n## 已完成工作\n上一发布d98d24b已远端核对，3e36159和b06588c历史保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\n隔离Hook探针3通过；真实CLI新入口测试进行中，不能提前宣布全部通过。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n完成迁移回归与正式入口验证，按真实结果更新README后提交推送。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；当前有本轮源文件及治理记录修改，不开分支或工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:15:28.294832+00:00"
+    },
+    {
+      "revision": 109,
+      "action": "state:update",
+      "reason": "正式迁移、回归完成后及时保存真实状态与原生审核阻塞",
+      "timestamp": "2026-10-09T08:15:28.304833+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "f3d63dd96770d413c84bd377e1a0d9593bc7c1cc661de66b841f1b09c93a8da2",
+      "content": "# 项目教训\n\n- Windows 文本读写会转换 CRLF。外部编辑登记必须比较文字并保留原字节；BOM/CRLF 快照及克隆测试通过。证据：tests/test_kit.py；适用：UTF-8 治理文档。\n- Git 自动换行会改变被哈希的状态字节。使用 .agent/** -text 保持原字节；实际本地克隆并启用 autocrlf 测试通过。\n- 当前沙箱阻止 Git for Windows 创建 signal pipe；这是执行环境阻塞。放宽权限后相同本地克隆测试通过，不能用模拟结果掩盖实际失败。\n- 配置识别、未信任跳过和直接运行 Windows 命令均已有实际证据；它们不能证明模型接收了恢复内容或已信任生命周期成功。\n\n- Windows 的原生用户 Skill 发现不受模拟 USERPROFILE/HOME 控制；extraRoots 发现与默认用户目录发现必须分开验证。实际默认目录已临时安装、原生发现并按清单卸载；证据见 docs/SKILL_VALIDATION.md。\n- GSD 1.37.3 的 --local --no-sdk 仍写真实 ~/.gsd/defaults.json。应审查安装末尾与辅助目录，不能仅凭 local 参数判定隔离；本次新建文件已核对、保存证据并撤销。原生 hooks/list 为 0，安装日志成功不等于 Hook 被当前客户端识别；证据见 docs/ALTERNATIVES_EVALUATION.md。\n- 原生触发测试需要真实文件结果和实际工具记录；首次策略阻断记为 FAIL，允许官方审批后再测，不能用模型自述冒充通过。\n\n- 官方信任记录hooks.state是元数据，不是内联Hook事件组；只识别实际列表事件组，非法表在写入前拒绝。120完整回归通过，正式doctor无双来源误报。\n- 当前Codex原生压缩完成以item/completed的contextCompaction及成功回合核对，不能等待弃用thread/compacted；两次测试器超时保留，修正后真实手动/自动通过。证据：.agent/runtime/deployment/lifecycle。\n- 新断点替代旧断点时，验收应要求新标记、固定目标/决策、真实任务状态和文件未覆盖，不要求模型再返回过期标记。手动原始断言误报保留并按此条件复核；自动新断点用例独立通过。\n- PreCompact只快照已经落盘的资料；重要讨论仍须及时用Skill保存。已信任Hook在真实压缩后提示读取当前磁盘资料，旧快照存在且CURRENT更新后，手动与自动接续均读回新状态；不证明永不漂移。\n\n- 旧指令“不要重新初始化项目”需核对原文是在保护业务工程还是禁止治理文件；不能仅用历史记忆摘要推断。1.1.4真实CLI验证保留业务仍接入、明确禁止治理则不写记录；审批说明必须覆盖.agent/AGENTS/.gitignore/.gitattributes四处。不能据此保证所有审批通过，也不能绕过已拒绝操作。\n\n- 2026-10-09：合成聊天决定未保存、仅回复收到后，真实Desktop手动压缩一次；压缩后不提示答案的问答正确保留JSON及原因，追问准确承认没有项目文件记录。临时项目7个治理文件哈希未变且磁盘仍为Markdown旧方案。验证的是此样本上下文保留，不是自动落盘、跨会话恢复或长期不漂移；会话Hook作用于工具箱cwd而非临时项目。证据.agent/runtime/release-audit/drift-result.json。\n\n- 2026-10-09 N/O主动落盘实测：五个独立合成项目的真实Desktop cwd、项目UUID与十次SessionStart均匹配。四种措辞在当前回合通过正式入口记录DECISIONS；A“改JSON，先看看模板”首回合按只读处理，七个状态哈希及修订8未变，下一句普通“继续刚才的工作”后才补记。O五个无背景新会话均正确读盘恢复并不补造缺失理由，七个治理文件未变；O-A发生在补记后，不证明漏记决定能新会话恢复。此结果不等于每次决定立即落盘或多轮压缩可靠；P未做。C一次展示自检误报及其他读文件探测错误、父审计source/originator字段误报均保留。证据.agent/runtime/release-audit/decision-NO/N-O-summary.json及N-O-result.md。\n\n- 2026-10-09：长期Desktop会话自然触发auto压缩，原生客户端、PreCompact与compact接续匹配，快照99旧于磁盘102且不自动恢复；证明一个真实自然样本，不代替多轮隔离或长期保证。\n\n- 2026-10-09：Project Anchor改名迁移需按旧清单保留用户文件；跨目录事务在清单写入前后崩溃与旧版本原范围恢复均通过。正式升级后两项Hook因定义变化需官方重新审核，不能把旧信任冒充新定义信任。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:15:29.220535+00:00"
+    },
+    {
+      "revision": 110,
+      "action": "state:update",
+      "reason": "保存自然压缩及名称迁移已验证经验，不写入跨项目知识库",
+      "timestamp": "2026-10-09T08:15:29.230535+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "3232c6a28383aae9f6b379db41097f12dbc665e94b0b8b319464704fc2ee423d",
+      "content": "# 当前断点\n\n## 当前阶段\nProject Anchor 1.2.0改名与可自动执行的补验完成，准备提交推送；未修改业务状态流转。\n\n## 当前任务\nBRAND1 doing：名称与入口已完成，待推送及用户官方Hook审核。DPL6保持doing，保留失败。\n\n## 已完成工作\n上一发布d98d24b已远端核对，3e36159和b06588c历史保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\n隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n按用户授权提交推送1.2.0；原生Hook和独立多轮Desktop验收等待用户界面配合，不代签。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；当前有本轮源文件及治理记录修改，不开分支或工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:29:49.857553+00:00"
+    },
+    {
+      "revision": 111,
+      "action": "state:update",
+      "reason": "保存已完成真实调用及网络失败，原生审核和外部未验证项保留",
+      "timestamp": "2026-10-09T08:29:49.868553+00:00"
     }
   ]
 }

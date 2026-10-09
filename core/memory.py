@@ -40,7 +40,7 @@ def project_root(path):
             return candidate
         if (candidate / ".git").exists():
             break
-    raise KitError("当前目录及仓库内父目录未初始化 codex-rules")
+    raise KitError("当前目录及仓库内父目录未初始化 Project Anchor")
 
 
 def paths(root):
@@ -189,6 +189,19 @@ def task_change(root, expected, action, payload, reason):
         _revision(state, expected)
         revised = mutate(copy.deepcopy(ledger), action, payload, reason)
         return _save(root, state, revised, {"tasks.json": encode_json(revised)}, f"task:{action}", reason)
+
+
+def rename_project(root, expected, name, reason):
+    if not isinstance(name, str) or not name.strip() or not reason.strip() or len(name) > 200 or '\n' in name or '\r' in name:
+        raise KitError("项目名称和变更原因必须有效，名称最多200字符且不能包含换行")
+    _, lock, _ = paths(root)
+    with locked(lock):
+        state, _, ledger = load(root)
+        _revision(state, expected)
+        if state["name"] == name.strip():
+            raise KitError("项目名称未变化，本次未写入")
+        state["name"] = name.strip()
+        return _save(root, state, ledger, {}, "project:rename", reason)
 
 
 def doc_change(root, expected, name, value, reason, approved=False, adopt=False):

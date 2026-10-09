@@ -39,3 +39,5 @@
 - 2026-10-09：用户要求补测N自然决定当回合落盘与O无背景新会话恢复。五个相同初始内容的独立合成项目已通过正式程序接入并登记目标/断点哈希；保留各自结果供O读取，不混用工具箱cwd。Desktop projectless创建接口会为已有目录生成-2副本，首次准备会话cwd错误，已停止且不计入样本。等待用户在界面添加五个已有项目后再从返回的projectId创建全新会话。P多轮衰减可选，本轮未做；不改规则/代码，不用CLI替代Desktop。证据.agent/runtime/release-audit/decision-NO。
 
 - 2026-10-09：用户确定对外名称Project Anchor，并授权将当前项目推送至Jakiewbe/Project-Anchor、编写README。当前仅更新介绍与公开验收摘要，保留codex-rules 1.1.4的CLI、Skill、配置和运行路径；通用智能体适配是未来方向，本轮不实现。远端初始提交及MIT许可证保留，不改写已有历史。
+
+- 2026-10-09：用户要求本机也统一Project Anchor名称，并逐步改成通用Skill，先补未验证项再推送。本轮将主Skill改为project-anchor、支持清单校验后的同父目录迁移，保留底层codex-rules存储标识以共享已有信任、日志、备份和锁；旧历史不抹除。不擅自完成其他客户端适配或原生Hook审核。

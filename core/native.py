@@ -8,7 +8,7 @@ import subprocess
 import threading
 import time
 from .atomic_io import KitError, read_json
-from . import VERSION
+from . import VERSION, NAME
 
 
 class CodexClient:
@@ -29,7 +29,7 @@ class CodexClient:
         threading.Thread(target=read, args=(self.process.stdout, True), daemon=True).start()
         threading.Thread(target=read, args=(self.process.stderr, False), daemon=True).start()
         try:
-            self.request("initialize", {"clientInfo": {"name": "codex_rules", "version": VERSION},
+            self.request("initialize", {"clientInfo": {"name": "project_anchor", "version": VERSION},
                                         "capabilities": {"experimentalApi": True}})
             self.send({"method": "initialized"})
         except Exception:
@@ -82,10 +82,10 @@ def skill_discovery(home, cwd):
         with CodexClient(home, str(Path(cwd).resolve())) as client:
             result = client.request("skills/list", {"cwds": [str(Path(cwd).resolve())], "forceReload": True})
         found = [skill for entry in result["data"] for skill in entry["skills"]
-                 if skill["name"] == "codex-rules" and Path(skill["path"]) == expected]
+                 if skill["name"] == NAME and Path(skill["path"]) == expected]
         status = "PASS" if len(found) == 1 and found[0]["enabled"] else "FAIL"
         checks.append({"status": status, "check": "Skill 原生发现", "detail": str(expected) if found else "当前 Codex 未发现实际安装路径"})
-        others = [skill for entry in result["data"] for skill in entry["skills"] if skill["name"] == "codex-rules" and Path(skill["path"]) != expected]
+        others = [skill for entry in result["data"] for skill in entry["skills"] if skill["name"] == NAME and Path(skill["path"]) != expected]
         if others:
             checks.append({"status": "WARN", "check": "同名 Skill", "detail": "还存在其他来源，Codex 不会自动合并同名 Skill"})
     except (KitError, OSError, ValueError, KeyError, TypeError) as exc:

@@ -7,20 +7,20 @@ from pathlib import Path
 import sys
 
 if sys.version_info < (3, 11):
-    sys.stderr.write("codex-rules 需要 Python 3.11+；Windows 请使用 py -3 kit.py\n")
+    sys.stderr.write("Project Anchor 需要 Python 3.11+；Windows 请使用 py -3 kit.py\n")
     raise SystemExit(2)
 
-from core import VERSION
+from core import VERSION, NAME, LEGACY_NAME
 from core.atomic_io import KitError, locked, read_json, recover
 from core.config import codex_home, install, uninstall, locations, trust_project
 from core.diagnostics import doctor
 from core.memory import (doc_change, init_project, knowledge_add, load, paths,
                          project_root, rebuild, retro, snapshot, snapshot_check,
-                         task_change, git_info)
+                         task_change, git_info, rename_project)
 
 
 def parser():
-    p = argparse.ArgumentParser(description="Codex-Rules 本地项目治理工具箱")
+    p = argparse.ArgumentParser(description="Project Anchor 本地项目治理工具箱")
     p.add_argument("--version", action="version", version=VERSION)
     sub = p.add_subparsers(dest="command", required=True)
     for command in ("install-global", "uninstall-global", "doctor"):
@@ -42,6 +42,11 @@ def parser():
     child.add_argument("--git-init", action="store_true")
     child.add_argument("--snapshot-keep", type=int, default=20)
     child.add_argument("--log-max-bytes", type=int, default=65536)
+    child = sub.add_parser("rename-project")
+    child.add_argument("path")
+    child.add_argument("--name", required=True)
+    child.add_argument("--expected-revision", type=int, required=True)
+    child.add_argument("--reason", required=True)
     child = sub.add_parser("status")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--rebuild", action="store_true")
@@ -130,12 +135,16 @@ def main(argv=None):
             with locked(lock), ExitStack() as stack:
                 extra = None
                 if args.global_install:
-                    from core.skill_install import skill_directory
+                    from core.skill_install import skill_directory, skill_scopes
                     manifest_path = root / "codex-rules/install.json"
                     manifest = read_json(manifest_path) if manifest_path.exists() else {}
                     target = Path(manifest["skill"]["path"]) if manifest.get("skill") else skill_directory(args.skills_dir)
-                    if read_json(journal).get("roots"):
-                        extra = {"skill": target}
+                    recovery_record = read_json(journal)
+                    migrating = "legacy_skill" in recovery_record.get("roots", {})
+                    if target.name == LEGACY_NAME and migrating:
+                        target = skill_directory(target.parent)
+                    if recovery_record.get("roots"):
+                        extra = skill_scopes(manifest, target, legacy=migrating)
                         stack.enter_context(locked(target.parent / ".codex-rules.lock"))
                 recover(root, journal, args.rollback, extra)
             result = {"recovered": True, "rollback": args.rollback}
@@ -161,6 +170,8 @@ def main(argv=None):
             elif args.command == "task":
                 payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
                 result = {"revision": task_change(root, args.expected_revision, args.action, payload, args.reason)}
+            elif args.command == "rename-project":
+                result = {"revision": rename_project(root, args.expected_revision, args.name, args.reason)}
             elif args.command == "state":
                 value = sys.stdin.buffer.read().decode("utf-8-sig") if args.text_input else Path(args.file).read_text(encoding="utf-8-sig")
                 result = {"revision": doc_change(root, args.expected_revision, args.document, value, args.reason,

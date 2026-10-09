@@ -34,7 +34,7 @@ def main():
     parser.add_argument("--start-at", default="default_onboarding", help="First workflow to execute")
     parser.add_argument("--skip-negatives", action="store_true")
     args = parser.parse_args()
-    folder = args.folder.resolve(strict=True) if args.folder else Path(tempfile.mkdtemp(prefix="codex-rules 正式安装实测 "))
+    folder = args.folder.resolve(strict=True) if args.folder else Path(tempfile.mkdtemp(prefix="project-anchor 正式安装实测 "))
     project = folder / "中文 空格 项目"
     project.mkdir(exist_ok=True)
     original_agents = "# Existing project notes\nKeep main.py output equal to 5.\n".encode()
@@ -49,7 +49,7 @@ def main():
         ("handoff", "整理工作状态，保存工作断点，准备切换会话。", "handoff"),
         ("fresh_session", "继续这个项目。先读取项目最初目标、当前断点和技术决策，说明下一步；本次不要修改文件。", "resume"),
         ("retro", "总结当前项目的经验教训，生成复盘草案。未完成和未验证的内容保留，知识库不要入库。", "retro"),
-        ("doctor", "$codex-rules 检查全局规则和 Hook 是否正常，只诊断，不更改配置。", "doctor"),
+        ("doctor", "$project-anchor 检查全局规则和 Hook 是否正常，只诊断，不更改配置。", "doctor"),
     ]
     results = []
     names = [c[0] for c in cases]
@@ -80,7 +80,7 @@ def main():
         events = [json.loads(line) for line in output.read_text(encoding="utf-8", errors="replace").splitlines() if line.startswith("{")]
         commands = [e.get("item", {}).get("command", "") for e in events
                     if e.get("item", {}).get("type") == "command_execution"]
-        used = any("codex-rules" in c and ("SKILL.md" in c or "run.py" in c) for c in commands)
+        used = any("project-anchor" in c and ("SKILL.md" in c or "run.py" in c) for c in commands)
         completed = not timed_out and process.returncode == 0 and any(e.get("type") == "turn.completed" for e in events)
         behavior, error = False, "Model request timed out; partial logs preserved" if timed_out else ""
         try:

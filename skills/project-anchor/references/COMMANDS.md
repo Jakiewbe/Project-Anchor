@@ -8,6 +8,7 @@
 | --- | --- |
 | 定位检查 | --locate |
 | 初始化 | init-project PATH --name NAME [--git-init] |
+| 用户授权项目更名 | rename-project PATH --name NAME --expected-revision N --reason TEXT |
 | 读取状态/目标/断点/任务 | status PATH |
 | 明确授权重建进度 | status PATH --rebuild |
 | 任务创建/更新 | task add/update PATH --file JSON --expected-revision N --reason TEXT |

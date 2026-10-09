@@ -56,7 +56,7 @@ def discovery(folder,installed_user=False,shared_home=None):
             client.request('skills/extraRoots/set',{'extraRoots':[str(parent)]})
         result=client.request('skills/list',{'cwds':[str(project)],'forceReload':True})
         (folder/'skills-list.json').write_bytes(encode_json(result))
-        current=[s for e in result['data'] for s in e['skills'] if s['name']=='codex-rules' and Path(s['path'])==parent/'codex-rules/SKILL.md']
+        current=[s for e in result['data'] for s in e['skills'] if s['name']=='project-anchor' and Path(s['path'])==parent/'project-anchor/SKILL.md']
         if len(current)!=1 or not current[0]['enabled']:
             raise RuntimeError('Codex did not discover user .agents Skill')
         hooks=client.request('hooks/list',{'cwds':[str(project)]})
@@ -67,7 +67,7 @@ def discovery(folder,installed_user=False,shared_home=None):
 
 
 CASES=[
- ('explicit',True,True,'$codex-rules 查看当前项目进度。不要改动任务。','progress'),
+ ('explicit',True,True,'$project-anchor 查看当前项目进度。不要改动任务。','progress'),
  ('init',False,False,'帮我初始化项目管理，使用当前目录名作为项目名。','init'),
  ('plan',True,False,'根据我的项目目标制定任务草案，并保存到项目任务账本。','plan'),
  ('task',True,True,'把 T1 标记为完成。验收证据：我已经实际运行 main.py，输出确实是 5。','task'),
@@ -103,7 +103,7 @@ def live_case(folder,case,home,installed_user=False):
     (folder/(name+'.stderr.txt')).write_text(result.stderr,encoding='utf-8')
     events=[json.loads(line) for line in result.stdout.splitlines() if line.strip().startswith('{')]
     commands=[e.get('item',{}).get('command','') for e in events if e.get('item',{}).get('type')=='command_execution']
-    used=any('codex-rules' in c and ('SKILL.md' in c or 'run.py' in c) for c in commands)
+    used=any('project-anchor' in c and ('SKILL.md' in c or 'run.py' in c) for c in commands)
     completed=any(e.get('type')=='turn.completed' for e in events) and result.returncode==0
     behavior=False
     reason='当前 Codex 执行策略阻止工具调用' if 'rejected: blocked by policy' in result.stderr else ''

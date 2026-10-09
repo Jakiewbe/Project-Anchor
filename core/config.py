@@ -11,7 +11,7 @@ from . import VERSION
 from .atomic_io import (KitError, check_pending, digest, encode_json, locked,
                         raw, read_json, safe_path, transaction, atomic_write)
 from .memory import KIT_ROOT, load, paths
-from .skill_install import prepare_skill, skill_directory
+from .skill_install import prepare_skill, skill_directory, skill_scopes
 
 BEGIN = b"<!-- codex-rules:begin -->"
 END = b"<!-- codex-rules:end -->"
@@ -24,6 +24,7 @@ def codex_home(value=None):
 
 def locations(home):
     home = Path(home).resolve()
+    # Stable storage identifier: existing trust, logs, backups and locks remain one set.
     managed = safe_path(home / "codex-rules", home)
     return managed, managed / ".lock", managed / ".transaction.json"
 
@@ -60,7 +61,7 @@ def hook_groups():
         unix = shlex.join(arguments)
         win = windows_command(arguments)
         handler = {"type": "command", "command": win if os.name == "nt" else unix,
-                   "timeout": 15, "statusMessage": "Codex-Rules " + event}
+                   "timeout": 15, "statusMessage": "Project Anchor " + event}
         if os.name == "nt":
             handler["commandWindows"] = win
         if event == "SessionStart":
@@ -108,6 +109,7 @@ def install(home, skills_dir=None):
         target = Path(manifest["skill"]["path"]) if manifest and manifest.get("skill") else skill_directory(skills_dir)
         stack.enter_context(locked(target.parent / ".codex-rules.lock"))
         target, skill_updates, skill_expected, skill_info = prepare_skill(home, manifest, skills_dir)
+        extra = skill_scopes(manifest, target)
         config = read_toml(safe_path(home / "config.toml", home))
         inline_present = has_inline_hooks(config)
         agents = safe_path(home / "AGENTS.md", home)
@@ -156,8 +158,15 @@ def install(home, skills_dir=None):
                 atomic_write(backup / path.name, path.read_bytes())
         for path, old_data in skill_expected.items():
             if old_data is not None:
-                atomic_write(backup / "skill" / path.relative_to(target), old_data)
-        transaction(home, journal, updates, expected, {"skill": target})
+                scope = next(key for key, folder in extra.items() if path.is_relative_to(folder))
+                atomic_write(backup / scope / path.relative_to(extra[scope]), old_data)
+        # Publish the updated manifest last; recovery authorizes only the known sibling names.
+        if "legacy_skill" in extra:
+            ordered = {p: updates[p] for p in skill_updates}
+            ordered.update({p: data for p, data in updates.items() if p != manifest_path})
+            ordered[manifest_path] = updates[manifest_path]
+            updates = ordered
+        transaction(home, journal, updates, expected, extra)
         return {"changed": True, "home": str(home), "backup": str(backup),
                 "skill": str(target), "trust": "UNVERIFIED", "inline_hooks_present": inline_present}
 

@@ -27,7 +27,7 @@
 先 status，按账本核对已完成工作、证据、阻塞与下一步；不得把尚未完成任务升级为 done。保存刚确认且未落盘的决策；更新 CURRENT 的七个必要章节，使用新的 revision。然后 snapshot 并再次 status/doctor 核对一致性。snapshot 不会提交 Git；如用户未授权，不创建提交、分支、工作树或推送。返回阶段、任务、阻塞、下一步和快照位置。主动交接不依赖压缩触发，Hook 继续独立运行。
 
 ## 规则与环境诊断
-执行 doctor <目标绝对路径> --json --native-hooks --native-skills，使用安装定位信息中的 CODEX_HOME；正确展示 PASS/WARN/FAIL/UNVERIFIED。原生查询只读取定义、启用和审核状态，不会设置信任；查询失败明确为 UNVERIFIED。文件存在、Hook 配置、信任、脚本运行和模型遵从不同。本会话漏执行检查另需客户端会话 ID 和已确认应触发的事件。发现错误只解释真实诊断；没有授权不自动改全局配置或重装。Skill 更新/缺失可提示用户安装，显式 $codex-rules 不保证损坏程序可运行。
+执行 doctor <目标绝对路径> --json --native-hooks --native-skills，使用安装定位信息中的 CODEX_HOME；正确展示 PASS/WARN/FAIL/UNVERIFIED。原生查询只读取定义、启用和审核状态，不会设置信任；查询失败明确为 UNVERIFIED。文件存在、Hook 配置、信任、脚本运行和模型遵从不同。本会话漏执行检查另需客户端会话 ID 和已确认应触发的事件。发现错误只解释真实诊断；没有授权不自动改全局配置或重装。Skill 更新/缺失可提示用户安装，显式 $project-anchor 不保证损坏程序可运行。
 
 ## 项目复盘
 核对目标与交付、DECISIONS/LESSONS 和验收证据，运行 retro 生成草案。已有 RETRO 时先读取，不能强行覆盖；需要补充时仅编辑不受状态哈希保护的 RETRO.md，并保留原内容。指出未实现或未验证项目，不为“项目完成了”一语跳过实际检查。筛选跨项目候选，包含适用条件、证据、局限、来源项目；获得用户对具体内容的确认后才 knowledge-add --approved。

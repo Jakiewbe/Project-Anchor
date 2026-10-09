@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 55,
+  "revision": 57,
   "tasks": [
     {
       "task_id": "A",
@@ -404,6 +404,23 @@
       "evidence": [],
       "blocker": "",
       "updated_at": "2026-10-09T06:22:12.985773+00:00"
+    },
+    {
+      "task_id": "BRAND1",
+      "title": "Project Anchor命名、兼容迁移与待验证项补验",
+      "milestone": "1.2名称与补验",
+      "plan": "approved",
+      "acceptance_criteria": [
+        "正式Skill名称及显示统一，兼容迁移不覆盖用户文件且故障回滚有效",
+        "补验原生发现、自然自动压缩及锁缺口，保留失败与需用户参与的未验证项",
+        "本机安装和入口验证，文档如实标明客户端能力及信任边界，提交推送与远端核对"
+      ],
+      "description": "Project Anchor命名、兼容迁移与待验证项补验",
+      "status": "doing",
+      "dependencies": [],
+      "evidence": [],
+      "blocker": "",
+      "updated_at": "2026-10-09T07:55:32.176969+00:00"
     }
   ],
   "history": [
@@ -1196,6 +1213,33 @@
         ]
       },
       "reason": "用户要求补测自然决定主动落盘，原聊天保留测试不能代替"
+    },
+    {
+      "revision": 56,
+      "timestamp": "2026-10-09T07:55:31.638369+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "BRAND1",
+        "title": "Project Anchor命名、兼容迁移与待验证项补验",
+        "milestone": "1.2名称与补验",
+        "plan": "approved",
+        "acceptance_criteria": [
+          "正式Skill名称及显示统一，兼容迁移不覆盖用户文件且故障回滚有效",
+          "补验原生发现、自然自动压缩及锁缺口，保留失败与需用户参与的未验证项",
+          "本机安装和入口验证，文档如实标明客户端能力及信任边界，提交推送与远端核对"
+        ]
+      },
+      "reason": "用户本轮改名、补验、推送授权"
+    },
+    {
+      "revision": 57,
+      "timestamp": "2026-10-09T07:55:32.176969+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "BRAND1",
+        "status": "doing"
+      },
+      "reason": "按验收边界执行名称迁移与补验"
     }
   ]
 }

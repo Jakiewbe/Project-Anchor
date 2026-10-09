@@ -28,7 +28,7 @@ def main():
         # Preserve the target project's cwd, UTF-8 stdin and native return code.
         return subprocess.run([str(interpreter), "-X", "utf8", str(kit), *sys.argv[1:]], env=env).returncode
     except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:
-        print(f"FAIL: codex-rules Skill 调用失败: {exc}", file=sys.stderr)
+        print(f"FAIL: project-anchor Skill 调用失败: {exc}", file=sys.stderr)
         return 1
 
 
