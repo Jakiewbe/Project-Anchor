@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 57,
+  "revision": 58,
   "tasks": [
     {
       "task_id": "A",
@@ -416,11 +416,11 @@
         "本机安装和入口验证，文档如实标明客户端能力及信任边界，提交推送与远端核对"
       ],
       "description": "Project Anchor命名、兼容迁移与待验证项补验",
-      "status": "doing",
+      "status": "blocked",
       "dependencies": [],
       "evidence": [],
-      "blocker": "",
-      "updated_at": "2026-10-09T07:55:32.176969+00:00"
+      "blocker": "名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。",
+      "updated_at": "2026-10-09T08:36:30.342745+00:00"
     }
   ],
   "history": [
@@ -1240,6 +1240,17 @@
         "status": "doing"
       },
       "reason": "按验收边界执行名称迁移与补验"
+    },
+    {
+      "revision": 58,
+      "timestamp": "2026-10-09T08:36:30.342745+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "BRAND1",
+        "status": "blocked",
+        "blocker": "名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。"
+      },
+      "reason": "保留真实未完成审核与需用户操作的验收，不因发布标为全部完成"
     }
   ]
 }

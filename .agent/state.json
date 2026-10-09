@@ -3,20 +3,20 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 111,
-  "task_revision": 57,
-  "current_task_revision": 57,
+  "revision": 113,
+  "task_revision": 58,
+  "current_task_revision": 58,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T08:29:49.868553+00:00",
+  "updated_at": "2026-10-09T08:36:31.318548+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "bc6e283b4a3a5c6ba65a1146d12587ee00650fe7ba174fb23d895a13149b1b36",
+    "CURRENT.md": "883e21871667da3649c26ea40f668dcd3cbdcd7475fac623ff8ab172ec04975c",
     "DECISIONS.md": "214db4dc4bbe2e9fcd85b4fd306c916c9eb5e15c646a913ed7cf671b7a1e3325",
     "LESSONS.md": "a1978ce5f398c3653439fb7f2973914558474c10e20ab0469e34a9d0887333dd",
-    "tasks.json": "6818fa56ebc4f64a0b759e9058f80fcc3c549f3a8ad73c71bdf4c5134e3d22e4"
+    "tasks.json": "e9c539d1f8b8d926f0bdb6bf7fc61fbdcb8709a513f022b08a4dd8d67cc82c04"
   },
   "history": [
     {
@@ -1108,6 +1108,26 @@
       "action": "state:update",
       "reason": "保存已完成真实调用及网络失败，原生审核和外部未验证项保留",
       "timestamp": "2026-10-09T08:29:49.868553+00:00"
+    },
+    {
+      "revision": 112,
+      "action": "task:update",
+      "reason": "保留真实未完成审核与需用户操作的验收，不因发布标为全部完成",
+      "timestamp": "2026-10-09T08:36:30.353518+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "bc6e283b4a3a5c6ba65a1146d12587ee00650fe7ba174fb23d895a13149b1b36",
+      "content": "# 当前断点\n\n## 当前阶段\nProject Anchor 1.2.0改名与可自动执行的补验已完成并推送；剩余原生审核及外部验收保留。\n\n## 当前任务\nBRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。\n\n## 已完成工作\n1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\n隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；发布已推送，本记录作为后续治理检查点另行同步；无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:36:31.307314+00:00"
+    },
+    {
+      "revision": 113,
+      "action": "state:update",
+      "reason": "实际发布成功后保存检查点及未完成的原生审核边界",
+      "timestamp": "2026-10-09T08:36:31.318548+00:00"
     }
   ]
 }
