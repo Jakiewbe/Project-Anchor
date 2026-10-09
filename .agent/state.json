@@ -3,17 +3,17 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "codex-rules",
-  "revision": 101,
+  "revision": 102,
   "task_revision": 55,
   "current_task_revision": 55,
   "goal_version": 5,
   "goal_approved": true,
-  "updated_at": "2026-10-09T07:32:21.736939+00:00",
+  "updated_at": "2026-10-09T07:35:04.956190+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "7c5223f6fa9261ae141d44094880bc5dea4573bb6f4c0a31c487056fea7c271d",
-    "CURRENT.md": "1c369ca40d962c087b49e1347e3404be47933ea156717fc93bb91e693365b7e1",
+    "CURRENT.md": "50c58f49efbf9bd5469f6a464524eef8049528666354b11f27fb0d0fcc75c40e",
     "DECISIONS.md": "9dd50dac4b88e7189d82076c88582cb3a20b285e6d7cbf974eca66fd681d526e",
     "LESSONS.md": "f3d63dd96770d413c84bd377e1a0d9593bc7c1cc661de66b841f1b09c93a8da2",
     "tasks.json": "e03ed0b24836a72fe38ca5066c04e12f7ce6f3bdfa441add71f2e4f56d14930c"
@@ -992,6 +992,20 @@
       "action": "state:update",
       "reason": "保存Project Anchor发布断点及真实测试结果",
       "timestamp": "2026-10-09T07:32:21.736939+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "1c369ca40d962c087b49e1347e3404be47933ea156717fc93bb91e693365b7e1",
+      "content": "# 当前断点\n\n## 当前阶段\nProject Anchor首次远端发布完成；1.1.4核心、Skill和安装路径保留。\n\n## 当前任务\nDPL6 doing：验收结果已记录；最小状态流转修复仅给方案，等待用户决策。\n\n## 已完成工作\nb06588c与3e36159均保留并随本次发布推送；核心与Skill未改。\nDesktop启动、手动压缩接续通过；旧快照未覆盖新状态；doctor 22 PASS、0 WARN、0 FAIL、5 UNVERIFIED。\n新会话盲测6通过；未落盘聊天单次压缩问答2通过，但不代表决定自动落盘。\nN五种自然措辞：当回合落盘4通过、1失败；A仅下一回合补记，其余B/C/D/E当回合准确落盘。\nN五个正确项目cwd、受信初始状态及Hook项目编号匹配；正式写入、修订连续、状态与进度校验通过。\nO五个无背景新会话正确恢复，5通过、0失败，治理文件未变；O-A是在补记后执行。\nN工作过程另有4次命令非零返回、父审计1次字段误报，原始记录保留，未重跑N/O样本。\n并发A/B明确拒绝，无已成功写入丢失；C缺原始响应；B完成请求未发出。\nJEV接入因AGENTS只读失败回滚，不改权限；未实施最小修复。\n\nREADME及公开Desktop验收摘要已整理；回归首轮121通过、1项沙箱Git管道失败，单项获准复核通过，原始记录保留。\n\nREADME与Desktop公开验收摘要已发布至Jakiewbe/Project-Anchor，远端初始历史与MIT许可证原样保留。\n\n## 当前阻塞\n决定当回合保存未达百分之百；多轮衰减P、Desktop自然自动压缩及长期使用未验证。\n第二台电脑未验证；JEV只读来源及处理由用户决定。\n\n## 下一步动作\n本轮发布已完成，其他修复仍需用户确认；DPL6不因发布而强制关闭。\n\n## 状态修订\n以state.json/tasks.json为准；证据.agent/runtime/release-audit/decision-NO。\n\n## Git 检查\nmaster跟踪origin/main；发布提交553f740已与远端核对一致；本记录另存发布检查点。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:35:04.945678+00:00"
+    },
+    {
+      "revision": 102,
+      "action": "state:update",
+      "reason": "远端发布实际成功后保存已核对结果，保留未验证项",
+      "timestamp": "2026-10-09T07:35:04.956190+00:00"
     }
   ]
 }
