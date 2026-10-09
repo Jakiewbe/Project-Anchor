@@ -217,3 +217,33 @@
 **OpenCode 完整任务添加：**保留本轮拒绝记录。若用户决定授予工具目录必要访问权限，先在 OpenCode 自身的权限机制中明确审核，再以新编号验收；不能自动放宽权限或绕过拒绝。WorkBuddy 保持未验证，本轮不安装。
 
 上述步骤未全部完成，PR #1 保持 Draft，不建议直接发布。原始 stdout/stderr、逐请求命令与前后哈希在系统临时目录保留；本机指针为 `.agent/runtime/universal/independent_review_folder.txt`。不上传原始聊天、日志或私人配置。
+
+## 8. 第 7 节之后的补充验收（2026-10-10）
+
+用户授权：OpenCode 新编号复验、真实 install-global（先备份）、整理 Cursor 主聊天人工清单。第 7 节的失败记录不改写。
+
+### 8.1 OpenCode 新编号复验
+
+第 7.3 节失败原因核对：显式添加任务时，模型为确认 `plan` 合法值用 grep 工具读取工具箱 `kit.py`，该路径在测试项目外，OpenCode 非交互运行自动拒绝 `external_directory`，模型随后无回答结束。第 7.1 节已在 COMMANDS.md 补充 plan 合法值，未放宽 OpenCode 权限。
+
+新合成项目、项目级 `install-client agents`、deepseek/deepseek-flash、`--secondary none`（避免原生 Codex 登记临时项目信任）：**8 通过 / 0 失败**。显式添加任务步骤读取 runtime.json、COMMANDS.md 后经 run.py 写入，T1 为 todo、plan approved（请求中明确“计划已获我批准”）；全部 8 步 stderr 无权限请求，文件工具无项目外路径。单次运行只说明本次未越界，不保证模型以后不会尝试读取工具箱源码。
+
+### 8.2 真实 Codex 安装更新
+
+- 执行前把 `~/.codex/AGENTS.md`、`hooks.json`、`config.toml`、`codex-rules/install.json` 和 `~/.agents/skills/project-anchor` 备份到用户目录 `.project-anchor-manual-backups/<时间>`，只记录哈希。
+- `py -3 kit.py install-global`：changed=true，trust=UNVERIFIED，工具自身备份另存于 `codex-rules/runtime/backups`。
+- 前后哈希：`AGENTS.md`、`hooks.json`、`config.toml` 不变；`install.json` 与 Skill 的 SKILL.md、CLIENTS.md、COMMANDS.md、WORKFLOWS.md、run.py 变化。
+- `doctor . --native-hooks --native-skills`（Cursor 终端）：0 FAIL；此前的“Hook 脚本版本”“Skill 模板版本”WARN 变为 PASS。该终端 PATH 中没有 codex，原生 Skill 发现与 Hook 信任为 UNVERIFIED，需要在 Codex 环境内复查。
+- Hook 命令字符串未变，但信任状态、启动和压缩执行都未复验，不能由本节推断。
+
+### 8.3 Cursor 人工测试项目刷新
+
+第 7.5 节准备的 Cursor 人工项目中，项目级 Skill 的 COMMANDS.md、WORKFLOWS.md 早于第 7.1 节修正。已对同一 home 和 skills-dir 重新 `install-client agents`（更新并备份旧文件），现与仓库一致；项目仍未接入治理，hello.py 未改，0 次提交。用户级 `~/.agents/skills/project-anchor` 也已是本分支版本，Cursor 可能同时发现两份同名 Skill，人工验收时需记录界面显示的来源。
+
+### 8.4 仍需用户执行
+
+- Cursor：按第 7.6 节在 Cursor 中直接打开人工项目执行。
+- Codex：在 Codex 中打开本机记录于 `.agent/runtime/universal/codex_lifecycle_project.txt` 的合成项目（已 `init-project`、`git init`、0 次提交），`/hooks` 审核 SessionStart、PreCompact；新会话确认 SessionStart；`/compact` 后确认 PreCompact 快照和 source=compact 的 SessionStart；然后 `py -3 kit.py doctor <项目> --session-id <ID> --expect-event PreCompact` 与 `--native-hooks --native-skills`。
+- Claude Code 登录与 WorkBuddy 安装仍由用户处理。
+
+PR #1 保持 Draft。

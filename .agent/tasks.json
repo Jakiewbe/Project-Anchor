@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 65,
+  "revision": 66,
   "tasks": [
     {
       "task_id": "A",
@@ -437,8 +437,8 @@
       ],
       "status": "blocked",
       "evidence": [],
-      "blocker": "独立复核157/0、模拟3/0、工作流8/1；OpenCode添加任务权限拒绝未重跑，Claude401超时；Codex配置副作用已精确撤销并加失败守卫。正式更新未授权，Cursor主聊天/规则、WorkBuddy与生命周期待人工，PR #1保持Draft。",
-      "updated_at": "2026-10-09T13:49:40.010332+00:00"
+      "blocker": "Draft PR #1；OpenCode 新编号复验 8/0，真实 install-global 已完成且 doctor 0 FAIL；仍待人工：Codex Hook 审核与启动/压缩生命周期、Cursor 直接打开项目的主聊天与规则加载、Claude Code 认证（401）、WorkBuddy（步骤见 docs/CLIENT_VALIDATION.md 第 7.6、8.4 节）",
+      "updated_at": "2026-10-09T16:05:17.770243+00:00"
     }
   ],
   "history": [
@@ -1351,6 +1351,17 @@
         "blocker": "独立复核157/0、模拟3/0、工作流8/1；OpenCode添加任务权限拒绝未重跑，Claude401超时；Codex配置副作用已精确撤销并加失败守卫。正式更新未授权，Cursor主聊天/规则、WorkBuddy与生命周期待人工，PR #1保持Draft。"
       },
       "reason": "同步最终157项独立复核计数，保持任务阻塞"
+    },
+    {
+      "revision": 66,
+      "timestamp": "2026-10-09T16:05:17.770243+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "status": "blocked",
+        "blocker": "Draft PR #1；OpenCode 新编号复验 8/0，真实 install-global 已完成且 doctor 0 FAIL；仍待人工：Codex Hook 审核与启动/压缩生命周期、Cursor 直接打开项目的主聊天与规则加载、Claude Code 认证（401）、WorkBuddy（步骤见 docs/CLIENT_VALIDATION.md 第 7.6、8.4 节）"
+      },
+      "reason": "OpenCode复验通过、install-global完成，收窄剩余阻塞"
     }
   ]
 }

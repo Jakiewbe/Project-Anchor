@@ -3,20 +3,20 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 134,
-  "task_revision": 65,
+  "revision": 136,
+  "task_revision": 66,
   "current_task_revision": 65,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T13:49:41.040461+00:00",
+  "updated_at": "2026-10-09T16:05:17.781996+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "fc81d107b4c802193228cbff10fe809143bbafa976c16a5b93fbd64a1e1c2dbf",
+    "CURRENT.md": "09da6b83d609c4ea97c1e9add080a5ed1efefe872ed1ab965c364bdaa3558de7",
     "DECISIONS.md": "0d4fcd7471cd106ae5d3397df07b17f8db4c2aaed87b5b7ad5b5ce341e387c45",
     "LESSONS.md": "6d8107a98651ebb52d105d0a093a01499cd1a2f7ed8d7ef619eaf7defbb51d3e",
-    "tasks.json": "dbe6c2830f385b6f9646c32d4e6af3e79321f0e575595c55614fbf6e33ecfb85"
+    "tasks.json": "cf7f0bcc6afc9d40f445412c8f7f57fbce384b589b7b867a334d5abeca3ae5f2"
   },
   "history": [
     {
@@ -1366,6 +1366,26 @@
       "action": "state:update",
       "reason": "任务阻塞说明更新后同步CURRENT修订",
       "timestamp": "2026-10-09T13:49:41.040461+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "fc81d107b4c802193228cbff10fe809143bbafa976c16a5b93fbd64a1e1c2dbf",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\r\n\r\n## 当前任务\r\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\r\n\r\n## 已完成工作\r\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\r\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\r\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\r\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\r\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\r\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\r\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\r\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\r\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\r\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\r\n记录在docs/CLIENT_VALIDATION.md第7、8节。\r\n\r\n## 当前阻塞\r\nClaude认证失败；不自行改认证。\r\nCodex Hook信任与启动/压缩生命周期待用户在Codex中审核和执行；Cursor终端PATH无codex，原生查询UNVERIFIED。\r\nCursor主聊天/项目规则、WorkBuddy未验证。\r\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\r\n\r\n## 下一步动作\r\n用户按CLIENT_VALIDATION第7.6、8.4节完成Cursor主聊天与Codex生命周期验收；未全部完成保持Draft。\r\n\r\n## 状态修订\r\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\r\n\r\n## Git 检查\r\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T16:05:17.158691+00:00"
+    },
+    {
+      "revision": 135,
+      "action": "state:update",
+      "reason": "记录OpenCode新编号复验与真实install-global结果",
+      "timestamp": "2026-10-09T16:05:17.168700+00:00"
+    },
+    {
+      "revision": 136,
+      "action": "task:update",
+      "reason": "OpenCode复验通过、install-global完成，收窄剩余阻塞",
+      "timestamp": "2026-10-09T16:05:17.781996+00:00"
     }
   ]
 }
