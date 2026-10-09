@@ -126,3 +126,94 @@
 3. Cursor：用 Cursor 直接打开合成项目（不在本仓库工作区内），在合成项目内放 `.agents/skills/project-anchor`（`install-client agents --home <独立目录> --skills-dir <项目>/.agents/skills`），新开 Agent 聊天分别输入 `/project-anchor 查看进度，只读`、自然语言“启用项目治理”、接入后新聊天“继续这个项目”和与项目无关的问答，核对文件变化；确认新聊天会按项目 AGENTS.md 先读状态。
 4. WorkBuddy：`install-client agents --home <独立目录> --skills-dir <项目>/.codebuddy/skills`（或社区资料中的 `~/.workbuddy/skills`），在技能面板确认出现 project-anchor，再执行与第 3 项相同的正反向请求。
 5. Codex：合并后 `py -3 kit.py install-global`，在 `/hooks` 审核，运行 `doctor --native-hooks --native-skills`，并按 SMOKE_TEST.md 复验启动、压缩和接续。
+
+<a id="independent-review"></a>
+## 7. 独立复核与补充验收（2026-10-09）
+
+本节由 Codex 在 `feat/universal-agent-skills`、原提交 `736faae` 上独立执行。前六节的历史结果、失败和限制保留；本节不把历史样本升级为本轮通过。用户授权同一分支提交、推送及更新 Draft PR #1，**未授权更新真实 Codex 安装**，也未授权处理任何客户端认证。
+
+### 7.1 源码与历史声明核对
+
+- 本轮使用 `origin/main...HEAD` 审查。仓库没有本地 main 分支，直接执行 `git diff main...HEAD` 返回 unknown revision；没有创建本地分支，而是读取已存在的远端 main。
+- 对比 main 的程序输出及源文件：Codex Hook 命令字符串、Codex runtime.json 字节、全局 AGENTS.md 模板均一致，VERSION 仍为 1.2.0。核心状态与任务实现没有被另写一套。
+- 原 **151 项自动回归独立复跑：151 通过 / 0 失败**。同时抽查安装所有权、卸载恢复、中断回滚、旧修订及旧快照保护的代码与测试，未发现本轮需要修改的新增业务核心缺陷。
+- 本机 PATH 实际发现 **codex-cli 0.162.0-alpha.2**；第 5 节“本机没有 Codex CLI”的历史结论不适用于本轮运行环境。
+- 历史 Cursor 合成项目只读指纹与记录一致：revision 8、T1 doing、hello.py 原样、0 次提交。该抽查不是新的 Cursor 模型测试，不能证明 Cursor 主聊天或规则加载。
+- 项目初始 CURRENT 落后于任务修订，体检给出 WARN；收尾通过正式 state 程序同步，未手改账本。
+
+发现并修正的验收/说明问题：
+
+1. `tests/client_live.py` 原先只保存截断的工具参数、stderr 和整理后的回答，不能提供完整原始响应或全部 `.agent/` 文件哈希；失败检查也没有可靠的非零退出码。现保存逐请求完整 stdout/stderr、命令与 cwd、全目录 SHA-256、业务文件哈希及提交数；遇到失败先保存并停止依赖步骤。超时保留部分输出，不改成成功。
+2. 新增 Codex 工作流测试入口，使用现有登录与临时项目级通用 Skill；本次调用关闭 Hook、使用 ephemeral 会话，不安装真实用户配置、不复制认证。这不是正式安装或生命周期验收。
+3. COMMANDS 首段仍要求 codex_home，WORKFLOWS 诊断仍无条件附加 Codex `--native-*`，与新增通用安装冲突。已按 runtime.json 来源区分参数，补充任务 plan 的合法值及批准边界；未用重跑失败请求证明这些文字修改有效。
+4. 关闭 Hook 与 ephemeral 会话仍不能保证 Codex 不写用户配置。收尾发现原生 CLI 自动在 config.toml 登记临时项目信任，首次配置保持检查失败。新测试器记录前后配置哈希，发现变化即判失败并停止，不自动覆盖未知用户修改；只记录哈希，不保存配置内容或认证值。
+
+新增 6 项证据、异常回合与配置变化检查后，**最终完整回归 157 通过 / 0 失败**。初次 151 项、中间 155/156 项和最终 157 项输出分别保留，没有覆盖。超时/启动异常也会保存回合前后指纹并记为失败，不继续发送依赖请求。
+
+### 7.2 自动化与模拟分别统计
+
+| 层级 | 本轮结果 | 解释 |
+| :--- | :--- | :--- |
+| 完整自动化回归 | 157 通过 / 0 失败 | 包含原 151 项及 6 项完整响应、完整哈希、异常回合和真实配置变化检查 |
+| 单独记录的模拟检查 | 3 通过 / 0 失败 | Claude startup/manual 输入、已审核摘要、双适配器交替与旧修订/旧快照保护；已包含在 157 项中，不另外累加 |
+| Codex 兼容性程序核对 | 4 通过 / 0 失败 | 命令、runtime 字节、全局模板、版本；不等于客户端生命周期通过 |
+
+### 7.3 真实客户端工作流与交替
+
+本轮创建新的中文/空格路径合成项目，含 hello.py 与空 Git 仓库。通用 Skill 安装在项目 `.agents/skills`，清单位于独立临时目录；原生发现与实际命令确认使用这份新入口。没有重装真实用户 Skill。
+
+首次 OpenCode 流程：**3 通过 / 1 失败**。
+
+- 通过：未接入项目只读反向请求、自然语言启用治理、自然语言批准目标。
+- 失败：显式添加 T1 时，模型尝试 grep 工具箱 kit.py，OpenCode 自动拒绝工作区外访问，最终没有回答，任务没有创建。客户端退出码为 0，但新测试器判定失败并返回 1；没有继续执行依赖此任务的原流程。
+- 原文：`permission requested: external_directory (C:\Users\chs\Desktop\codex-plus\*); auto-rejecting`。工具事件另记录 `The user rejected permission to use this specific tool call.`；这不等同于用户实际在界面点击拒绝。
+- 未放宽权限、未更换模型、未重跑这个失败请求。
+
+随后用独立记录补做尚未执行的交替步骤，**5 通过 / 0 失败**：
+
+| 客户端 | 步骤 | 证据 |
+| :--- | :--- | :--- |
+| Codex | 显式调用并读取 OpenCode 已保存的目标 | 加载项目级 SKILL/run.py，回答正确，全部项目状态哈希不变 |
+| Codex | 将 T1 从 todo 更新为 doing | 通过正式程序写入，任务与进度变化，业务文件不变 |
+| OpenCode | 新会话读取 Codex 更新的 T1 | 回答 doing，全部项目状态哈希不变 |
+| OpenCode | 自然语言保存日志 UTF-8 决定及原因 | DECISIONS 与修订实际变化，经正式程序写入 |
+| Codex | 新会话读取 OpenCode 保存的决定 | 回答 UTF-8、理由和 T1，状态哈希不变 |
+
+**限制：T1 是测试器通过正式 kit.py 预置的任务，不能将 Codex 后续更新成功计为 OpenCode 添加任务通过。** 这五步证明指定场景的双向接续，不证明所有跨客户端操作或生命周期可用。工具调用原始记录已核对，未发现直接改写受保护状态；每步 hello.py 不变、Git 提交数为 0。
+
+交替完成后另做一次 CLI 旧修订写入：被拒绝，全部 `.agent/` 哈希不变。原文仍为 `FAIL: 修订冲突: 当前 4，请求 3`；未重试，不把它计入模型工作流通过数。
+
+本轮工作流合计 **8 通过 / 1 失败**：Codex 3/0，OpenCode 5/1。认证检查另计。
+
+### 7.4 Codex 配置、原生查询与安装授权边界
+
+- 真实现有安装只读体检（含原生 Skill/Hook 查询）：初始 **PASS 21、WARN 3、FAIL 0、UNVERIFIED 5**。WARN 原文分别为 Hook 脚本版本、Skill 模板版本、CURRENT 修订；原生现有命令的发现/信任查询有证据，但不能替代本分支脚本运行或压缩效果。
+- 临时 CODEX_HOME **和临时 skills-dir 同时隔离**后，安装与原生查询完成：**PASS 22、WARN 3、FAIL 0、UNVERIFIED 6**。WARN 是目标草案、同名 Skill 来源、隔离 Hook 未审核；未调用模型或触发这些隔离 Hook。
+- 没有运行真实 install-global、没有修改原生 Hook 信任。正式更新、启动/手动压缩和压缩后接续未验收。
+- 首次收尾的 11 文件哈希比较发现 config.toml 变化，其他 10 文件不变。确认新增项是本轮合成项目的信任表；只删除这一个表即可与初始**完整文件 SHA-256 完全一致**，因此仅撤销该项，未覆盖其他用户设置或改变认证字段。最终 11 文件全部恢复初始哈希。
+- 首次失败及精确恢复证据分别保存在本机 `real-config-comparison-before-restore.json`、`config-restore-plan.json`、`config-restore-result.json`、`real-config-comparison.json`。未重跑模型请求验证恢复，未把配置副作用隐去，也不把“未执行安装”写成“配置从未变化”。不保存配置正文或迁移认证信息。
+- 同步 CURRENT 后的真实只读体检为 **PASS 22、WARN 2、FAIL 0、UNVERIFIED 5**；剩余 WARN 是 Hook 脚本版本和 Skill 模板版本。该复查后 11 文件仍与初始哈希相同。
+
+### 7.5 Claude、WorkBuddy 与 Cursor 未执行项
+
+- Claude Code 2.1.153：只执行一次“只回答 OK”认证检查（现有登录，命令级关闭两个会记录合成会话的用户插件）。原始事件连续出现 `error_status: 401`、`error: authentication_failed`，客户端内部重试后在 120 秒超时。**认证检查 0 通过 / 1 失败**；自然语言、Claude 参与的交替及压缩后 SessionStart(compact) 未执行。不将客户端内部重试描述为多次独立测试。
+- WorkBuddy：未发现可调用命令、Windows 安装登记或开始菜单入口，未安装、未执行模型测试；保持未验证。
+- Cursor：未启动子代理或替代用户主聊天。另准备了一个尚未治理初始化的独立临时项目及项目级通用 Skill，供人工验收；准备成功不是 Cursor 支持验证。
+
+### 7.6 仍需用户执行的准确步骤
+
+**Cursor 主聊天与项目规则：**
+
+1. 本轮已准备的项目路径保存在本机 `cursor-manual-fixture.json`；读取该文件的 project 字段，用 Cursor“打开文件夹”打开此目录，不要作为工具仓库的附加目录。
+2. 在 Customize → Skills 中确认 project-anchor 出现，并核对来源为本项目 `.agents/skills/project-anchor/SKILL.md`。这一步需要保存界面证据，不以模型自述替代原生发现。
+3. 新开 Agent 聊天，先问“hello.py 的 add 返回什么？只读，不修改”。应没有 `.agent/`；再说“为当前项目启用 Project Anchor 治理，只接入治理，不改业务代码”。接入后核对治理文件、hello.py 和 0 次提交。
+4. 提供并批准合成项目目标，显式输入 `/project-anchor 添加一个任务草案`，检查正式程序调用与账本。未批准草案不得开始。
+5. 形成一个明确决定并要求记录，保存断点；**另开全新聊天，不显式点名 Skill**，只说“继续这个项目，只读告诉我目标、任务、最近决定和下一步”。保存实际读取项目 AGENTS.md/治理文件的证据，并核对状态哈希不变。这一步验证直接项目聊天与持久规则，不由本仓库子代理结果代替。
+
+**Claude：**由用户处理登录；成功后先运行 `claude -p "只回答 OK"`，再运行第 6 节的真实工作流与 `/compact` 检查。不要在认证失败时反复运行整套流程。
+
+**Codex 正式安装及生命周期：**只有用户另外授权真实 install-global 后，备份并更新真实配置，在 `/hooks` 审核当前定义，再按 SMOKE_TEST.md 检查 SessionStart、手动 PreCompact 和 SessionStart(compact)。本轮临时安装与关闭 Hook 的模型请求不替代这些步骤。
+
+**OpenCode 完整任务添加：**保留本轮拒绝记录。若用户决定授予工具目录必要访问权限，先在 OpenCode 自身的权限机制中明确审核，再以新编号验收；不能自动放宽权限或绕过拒绝。WorkBuddy 保持未验证，本轮不安装。
+
+上述步骤未全部完成，PR #1 保持 Draft，不建议直接发布。原始 stdout/stderr、逐请求命令与前后哈希在系统临时目录保留；本机指针为 `.agent/runtime/universal/independent_review_folder.txt`。不上传原始聊天、日志或私人配置。

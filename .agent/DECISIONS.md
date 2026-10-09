@@ -43,3 +43,7 @@
 - 2026-10-09：用户要求本机也统一Project Anchor名称，并逐步改成通用Skill，先补未验证项再推送。本轮将主Skill改为project-anchor、支持清单校验后的同父目录迁移，保留底层codex-rules存储标识以共享已有信任、日志、备份和锁；旧历史不抹除。不擅自完成其他客户端适配或原生Hook审核。
 
 - 2026-10-09：用户授权通用Agent Skills适配并在独立分支feat/universal-agent-skills提交、推送及创建PR（不推main、不合并、不强推、不建工作树）。架构：保留唯一kit.py与.agent账本；新增install-client agents（不依赖CODEX_HOME，清单PROJECT_ANCHOR_HOME）与claude（Skill、rules/project-anchor.md、settings.json两组Hook，管理目录<配置>/project-anchor），复用所有权、备份、锁、事务和卸载。Codex Hook命令、全局规则与runtime.json字节不变，VERSION不升级。Cursor/OpenCode/WorkBuddy不写空壳适配器，持久规则依靠项目AGENTS.md，生命周期标为不支持或未验证。GOAL未修改。
+
+
+## 2026-10-09：通用适配独立复核与真实安装授权边界
+用户授权在现有feat/universal-agent-skills提交推送和更新Draft PR #1；未授权修改真实Codex安装、认证、Hook信任、main或历史。选择：只做隔离安装/原生查询，真实工作流使用项目级通用Skill、现有登录、Codex本次关闭Hook；不把它升级为正式安装或生命周期验收。证据：原151项独立通过，修正测试器完整响应/哈希/失败退出后155项通过；OpenCode首轮3/1保留权限拒绝，独立补做交替5/0，旧修订拒绝。Claude一次请求连续401后超时，跳过后续；不放宽权限重跑、不处理认证。文档中残留Codex专属参数已修正；现有核心与版本不变。

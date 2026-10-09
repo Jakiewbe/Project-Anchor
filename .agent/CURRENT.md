@@ -1,31 +1,35 @@
 # 当前断点
 
 ## 当前阶段
-通用Agent Skills适配已提交Draft PR #1 https://github.com/Jakiewbe/Project-Anchor/pull/1 ；真实集成验收未全部完成，不可直接发布。
+通用Agent适配独立复核与本机可执行补验已完成；Draft PR #1保持，不合并或发布。
 
 ## 当前任务
-UNI1 blocked：Draft PR #1待审查，等待剩余人工真实客户端验收。BRAND1 blocked、DPL6 doing保持原状。
+UNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。
 
 ## 已完成工作
-新增core/clients.py、global/CLIENT_RULES.md；kit.py增加install-client/uninstall-client及doctor/trust-project/recover的--client。
-Hook运行时支持--managed-dir；run.py按runtime.json来源设置环境，非Codex安装不设CODEX_HOME。
-Skill说明、CLIENTS/COMMANDS、项目模板改为客户端中立；README能力矩阵、USAGE、CHANGELOG、docs/CLIENT_VALIDATION.md已更新。
-自动回归151通过0失败（原131+新增20）；含中文空格路径、幂等、配置保留、更新备份、拒绝覆盖、卸载、回滚恢复、双入口旧修订保护。
-OpenCode 1.14.29真实运行第3次8/0；第1次4/3（模型下线）、第2次5/2（目标未批准，场景补步骤）原样保留。
-Claude Code 2.1.153真实Hook：SessionStart startup/resume与PreCompact manual 3/0，init事件列出Skill。
-Cursor 3.23.12：Agent子代理在合成项目10/0（反向2、启用、批准目标、/project-anchor加任务、决定、交接、恢复、同步CURRENT、旧修订被拒），与OpenCode双向交替2/0。
-Cursor结果限制：子代理运行在本仓库工作区、受本仓库规则影响，使用Codex安装的1.2.0 Skill副本，不等同用户直接打开项目的新聊天。
+原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。
+补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。
+单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数。
+OpenCode首轮3通过1失败（越出测试目录读源码被自动拒绝，无任务写入），未放宽权限重跑。
+独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。
+真实工作流合计8通过1失败；Claude认证检查0通过1失败：一次请求连续401，120秒超时。
+Cursor历史项目指纹抽查符合revision8/T1doing/代码不变/0提交；不等同新Cursor验收。
+真实安装仅只读查询；Codex CLI确实可用，未执行真实install-global或代签Hook信任。
+临时Codex配置和Skill同时隔离；原生查询22PASS/3WARN/0FAIL/6UNVERIFIED，非生命周期验收。
+新增完整原始证据与人工Cursor独立项目；记录在docs/CLIENT_VALIDATION.md第7节。
+
+Codex自动登记临时项目造成配置首次检查失败；精确撤销后11个真实安装文件哈希恢复，新增失败守卫。
 
 ## 当前阻塞
-本机Claude Code所有模型请求401，Claude自然语言流程与Claude参与的交替未执行；不处理认证。
-Codex CLI未安装；WorkBuddy未安装；Cursor直接打开项目的新聊天与项目AGENTS.md规则加载未测；压缩后接续与自动压缩未验证。
-现有Codex安装需重新install-global（Hook脚本版本与Skill模板WARN），属用户操作。
+Claude认证失败；OpenCode完整添加请求被权限拒绝；不自行改认证或放宽权限。
+真实Codex安装更新未授权，生命周期未复验；Cursor主聊天/项目规则及WorkBuddy未验证。
+旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。
 
 ## 下一步动作
-用户审查PR #1并按docs/CLIENT_VALIDATION.md第6节完成剩余人工验收；未经确认不合并、不发布。
+按CLIENT_VALIDATION第7.6节完成人工验收；未全部完成保持Draft，不建议发布。
 
 ## 状态修订
-以state.json/tasks.json为准；原始运行记录.agent/runtime/universal。
+以state.json/tasks.json为准；本轮原始日志指针.agent/runtime/universal/independent_review_folder.txt。
 
 ## Git 检查
-feat/universal-agent-skills已推送；Cursor验收记录另行提交到同一分支；未推main、未强推、无工作树。
+仅feat/universal-agent-skills获准提交推送及更新PR描述；结果以Git/PR为准；不推main、无新分支/工作树。

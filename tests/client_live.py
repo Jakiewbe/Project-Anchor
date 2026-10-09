@@ -14,6 +14,8 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
+from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON = [sys.executable, "-X", "utf8"]
@@ -40,14 +42,51 @@ def opencode_skills(project):
 
 def fingerprint(project):
     agent = project / ".agent"
+    commits = subprocess.run(["git", "-C", str(project), "rev-list", "--all"], capture_output=True).stdout.splitlines()
+    business = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in project.glob("*.py")}
+    hashes = {p.relative_to(agent).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+              for p in sorted(agent.rglob("*")) if p.is_file()} if agent.exists() else {}
     if not (agent / "state.json").exists():
-        return {"initialized": False}
+        return {"initialized": False, "agent_hashes": hashes, "business_hashes": business, "commits": len(commits)}
     state = json.loads((agent / "state.json").read_text(encoding="utf-8"))
     tasks = json.loads((agent / "tasks.json").read_text(encoding="utf-8"))
     return {"initialized": True, "revision": state["revision"], "goal_approved": state["goal_approved"],
             "tasks": {t["task_id"]: t["status"] for t in tasks["tasks"]},
             "current": hashlib.sha256((agent / "CURRENT.md").read_bytes()).hexdigest()[:12],
-            "decisions": (agent / "DECISIONS.md").read_text(encoding="utf-8")}
+            "decisions": (agent / "DECISIONS.md").read_text(encoding="utf-8"), "agent_hashes": hashes,
+            "business_hashes": business, "commits": len(commits)}
+
+
+def capture_client(command, project, client, prompt=None, timeout=900):
+    """Keep exact stdout/stderr, including failed requests, outside the model's workspace."""
+    folder = Path(project).parent / "raw-client" / f"{client}-{uuid.uuid4().hex}"
+    folder.mkdir(parents=True)
+    metadata = {"client": client, "command": command, "cwd": str(project),
+                "started_at": datetime.now(timezone.utc).isoformat()}
+    stdout = stderr = b""
+    try:
+        result = subprocess.run(command, cwd=project, input=prompt.encode("utf-8") if prompt is not None else None,
+                                stdin=subprocess.DEVNULL if prompt is None else None, capture_output=True,
+                                timeout=timeout)
+        stdout, stderr = result.stdout, result.stderr
+        metadata["returncode"] = result.returncode
+    except subprocess.TimeoutExpired as exc:
+        stdout, stderr = exc.stdout or b"", exc.stderr or b""
+        metadata["error"] = "timeout; partial response preserved"
+        exc.evidence = str(folder)
+        raise
+    except OSError as exc:
+        metadata["error"] = f"{type(exc).__name__}: process could not start"
+        exc.evidence = str(folder)
+        raise
+    finally:
+        (folder / "stdout.jsonl").write_bytes(stdout)
+        (folder / "stderr.txt").write_bytes(stderr)
+        (folder / "request.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8")
+    result.stdout = stdout.decode("utf-8", errors="replace")
+    result.stderr = stderr.decode("utf-8", errors="replace")
+    result.evidence = str(folder)
+    return result
 
 
 def claude(project, prompt, resume=None):
@@ -57,8 +96,7 @@ def claude(project, prompt, resume=None):
     if resume:
         command += ["--resume", resume]
     started = time.time()
-    result = subprocess.run(command, cwd=project, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8",
-                            errors="replace", timeout=900)
+    result = capture_client(command, project, "claude")
     events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
     init = next((e for e in events if e.get("type") == "system" and e.get("subtype") == "init"), {})
     final = next((e for e in reversed(events) if e.get("type") == "result"), {})
@@ -66,33 +104,61 @@ def claude(project, prompt, resume=None):
     for event in events:
         for part in (event.get("message") or {}).get("content", []) if event.get("type") == "assistant" else []:
             if isinstance(part, dict) and part.get("type") == "tool_use":
-                tools.append({"name": part["name"], "input": json.dumps(part.get("input"), ensure_ascii=False)[:400]})
+                tools.append({"name": part["name"], "input": json.dumps(part.get("input"), ensure_ascii=False)})
     return {"client": "claude", "session_id": final.get("session_id") or init.get("session_id"),
             "returncode": result.returncode, "seconds": round(time.time() - started, 1),
             "skills_listed": "project-anchor" in json.dumps(init.get("skills", []) + init.get("slash_commands", [])),
             "tools": tools, "answer": final.get("result", ""), "is_error": final.get("is_error"),
-            "stderr": result.stderr[-600:]}
+            "stderr": result.stderr, "raw": result.evidence}
 
 
 def opencode(project, prompt, model):
     launcher = Path(shutil.which("opencode")).parent / "node_modules/opencode-ai/bin/opencode"
     command = [shutil.which("node"), str(launcher), "run", "--pure", "--format", "json", "-m", model, prompt]
     started = time.time()
-    result = subprocess.run(command, cwd=project, stdin=subprocess.DEVNULL, capture_output=True, encoding="utf-8",
-                            errors="replace", timeout=900)
+    result = capture_client(command, project, "opencode")
     events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
     tools, texts, session = [], [], None
     for event in events:
         part = event.get("part") or {}
         session = session or event.get("sessionID") or part.get("sessionID")
         if part.get("type") == "tool":
-            tools.append({"name": part.get("tool"), "input": json.dumps((part.get("state") or {}).get("input"), ensure_ascii=False)[:400]})
+            tools.append({"name": part.get("tool"), "input": json.dumps((part.get("state") or {}).get("input"), ensure_ascii=False)})
         elif part.get("type") == "text" and part.get("text"):
             texts.append(part["text"])
     return {"client": "opencode", "session_id": session, "returncode": result.returncode,
             "is_error": any(event.get("type") == "error" for event in events),
             "seconds": round(time.time() - started, 1), "tools": tools, "answer": "\n".join(texts),
-            "stderr": result.stderr[:1500]}
+            "stderr": result.stderr, "raw": result.evidence}
+
+
+def codex(project, prompt):
+    # Uses existing login without copying auth or updating the real install.
+    # Project-local Skill is installed by setup(); lifecycle Hooks are disabled for this workflow test.
+    command = [shutil.which("codex"), "--no-daemon", "exec", "--disable", "hooks", "--disable", "multi_agent",
+               "--ephemeral", "--approve-for-me", "--json", "-C", str(project), "-"]
+    home = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex").expanduser()
+    config = home / "config.toml"
+    before_config = hashlib.sha256(config.read_bytes()).hexdigest() if config.exists() else None
+    started = time.time()
+    result = capture_client(command, project, "codex", prompt)
+    after_config = hashlib.sha256(config.read_bytes()).hexdigest() if config.exists() else None
+    events = [json.loads(line) for line in result.stdout.splitlines() if line.startswith("{")]
+    tools, texts, session = [], [], None
+    for event in events:
+        session = session or event.get("thread_id")
+        item = event.get("item", {})
+        if event.get("type") == "item.completed" and item.get("type") == "command_execution":
+            tools.append({"name": "command_execution", "input": item.get("command", "")})
+        elif event.get("type") == "item.completed" and item.get("type") == "agent_message":
+            texts.append(item.get("text", ""))
+    return {"client": "codex", "session_id": session, "returncode": result.returncode,
+            "is_error": not any(e.get("type") == "turn.completed" for e in events),
+            "seconds": round(time.time() - started, 1), "tools": tools, "answer": "\n".join(texts),
+            "stderr": result.stderr, "raw": result.evidence, "hooks_disabled": True,
+            "installation_scope": "project-local agents; no install-global executed",
+            "user_config_changed": before_config != after_config,
+            "user_config_before_sha256": before_config, "user_config_after_sha256": after_config}
 
 
 def used_anchor(step):
@@ -115,7 +181,7 @@ def setup(base, clients):
     installs = {}
     if "claude" in clients:
         installs["claude"] = kit("install-client", "claude", "--home", project / ".claude")
-    if "opencode" in clients:
+    if "opencode" in clients or "codex" in clients:
         installs["agents"] = kit("install-client", "agents", "--home", base / "anchor home",
                                  "--skills-dir", project / ".agents/skills")
     return project, installs
@@ -140,8 +206,8 @@ def claude_lifecycle(base, out):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["workflow", "claude-lifecycle"], default="workflow")
-    parser.add_argument("--primary", choices=["claude", "opencode"], default="claude")
-    parser.add_argument("--secondary", choices=["claude", "opencode", "none"], default="opencode")
+    parser.add_argument("--primary", choices=["claude", "opencode", "codex"], default="claude")
+    parser.add_argument("--secondary", choices=["claude", "opencode", "codex", "none"], default="opencode")
     parser.add_argument("--opencode-model", default="deepseek/deepseek-flash")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
@@ -151,15 +217,24 @@ def main():
     clients = [args.primary] + ([] if args.secondary == "none" else [args.secondary])
     project, installs = setup(base, clients)
     record = {"base": str(base), "project": str(project), "installs": installs, "steps": []}
-    runners = {"claude": claude, "opencode": lambda p, prompt: opencode(p, prompt, args.opencode_model)}
-    explicit = {"claude": "/project-anchor ", "opencode": "请使用 project-anchor skill："}
+    runners = {"claude": claude, "opencode": lambda p, prompt: opencode(p, prompt, args.opencode_model), "codex": codex}
+    explicit = {"claude": "/project-anchor ", "opencode": "请使用 project-anchor skill：", "codex": "$project-anchor "}
 
     def step(name, client, expect, *call):
         before = fingerprint(project)
-        outcome = runners[client](project, *call)
+        started = time.time()
+        try:
+            outcome = runners[client](project, *call)
+        except (subprocess.TimeoutExpired, OSError) as exc:
+            outcome = {"client": client, "session_id": None, "returncode": None, "is_error": True,
+                       "tools": [], "answer": "", "seconds": round(time.time() - started, 1),
+                       "stderr": type(exc).__name__, "raw": getattr(exc, "evidence", None),
+                       "user_config_changed": None}
         after = fingerprint(project)
         outcome.update(name=name, before=before, after=after, used_anchor=used_anchor(outcome))
         outcome["checks"] = {}
+        if client == "codex":
+            outcome["checks"]["real_config_unchanged"] = outcome["user_config_changed"] is False
         for key, test in expect.items():
             try:
                 outcome["checks"][key] = bool(test(before, after, outcome))
@@ -168,6 +243,8 @@ def main():
         record["steps"].append(outcome)
         Path(args.out).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
         print(name, outcome["checks"], outcome["seconds"], flush=True)
+        if not all(outcome["checks"].values()):
+            raise SystemExit(1)  # Preserve the first failure; do not issue dependent requests.
         return outcome
 
     unchanged = lambda b, a, o: b == a
@@ -224,10 +301,11 @@ def main():
     Path(args.out).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
     passed = sum(all(s["checks"].values()) for s in record["steps"])
     print(f"steps passed {passed}/{len(record['steps'])}; results {args.out}")
+    return 0 if passed == len(record["steps"]) else 1
 
 
 if __name__ == "__main__":
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
-    main()
+    raise SystemExit(main())
