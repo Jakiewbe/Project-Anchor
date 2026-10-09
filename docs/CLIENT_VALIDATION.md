@@ -23,7 +23,7 @@
 | Codex | 已验证（历史 1.2.0 记录） | 已验证（历史，非 100%） | 已验证（全局 AGENTS.md 管理块） | 已验证（历史） | 启动、手动压缩：历史已验证；本版本 Hook 定义需重新审核，当前未验证 |
 | Claude Code 2.1.153 | 已验证（项目级 `.claude/skills`，init 事件列出） | 未验证（本机 API 401） | 未验证（规则文件已安装，加载需模型回答证明） | 未验证（401） | SessionStart startup/resume、PreCompact manual：已验证；压缩后 SessionStart(compact)、自动压缩：未验证 |
 | OpenCode 1.14.29 | 已验证（`opencode debug skill`，项目级 `.agents/skills`） | 已验证（1 次完整运行 8/8） | 已验证（项目 AGENTS.md；新会话按规则读盘） | 已验证 | 不支持（本工具未提供 JS 插件） |
-| Cursor 3.23.12 | 已验证（本机 Cursor 会话列出 `~/.agents/skills/project-anchor`） | 未验证 | 未验证（项目 AGENTS.md 机制有官方说明） | 未验证 | 不支持（未配置 Cursor Hook） |
+| Cursor 3.23.12 | 已验证（本机 Cursor 会话列出 `~/.agents/skills/project-anchor`） | 部分验证（Cursor 子代理 10/0，限制见第 5 节） | 未验证（子代理在其他工作区运行，未加载合成项目 AGENTS.md） | 部分验证（同上） | 不支持（未配置 Cursor Hook） |
 | WorkBuddy | 未验证 | 未验证 | 未验证 | 未验证 | 不支持 |
 
 ## 3. 自动化测试
@@ -80,19 +80,49 @@
 - 测试时用 `--settings` 关闭用户的两个插件，避免合成会话进入其记忆库；`--allowedTools` 预先允许 Bash/Read/Write/Edit/Glob/Grep/Skill，只在临时项目中使用。
 - 第一次驱动运行因测试器未关闭 stdin 导致 `claude -p` 等待输入，手动终止，不计入结果。
 
+### Cursor 3.23.12（Cursor Agent 子代理）与 OpenCode 交替
+
+另建合成项目 `Anchor Cursor 实测 中文 空格 */合成 项目`（含 hello.py，`git init`，0 次提交）。每步启动一个全新 Cursor 子代理（generalPurpose），提示中给出项目路径和一句用户请求，要求回报原样回答和实际读写、命令；每步后由独立脚本比对 `.agent` 指纹（revision、任务、CURRENT 哈希、决定、hello.py、提交数）。
+
+| # | 客户端 | 请求类型 | 结果 | 指纹证据 |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | Cursor | 未接入项目只读问答（反向） | 通过 | 只读 hello.py；无 `.agent` |
+| 2 | Cursor | 自然语言启用治理 | 通过 | 读取 `~/.agents/skills/project-anchor/SKILL.md`，经 run.py `init-project`；revision 0，hello.py 不变，0 次提交 |
+| 3 | Cursor | 自然语言批准目标 | 通过 | `state update GOAL --approved`；goal_approved true |
+| 4 | Cursor | 显式 `/project-anchor` 添加任务 | 通过 | T1 todo |
+| 5 | Cursor | 自然语言保存决定 | 通过 | DECISIONS 含 UTF-8 决定，revision 5 |
+| 6 | Cursor | 主动交接 | 通过 | CURRENT 更新、快照生成，revision 6 |
+| 7 | OpenCode | 新会话恢复并把 T1 改为进行中 | 通过 | 回答含目标、T1、UTF-8 决定；T1 doing，revision 7，代码不变 |
+| 8 | Cursor | 新会话只读恢复 | 通过 | 回答 T1 doing、revision 7，并指出 CURRENT 落后；状态不变 |
+| 9 | Cursor | 已接入项目普通问答（反向） | 通过 | 只读 hello.py，未调用 Skill；状态不变 |
+| 10 | Cursor | 同步 CURRENT | 通过 | revision 8，CURRENT 哈希变化，任务不变 |
+| 11 | OpenCode | 新会话只读恢复 | 通过 | 回答 CURRENT 下一步、T1 doing、revision 8；状态不变 |
+| 12 | Cursor | 按旧 revision 7 写 CURRENT（用户明确给出旧修订，禁止重试） | 通过 | 程序返回 `修订冲突: 当前 8，请求 7`，退出码 1；revision 与 CURRENT 哈希不变；客户端未自行改用新修订或直接改文件 |
+
+合计 Cursor 10 通过 / 0 失败，OpenCode 交替 2 通过 / 0 失败（OpenCode 使用 deepseek/deepseek-flash、`--pure`，从用户级 `~/.agents/skills` 发现 Skill）。
+
+限制，结论不外推：
+
+- 这些是 Cursor Agent 子代理，运行在本仓库工作区，不是用户在合成项目中新开的聊天；本仓库规则（含 `global/AGENTS.md` 的“默认接入”约定）对其生效，会提高 Skill 被选中的概率；合成项目的 AGENTS.md 未作为 Cursor 规则加载，因此“持久规则”仍未验证。
+- 使用的是 Codex `install-global` 安装到 `~/.agents/skills` 的 1.2.0 版 Skill（runtime 指向 codex_home），不是本分支的 `install-client agents`。
+- 第 12 步的旧修订由请求直接给出，验证的是程序拒绝和客户端不绕过，不是两个会话自然并发。
+- 子代理的文件搜索工具有两次返回本仓库工作区文件而非目标目录（只读，结果未被采用）。
+- 观察到既有行为：`GOAL.md` 正文“目标版本 1”而 state.json 的 goal_version 为 2；与本次适配无关，未修改。
+- 第 10、12 步按 Skill 说明在项目 `.agent/runtime/skill-input/` 留下草稿文件。
+
 ### 未执行
 
 - Codex：本机没有 Codex CLI，原生 skills/list、Hook 信任与执行不能复验；只有自动回归。本仓库运行 `doctor` 对现有安装报告 0 FAIL，Hook 脚本版本和 Skill 模板版本 WARN，需要重新 `install-global`。
-- Cursor 显式 `/project-anchor`、自然语言选择和规则遵守：没有盲测。
+- Cursor：用户在合成项目中直接新开的聊天、合成项目 AGENTS.md 作为 Cursor 规则加载，没有执行。
 - WorkBuddy：未安装。
-- 两个真实客户端交替操作同一项目：Claude 无法调用模型，未执行；只有第 4 节的模拟结果。
+- Claude 参与的交替：Claude 无法调用模型，未执行。
 
 ## 6. 需要人工完成的验收
 
 在新的临时目录准备合成项目（路径含中文和空格，`git init`，放一个 hello.py），每项保存客户端原始回答和 `.agent` 前后哈希：
 
 1. Claude Code：修复登录后运行 `py -3 -X utf8 tests/client_live.py --primary claude --secondary opencode --out <结果文件>`；或在用户级安装 `py -3 kit.py install-client claude` 后手动执行：未接入问答（反向）、“启用项目治理”、`/project-anchor 添加任务…`、保存决定、交接、新会话恢复、已接入普通问答（反向）、`/compact` 后检查 SessionStart(compact) 记录：`py -3 kit.py doctor <项目> --client claude --session-id <ID> --expect-event PreCompact`。
-2. 交替：第 1 项结束后用 OpenCode 新会话把 T1 改为进行中，再用 Claude 新会话只读询问 T1 状态；另用旧 revision 让一方写入，确认被拒绝。
-3. Cursor：在合成项目内放 `.agents/skills/project-anchor`（`install-client agents --home <独立目录> --skills-dir <项目>/.agents/skills`），新开 Agent 会话分别输入 `/project-anchor 查看进度，只读`、自然语言“启用项目治理”和与项目无关的问答，核对文件变化。
+2. Claude 交替：第 1 项结束后用 OpenCode 新会话把 T1 改为进行中，再用 Claude 新会话只读询问 T1 状态（Cursor 与 OpenCode 的交替已在第 5 节完成）。
+3. Cursor：用 Cursor 直接打开合成项目（不在本仓库工作区内），在合成项目内放 `.agents/skills/project-anchor`（`install-client agents --home <独立目录> --skills-dir <项目>/.agents/skills`），新开 Agent 聊天分别输入 `/project-anchor 查看进度，只读`、自然语言“启用项目治理”、接入后新聊天“继续这个项目”和与项目无关的问答，核对文件变化；确认新聊天会按项目 AGENTS.md 先读状态。
 4. WorkBuddy：`install-client agents --home <独立目录> --skills-dir <项目>/.codebuddy/skills`（或社区资料中的 `~/.workbuddy/skills`），在技能面板确认出现 project-anchor，再执行与第 3 项相同的正反向请求。
 5. Codex：合并后 `py -3 kit.py install-global`，在 `/hooks` 审核，运行 `doctor --native-hooks --native-skills`，并按 SMOKE_TEST.md 复验启动、压缩和接续。
