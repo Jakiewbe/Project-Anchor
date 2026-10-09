@@ -1,10 +1,10 @@
 # 当前断点
 
 ## 当前阶段
-通用Agent Skills适配实现与验收完成至可审查状态；准备Draft PR，真实集成验收未全部完成。
+通用Agent Skills适配已提交Draft PR #1 https://github.com/Jakiewbe/Project-Anchor/pull/1 ；真实集成验收未全部完成，不可直接发布。
 
 ## 当前任务
-UNI1 doing：feat/universal-agent-skills分支，提交、推送并创建Draft PR。BRAND1 blocked、DPL6 doing保持原状。
+UNI1 blocked：Draft PR #1待审查，等待人工真实客户端验收。BRAND1 blocked、DPL6 doing保持原状。
 
 ## 已完成工作
 新增core/clients.py、global/CLIENT_RULES.md；kit.py增加install-client/uninstall-client及doctor/trust-project/recover的--client。
@@ -21,10 +21,10 @@ Codex CLI未安装；Cursor调用与WorkBuddy未测；压缩后接续与自动�
 现有Codex安装需重新install-global（Hook脚本版本与Skill模板WARN），属用户操作。
 
 ## 下一步动作
-提交相关文件、推送分支、创建Draft PR；再把PR链接写入CURRENT。人工验收步骤见docs/CLIENT_VALIDATION.md第6节。
+用户审查PR #1并按docs/CLIENT_VALIDATION.md第6节完成人工验收；未经确认不合并、不发布。
 
 ## 状态修订
 以state.json/tasks.json为准；原始运行记录.agent/runtime/universal。
 
 ## Git 检查
-分支feat/universal-agent-skills自2e17040；仅提交本轮相关文件，不推main、不强推、不建工作树。
+feat/universal-agent-skills已推送，476de2b为功能提交，另有状态记录提交；未推main、未强推、无工作树。

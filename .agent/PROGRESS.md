@@ -1,6 +1,6 @@
 # Project Anchor — 进度（程序生成，请勿手工编辑）
 
-账本修订: 60
+账本修订: 61
 总任务: 20；有效任务: 20；已完成: 17；完成率: 85%
 [#################---]
 
@@ -21,13 +21,13 @@
 | ID | 标题 | 计划 | 依赖 / 阻塞 |
 | --- | --- | --- | --- |
 | DPL6 | 本地发布检查点及严格独立验收 | approved |  |
-| UNI1 | 通用 Agent Skills 适配与可审查 PR | approved |  |
 
 ## 阻塞任务
 
 | ID | 标题 | 计划 | 依赖 / 阻塞 |
 | --- | --- | --- | --- |
 | BRAND1 | Project Anchor命名、兼容迁移与待验证项补验 | approved | 名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。 |
+| UNI1 | 通用 Agent Skills 适配与可审查 PR | approved | Draft PR #1 已创建；真实集成验收待人工：Claude Code 本机 401、真实双客户端交替、Cursor 调用、WorkBuddy、Codex 原生复验未完成（步骤见 docs/CLIENT_VALIDATION.md 第 6 节） |
 
 ## 最近完成
 

@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 60,
+  "revision": 61,
   "tasks": [
     {
       "task_id": "A",
@@ -435,10 +435,10 @@
         "隔离合成项目中自动化、模拟、真实客户端结果分别记录：发现与显式调用、自然语言正反向、初始化/任务/决策/交接、新会话恢复、双客户端交替及旧修订保护；不能执行的保留未验证并给出步骤",
         "README、安装说明、客户端能力矩阵和项目状态更新；分支提交推送并创建 PR，未完成真实集成验收时为 Draft"
       ],
-      "status": "doing",
+      "status": "blocked",
       "evidence": [],
-      "blocker": "",
-      "updated_at": "2026-10-09T11:40:41.167758+00:00"
+      "blocker": "Draft PR #1 已创建；真实集成验收待人工：Claude Code 本机 401、真实双客户端交替、Cursor 调用、WorkBuddy、Codex 原生复验未完成（步骤见 docs/CLIENT_VALIDATION.md 第 6 节）",
+      "updated_at": "2026-10-09T12:44:28.426649+00:00"
     }
   ],
   "history": [
@@ -1299,6 +1299,17 @@
         "status": "doing"
       },
       "reason": "开始实施"
+    },
+    {
+      "revision": 61,
+      "timestamp": "2026-10-09T12:44:28.426649+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "status": "blocked",
+        "blocker": "Draft PR #1 已创建；真实集成验收待人工：Claude Code 本机 401、真实双客户端交替、Cursor 调用、WorkBuddy、Codex 原生复验未完成（步骤见 docs/CLIENT_VALIDATION.md 第 6 节）"
+      },
+      "reason": "Draft PR已创建，等待人工真实客户端验收"
     }
   ]
 }

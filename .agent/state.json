@@ -3,20 +3,20 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 120,
-  "task_revision": 60,
-  "current_task_revision": 60,
+  "revision": 122,
+  "task_revision": 61,
+  "current_task_revision": 61,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T12:43:13.435667+00:00",
+  "updated_at": "2026-10-09T12:44:35.806359+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "1411a831d12d949574ddce51dfcf8d66795742ad13ea94dc5106df84b6e4efbf",
+    "CURRENT.md": "1eab25508863ecb4d6a281562b966dd18b782686467277c87f846d9c1933a689",
     "DECISIONS.md": "246d9e5cfa2f1281388f7cf799acd03acfdd809142ec595bdd7f014b3cf93a1a",
     "LESSONS.md": "a1978ce5f398c3653439fb7f2973914558474c10e20ab0469e34a9d0887333dd",
-    "tasks.json": "d515cfbdb479e7b45e4224c5893be86ca6eb4e876d1224b9e1c50fe282e8835b"
+    "tasks.json": "5dae0ca65f1daa63ace7180d7f6bf006085a34d8f143ab12e479b6f814a35f60"
   },
   "history": [
     {
@@ -1210,6 +1210,26 @@
       "action": "state:update",
       "reason": "通用适配验收后更新断点",
       "timestamp": "2026-10-09T12:43:13.435667+00:00"
+    },
+    {
+      "revision": 121,
+      "action": "task:update",
+      "reason": "Draft PR已创建，等待人工真实客户端验收",
+      "timestamp": "2026-10-09T12:44:28.438228+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "1411a831d12d949574ddce51dfcf8d66795742ad13ea94dc5106df84b6e4efbf",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n通用Agent Skills适配已提交Draft PR #1 https://github.com/Jakiewbe/Project-Anchor/pull/1 ；真实集成验收未全部完成，不可直接发布。\r\n\r\n## 当前任务\r\nUNI1 blocked：Draft PR #1待审查，等待人工真实客户端验收。BRAND1 blocked、DPL6 doing保持原状。\r\n\r\n## 已完成工作\r\n新增core/clients.py、global/CLIENT_RULES.md；kit.py增加install-client/uninstall-client及doctor/trust-project/recover的--client。\r\nHook运行时支持--managed-dir；run.py按runtime.json来源设置环境，非Codex安装不设CODEX_HOME。\r\nSkill说明、CLIENTS/COMMANDS、项目模板改为客户端中立；README能力矩阵、USAGE、CHANGELOG、docs/CLIENT_VALIDATION.md已更新。\r\n自动回归151通过0失败（原131+新增20）；含中文空格路径、幂等、配置保留、更新备份、拒绝覆盖、卸载、回滚恢复、双入口旧修订保护。\r\nOpenCode 1.14.29真实运行第3次8/0；第1次4/3（模型下线）、第2次5/2（目标未批准，场景补步骤）原样保留。\r\nClaude Code 2.1.153真实Hook：SessionStart startup/resume与PreCompact manual 3/0，init事件列出Skill。\r\nCursor 3.23.12本机会话发现~/.agents/skills/project-anchor；本仓库doctor对现有Codex安装0 FAIL。\r\n\r\n## 当前阻塞\r\n本机Claude Code所有模型请求401，自然语言流程与真实双客户端交替未执行；不处理认证。\r\nCodex CLI未安装；Cursor调用与WorkBuddy未测；压缩后接续与自动压缩未验证。\r\n现有Codex安装需重新install-global（Hook脚本版本与Skill模板WARN），属用户操作。\r\n\r\n## 下一步动作\r\n用户审查PR #1并按docs/CLIENT_VALIDATION.md第6节完成人工验收；未经确认不合并、不发布。\r\n\r\n## 状态修订\r\n以state.json/tasks.json为准；原始运行记录.agent/runtime/universal。\r\n\r\n## Git 检查\r\nfeat/universal-agent-skills已推送，476de2b为功能提交，另有状态记录提交；未推main、未强推、无工作树。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T12:44:35.796103+00:00"
+    },
+    {
+      "revision": 122,
+      "action": "state:update",
+      "reason": "记录Draft PR与阻塞",
+      "timestamp": "2026-10-09T12:44:35.806359+00:00"
     }
   ]
 }
