@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="282" viewBox="0 0 1200 282" role="img" aria-labelledby="title desc">
+  <title id="title">From intent to a resumable project</title>
+  <desc id="desc">Confirm goals. Approve the task plan. Build and verify with evidence. Save context and hand off. Each session resumes from the latest project files.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#0F766E" stroke-width="1.5"/></marker></defs>
+  <rect width="1200" height="282" rx="16" fill="#F3F7F6"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="48" y="46" font-size="13" letter-spacing="2" font-weight="600" fill="#0F766E">A RESUMABLE WORKFLOW</text>
+    <path d="M62 96H1117" stroke="#B5D4CC" stroke-width="2" marker-end="url(#arrow)"/>
+    <g fill="#0F766E"><circle cx="62" cy="96" r="18"/><circle cx="350" cy="96" r="18"/><circle cx="638" cy="96" r="18"/><circle cx="926" cy="96" r="18"/></g>
+    <g fill="white" font-size="13" text-anchor="middle" font-weight="600"><text x="62" y="101">01</text><text x="350" y="101">02</text><text x="638" y="101">03</text><text x="926" y="101">04</text></g>
+    <g fill="#153D43" font-size="22" font-weight="600"><text x="48" y="151">Confirm goals</text><text x="336" y="151">Approve the plan</text><text x="624" y="151">Build + verify</text><text x="912" y="151">Save + hand off</text></g>
+    <g fill="#526B6E" font-size="14"><text x="48" y="181">Scope, constraints, acceptance</text><text x="336" y="181">Tasks, dependencies, milestones</text><text x="624" y="181">Progress backed by evidence</text><text x="912" y="181">Decisions and current context</text></g>
+    <path d="M48 214H1152" stroke="#D4E1DE"/>
+    <text x="48" y="251" font-size="14" fill="#526B6E">Next session: read the latest project files before continuing. Snapshots never restore automatically.</text>
+  </g>
+</svg>

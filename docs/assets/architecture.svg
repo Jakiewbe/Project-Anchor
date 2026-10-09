@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" role="img" aria-labelledby="title desc">
+  <title id="title">One core. Shared project state.</title>
+  <desc id="desc">The user expresses intent. Skill calls the Python core. Rules constrain the agent, and trusted client hooks call the same core independently. All state operations share the project .agent directory.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#517478" stroke-width="1.5"/></marker></defs>
+  <rect width="1200" height="580" rx="16" fill="#F3F7F6"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="48" y="52" font-size="13" letter-spacing="2" font-weight="600" fill="#0F766E">HOW IT WORKS</text>
+    <text x="48" y="96" font-size="31" font-weight="650" fill="#153D43">One core. Shared project state.</text>
+    <rect x="48" y="135" width="250" height="72" rx="10" fill="#E3EEEC"/>
+    <text x="68" y="164" font-size="19" font-weight="600" fill="#153D43">AGENTS.md</text>
+    <text x="68" y="188" font-size="14" fill="#526B6E">Goals, boundaries, permissions</text>
+    <path d="M173 207V242" fill="none" stroke="#517478" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+    <text x="191" y="232" font-size="12" fill="#526B6E">constrains</text>
+    <rect x="48" y="254" width="250" height="103" rx="10" fill="white" stroke="#BDD3CF"/>
+    <text x="68" y="288" font-size="22" font-weight="600" fill="#153D43">User + Agent</text>
+    <text x="68" y="316" font-size="15" fill="#526B6E">Intent, decisions, evidence</text>
+    <text x="68" y="339" font-size="13" fill="#526B6E">Natural-language interaction</text>
+    <path d="M298 305H355" fill="none" stroke="#517478" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="367" y="254" width="205" height="103" rx="10" fill="white" stroke="#BDD3CF"/>
+    <text x="387" y="288" font-size="22" font-weight="600" fill="#153D43">Skill</text>
+    <text x="387" y="316" font-size="15" fill="#526B6E">Select the workflow</text>
+    <text x="387" y="339" font-size="13" fill="#526B6E">Load only when needed</text>
+    <path d="M572 305H629" fill="none" stroke="#517478" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="641" y="254" width="223" height="103" rx="10" fill="#0F766E"/>
+    <text x="661" y="288" font-size="22" font-weight="600" fill="white">Python core</text>
+    <text x="661" y="316" font-size="15" fill="#DCF4EE">Validate, lock, write</text>
+    <text x="661" y="339" font-size="13" fill="#DCF4EE">kit.py / single CLI</text>
+    <path d="M864 305H920" fill="none" stroke="#517478" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="932" y="233" width="220" height="145" rx="10" fill="white" stroke="#0F766E" stroke-width="1.5"/>
+    <text x="952" y="269" font-size="22" font-weight="600" fill="#153D43">.agent/</text>
+    <text x="952" y="298" font-size="15" fill="#526B6E">Goal + current context</text>
+    <text x="952" y="323" font-size="15" fill="#526B6E">Decisions + task ledger</text>
+    <text x="952" y="348" font-size="15" fill="#526B6E">Generated progress</text>
+    <rect x="641" y="411" width="223" height="75" rx="10" fill="#E3EEEC"/>
+    <text x="661" y="442" font-size="20" font-weight="600" fill="#153D43">Client hooks</text>
+    <text x="661" y="468" font-size="14" fill="#526B6E">Trusted lifecycle events</text>
+    <path d="M752 411V370" fill="none" stroke="#517478" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="48" y="461" font-size="15" fill="#526B6E">Hooks run independently of Skill selection.</text>
+    <path d="M48 516H1152" stroke="#D4E1DE"/>
+    <text x="48" y="552" font-size="14" fill="#526B6E">Current client integration: Codex. Other agents require separate adaptation and validation.</text>
+  </g>
+</svg>

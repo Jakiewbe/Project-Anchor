@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+  <title id="title">Project Anchor</title>
+  <desc id="desc">A file-based memory and governance toolkit for AI agents. Keep the goal. Carry the context.</desc>
+  <rect width="1200" height="400" rx="16" fill="#102C32"/>
+  <path d="M880 0V400M1040 0V400M0 80H1200M0 320H1200" stroke="#214149" stroke-width="1"/>
+  <circle cx="1020" cy="200" r="112" fill="none" stroke="#335B61" stroke-width="1.5"/>
+  <circle cx="1020" cy="200" r="88" fill="none" stroke="#335B61" stroke-width="1" stroke-dasharray="4 8"/>
+  <g fill="none" stroke="#80DBCA" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="1020" cy="145" r="17"/>
+    <path d="M1020 165V262M988 190H1052M952 226C958 268 990 277 1020 262C1050 277 1082 268 1088 226M952 226L950 249M952 226L975 232M1088 226L1090 249M1088 226L1065 232"/>
+  </g>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <text x="64" y="57" font-size="13" font-weight="600" letter-spacing="3" fill="#80DBCA">PROJECT MEMORY / AGENT GOVERNANCE</text>
+    <text x="60" y="168" font-size="70" font-weight="650" letter-spacing="-2" fill="#F6F8F6">Project Anchor</text>
+    <text x="64" y="224" font-size="29" fill="#D4E7E5">Keep the goal. Carry the context.</text>
+    <text x="64" y="274" font-size="16" fill="#9AB9BC">Persistent goals, decisions and progress. One source of truth.</text>
+    <text x="64" y="365" font-size="13" letter-spacing="2" fill="#B3CDCD">FILE-BASED</text>
+    <text x="228" y="365" font-size="13" letter-spacing="2" fill="#B3CDCD">LOCAL-FIRST</text>
+    <text x="407" y="365" font-size="13" letter-spacing="2" fill="#B3CDCD">PYTHON CORE</text>
+    <text x="1112" y="365" text-anchor="end" font-size="13" letter-spacing="2" fill="#80DBCA">v1.2.0</text>
+  </g>
+</svg>

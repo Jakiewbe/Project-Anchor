@@ -1,12 +1,14 @@
 # 当前断点
 
 ## 当前阶段
-Project Anchor 1.2.0改名与可自动执行的补验已完成并推送；剩余原生审核及外部验收保留。
+本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。
 
 ## 当前任务
 BRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。
 
 ## 已完成工作
+README重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。
+本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。
 1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。
 自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。
 快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。
@@ -30,4 +32,4 @@ Hook定义改名后应在客户端重新审核当前定义，不代签信任。
 以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。
 
 ## Git 检查
-master跟踪origin/main；发布已推送，本记录作为后续治理检查点另行同步；无新分支/工作树。
+master跟踪origin/main；图文文档已验证并获准发布，提交及同步结果以Git记录为准；无新分支/工作树。

@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="174" height="22" role="img" aria-label="runtime: standard library">
+  <rect width="174" height="22" rx="3" fill="#64748B"/><path d="M3 0H57V22H3Q0 22 0 19V3Q0 0 3 0" fill="#475569"/>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="white" text-anchor="middle"><text x="28" y="15">runtime</text><text x="115" y="15">standard library</text></g>
+</svg>

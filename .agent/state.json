@@ -3,17 +3,17 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 113,
+  "revision": 116,
   "task_revision": 58,
   "current_task_revision": 58,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T08:36:31.318548+00:00",
+  "updated_at": "2026-10-09T09:03:07.908802+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "883e21871667da3649c26ea40f668dcd3cbdcd7475fac623ff8ab172ec04975c",
+    "CURRENT.md": "39c3354bc0cecc573be0da33eeec9b1b4537ef3fe014853a56227346e7d4a016",
     "DECISIONS.md": "214db4dc4bbe2e9fcd85b4fd306c916c9eb5e15c646a913ed7cf671b7a1e3325",
     "LESSONS.md": "a1978ce5f398c3653439fb7f2973914558474c10e20ab0469e34a9d0887333dd",
     "tasks.json": "e9c539d1f8b8d926f0bdb6bf7fc61fbdcb8709a513f022b08a4dd8d67cc82c04"
@@ -1128,6 +1128,48 @@
       "action": "state:update",
       "reason": "实际发布成功后保存检查点及未完成的原生审核边界",
       "timestamp": "2026-10-09T08:36:31.318548+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "883e21871667da3649c26ea40f668dcd3cbdcd7475fac623ff8ab172ec04975c",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。\r\n\r\n## 当前任务\r\nBRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。\r\n\r\n## 已完成工作\r\nREADME重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。\r\n本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。\r\n1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。\r\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\r\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\r\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\r\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\r\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\r\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\r\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\r\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\r\n隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。\r\n\r\n## 当前阻塞\r\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\r\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\r\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\r\n\r\n## 下一步动作\r\n等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。\r\n\r\n## 状态修订\r\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\r\n\r\n## Git 检查\r\nmaster跟踪origin/main；本轮README、手册、SVG及状态更新未提交推送；无新分支/工作树。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:59:03.847705+00:00"
+    },
+    {
+      "revision": 114,
+      "action": "state:update",
+      "reason": "用户要求重写README并配图；文档7项检查及本地视觉核对通过，保持功能和未验证边界",
+      "timestamp": "2026-10-09T08:59:03.858361+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "6b777799e1738de4c63b48608acaf49d0b63854833cf38766a48b1bb023f1700",
+      "content": "# 当前断点\n\n## 当前阶段\n本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。\n\n## 当前任务\nBRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。\n\n## 已完成工作\nREADME重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。\n本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。\n1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\n隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；本轮README、手册、SVG及状态更新未提交推送；无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:59:42.261353+00:00"
+    },
+    {
+      "revision": 115,
+      "action": "state:update",
+      "reason": "用户要求重写README并配图；文档7项检查及本地视觉核对通过，保持功能和未验证边界",
+      "timestamp": "2026-10-09T08:59:42.272366+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "5832f8e6bd710893be1391cc20039a29e098cd4c4b85d4f83d58c13cbaecb518",
+      "content": "# 当前断点\n\n## 当前阶段\n本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。\n\n## 当前任务\nBRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。\n\n## 已完成工作\nREADME重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。\n本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。\n1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。\n自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。\n快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。\n改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。\n新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。\n原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。\nProject Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。\n原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。\n新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。\n隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。\n\n## 当前阻塞\n同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。\n多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。\nHook定义改名后应在客户端重新审核当前定义，不代签信任。\n\n## 下一步动作\n等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。\n\n## 状态修订\n以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。\n\n## Git 检查\nmaster跟踪origin/main；图文文档已验证并获准发布，提交及同步结果以Git记录为准；无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T09:03:07.898817+00:00"
+    },
+    {
+      "revision": 116,
+      "action": "state:update",
+      "reason": "用户授权发布图文README；检查通过，发布证据保存在Git提交及远端",
+      "timestamp": "2026-10-09T09:03:07.908802+00:00"
     }
   ]
 }
