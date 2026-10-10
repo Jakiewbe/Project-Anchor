@@ -2,7 +2,7 @@
 
 [返回项目首页](../README.md) · [客户端机制](../skills/project-anchor/references/CLIENTS.md) · [使用手册](USAGE.md)
 
-记录日期 2026-10-09，Windows 10 19045，Python 3.11。自动化、模拟和真实客户端结果分开统计；结构检查和模拟不能代替真实客户端验收。原始运行记录保存在本机 `.agent/runtime/universal/`，不提交，不含认证信息。
+初始记录日期 2026-10-09，后续补充见第 8–10 节；Windows 10 19045，Python 3.11。自动化、模拟和真实客户端结果分开统计；结构检查和模拟不能代替真实客户端验收。原始运行记录保存在本机 `.agent/runtime/universal/`，不提交，不含认证信息。当前发布范围以第 10 节用户决定为准。
 
 ## 1. 规范与官方文档
 
@@ -16,15 +16,15 @@
 
 ## 2. 能力矩阵
 
-“已验证”只表示本记录中有真实客户端证据；“未验证”表示机制有官方说明或已配置但缺少真实证据；“不支持”表示本工具没有为该客户端提供此能力。
+“已验证”只表示本记录中对应场景有真实客户端证据；“未验证”表示未完成当前声明所需的验收；“不支持”表示本工具没有为该客户端提供此能力。Claude、WorkBuddy 本轮范围外、未验证，不作发布阻塞；第 5 节历史发现与 Hook 片段记录原样保留，不提升为当前客户端验收。
 
 | 客户端 | Skill 发现 | 自然语言调用 | 持久规则 | 主动交接 | 生命周期自动化 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| Codex | 已验证（历史 1.2.0 记录） | 已验证（历史，非 100%） | 已验证（全局 AGENTS.md 管理块） | 已验证（历史） | 启动、手动压缩：历史已验证；本版本 Hook 定义需重新审核，当前未验证 |
-| Claude Code 2.1.153 | 已验证（项目级 `.claude/skills`，init 事件列出） | 未验证（本机 API 401） | 未验证（规则文件已安装，加载需模型回答证明） | 未验证（401） | SessionStart startup/resume、PreCompact manual：已验证；压缩后 SessionStart(compact)、自动压缩：未验证 |
+| Codex | 已验证（项目级入口及原生查询） | 部分验证（工作流与压缩前后只读回答，非永久保证） | 已验证（历史全局 AGENTS.md 管理块） | 已验证（历史） | CLI 启动、手动 PreCompact、压缩后 SessionStart 已验证（第 10 节）；Desktop/IDE 未验证，可选、未要求 |
+| Claude Code 2.1.153 | 未验证（范围外；历史发现见第 5 节） | 未验证（范围外；401 记录保留） | 未验证（范围外） | 未验证（范围外） | 未验证（范围外；适配代码和历史 Hook 片段保留，不声明已验收） |
 | OpenCode 1.14.29 | 已验证（`opencode debug skill`，项目级 `.agents/skills`） | 已验证（1 次完整运行 8/8） | 已验证（项目 AGENTS.md；新会话按规则读盘） | 已验证 | 不支持（本工具未提供 JS 插件） |
-| Cursor 3.23.12 | 已验证（本机 Cursor 会话列出 `~/.agents/skills/project-anchor`） | 部分验证（Cursor 子代理 10/0，限制见第 5 节） | 未验证（子代理在其他工作区运行，未加载合成项目 AGENTS.md） | 部分验证（同上） | 不支持（未配置 Cursor Hook） |
-| WorkBuddy | 未验证 | 未验证 | 未验证 | 未验证 | 不支持 |
+| Cursor 3.23.12 | 部分验证（主聊天菜单可见，界面来源未确认；第 9 节运行项目级 Skill） | 已有主聊天人工工作流证据（第 9 节）；子代理证据另计 | 未单独验证（规则注入仅 Agent 自述，与 Skill 调用同时发生） | 已有保存断点及新聊天只读恢复证据（第 9 节） | 不支持（未配置 Cursor Hook） |
+| WorkBuddy | 未验证（范围外） | 未验证（范围外） | 未验证（范围外） | 未验证（范围外） | 未验证（未安装，本轮不做） |
 
 ## 3. 自动化测试
 
@@ -117,14 +117,14 @@
 - WorkBuddy：未安装。
 - Claude 参与的交替：Claude 无法调用模型，未执行。
 
-## 6. 需要人工完成的验收
+## 6. 原人工验收清单（当前范围见第 10 节）
 
 在新的临时目录准备合成项目（路径含中文和空格，`git init`，放一个 hello.py），每项保存客户端原始回答和 `.agent` 前后哈希：
 
-1. Claude Code：修复登录后运行 `py -3 -X utf8 tests/client_live.py --primary claude --secondary opencode --out <结果文件>`；或在用户级安装 `py -3 kit.py install-client claude` 后手动执行：未接入问答（反向）、“启用项目治理”、`/project-anchor 添加任务…`、保存决定、交接、新会话恢复、已接入普通问答（反向）、`/compact` 后检查 SessionStart(compact) 记录：`py -3 kit.py doctor <项目> --client claude --session-id <ID> --expect-event PreCompact`。
-2. Claude 交替：第 1 项结束后用 OpenCode 新会话把 T1 改为进行中，再用 Claude 新会话只读询问 T1 状态（Cursor 与 OpenCode 的交替已在第 5 节完成）。
+1. Claude Code（本轮不做，范围外、未验证，非发布阻塞）：原操作方案为修复登录后运行 `py -3 -X utf8 tests/client_live.py --primary claude --secondary opencode --out <结果文件>`；或在用户级安装 `py -3 kit.py install-client claude` 后手动执行：未接入问答（反向）、“启用项目治理”、`/project-anchor 添加任务…`、保存决定、交接、新会话恢复、已接入普通问答（反向）、`/compact` 后检查 SessionStart(compact) 记录：`py -3 kit.py doctor <项目> --client claude --session-id <ID> --expect-event PreCompact`。
+2. Claude 交替（本轮不做，范围外、未验证，非发布阻塞）：原操作方案为第 1 项结束后用 OpenCode 新会话把 T1 改为进行中，再用 Claude 新会话只读询问 T1 状态（Cursor 与 OpenCode 的交替已在第 5 节完成）。
 3. Cursor：用 Cursor 直接打开合成项目（不在本仓库工作区内），在合成项目内放 `.agents/skills/project-anchor`（`install-client agents --home <独立目录> --skills-dir <项目>/.agents/skills`），新开 Agent 聊天分别输入 `/project-anchor 查看进度，只读`、自然语言“启用项目治理”、接入后新聊天“继续这个项目”和与项目无关的问答，核对文件变化；确认新聊天会按项目 AGENTS.md 先读状态。
-4. WorkBuddy：`install-client agents --home <独立目录> --skills-dir <项目>/.codebuddy/skills`（或社区资料中的 `~/.workbuddy/skills`），在技能面板确认出现 project-anchor，再执行与第 3 项相同的正反向请求。
+4. WorkBuddy（本轮不做，范围外、未验证，非发布阻塞）：原操作方案为 `install-client agents --home <独立目录> --skills-dir <项目>/.codebuddy/skills`（或社区资料中的 `~/.workbuddy/skills`），在技能面板确认出现 project-anchor，再执行与第 3 项相同的正反向请求。
 5. Codex：合并后 `py -3 kit.py install-global`，在 `/hooks` 审核，运行 `doctor --native-hooks --native-skills`，并按 SMOKE_TEST.md 复验启动、压缩和接续。
 
 <a id="independent-review"></a>
@@ -200,7 +200,7 @@
 - WorkBuddy：未发现可调用命令、Windows 安装登记或开始菜单入口，未安装、未执行模型测试；保持未验证。
 - Cursor：未启动子代理或替代用户主聊天。另准备了一个尚未治理初始化的独立临时项目及项目级通用 Skill，供人工验收；准备成功不是 Cursor 支持验证。
 
-### 7.6 仍需用户执行的准确步骤
+### 7.6 原待执行步骤（当前范围见第 10 节）
 
 **Cursor 主聊天与项目规则：**
 
@@ -210,13 +210,13 @@
 4. 提供并批准合成项目目标，显式输入 `/project-anchor 添加一个任务草案`，检查正式程序调用与账本。未批准草案不得开始。
 5. 形成一个明确决定并要求记录，保存断点；**另开全新聊天，不显式点名 Skill**，只说“继续这个项目，只读告诉我目标、任务、最近决定和下一步”。保存实际读取项目 AGENTS.md/治理文件的证据，并核对状态哈希不变。这一步验证直接项目聊天与持久规则，不由本仓库子代理结果代替。
 
-**Claude：**由用户处理登录；成功后先运行 `claude -p "只回答 OK"`，再运行第 6 节的真实工作流与 `/compact` 检查。不要在认证失败时反复运行整套流程。
+**Claude：本轮不做，范围外、未验证，非发布阻塞。** 原计划为用户处理登录后完成第 6 节工作流与 `/compact`；该计划已由第 10 节决定收口，401 原始失败保留。
 
 **Codex 正式安装及生命周期：**只有用户另外授权真实 install-global 后，备份并更新真实配置，在 `/hooks` 审核当前定义，再按 SMOKE_TEST.md 检查 SessionStart、手动 PreCompact 和 SessionStart(compact)。本轮临时安装与关闭 Hook 的模型请求不替代这些步骤。
 
-**OpenCode 完整任务添加：**保留本轮拒绝记录。若用户决定授予工具目录必要访问权限，先在 OpenCode 自身的权限机制中明确审核，再以新编号验收；不能自动放宽权限或绕过拒绝。WorkBuddy 保持未验证，本轮不安装。
+**OpenCode 完整任务添加：**保留本轮拒绝记录。若用户决定授予工具目录必要访问权限，先在 OpenCode 自身的权限机制中明确审核，再以新编号验收；不能自动放宽权限或绕过拒绝。WorkBuddy 保持范围外、未验证，本轮不做，不作为发布阻塞。
 
-上述步骤未全部完成，PR #1 保持 Draft，不建议直接发布。原始 stdout/stderr、逐请求命令与前后哈希在系统临时目录保留；本机指针为 `.agent/runtime/universal/independent_review_folder.txt`。不上传原始聊天、日志或私人配置。
+本节当时因上述步骤未完成而保持 PR #1 为 Draft；当前发布范围改按第 10 节，不再以 Claude、WorkBuddy 或每个客户端的完整生命周期作为前置条件。PR 状态变更仍由用户决定。原始 stdout/stderr、逐请求命令与前后哈希在系统临时目录保留；本机指针为 `.agent/runtime/universal/independent_review_folder.txt`。不上传原始聊天、日志或私人配置。
 
 ## 8. 第 7 节之后的补充验收（2026-10-10）
 
@@ -240,11 +240,11 @@
 
 第 7.5 节准备的 Cursor 人工项目中，项目级 Skill 的 COMMANDS.md、WORKFLOWS.md 早于第 7.1 节修正。已对同一 home 和 skills-dir 重新 `install-client agents`（更新并备份旧文件），现与仓库一致；项目仍未接入治理，hello.py 未改，0 次提交。用户级 `~/.agents/skills/project-anchor` 也已是本分支版本，Cursor 可能同时发现两份同名 Skill，人工验收时需记录界面显示的来源。
 
-### 8.4 仍需用户执行
+### 8.4 原待执行项与当前范围
 
-- Cursor：按第 7.6 节在 Cursor 中直接打开人工项目执行。
-- Codex：在 Codex 中打开本机记录于 `.agent/runtime/universal/codex_lifecycle_project.txt` 的合成项目（已 `init-project`、`git init`、0 次提交），`/hooks` 审核 SessionStart、PreCompact；新会话确认 SessionStart；`/compact` 后确认 PreCompact 快照和 source=compact 的 SessionStart；然后 `py -3 kit.py doctor <项目> --session-id <ID> --expect-event PreCompact` 与 `--native-hooks --native-skills`。
-- Claude Code 登录与 WorkBuddy 安装仍由用户处理。
+- Cursor：原要求按第 7.6 节直接打开人工项目；已补充第 9 节主聊天人工证据，限制保留。
+- Codex：以下为原操作清单；后续 CLI 已有第 10 节证据，Desktop/IDE 补验可选、未要求。在 Codex 中打开本机记录于 `.agent/runtime/universal/codex_lifecycle_project.txt` 的合成项目（已 `init-project`、`git init`、0 次提交），`/hooks` 审核 SessionStart、PreCompact；新会话确认 SessionStart；`/compact` 后确认 PreCompact 快照和 source=compact 的 SessionStart；然后 `py -3 kit.py doctor <项目> --session-id <ID> --expect-event PreCompact` 与 `--native-hooks --native-skills`。
+- Claude Code 登录与 WorkBuddy 安装：本轮不做，范围外、未验证，不是发布阻塞（第 10 节）。
 
 PR #1 保持 Draft。
 
@@ -270,7 +270,30 @@ Cursor 3.23.12。用户用 `cursor -n` 在新窗口直接打开第 8.3 节的人
 结论与限制：
 
 - Cursor 主聊天可在新会话中不点名 Skill 恢复目标、任务和决定，且只读请求不改状态；反向请求未误触发治理。
-- 项目规则注入与 Skill 自动调用在第 8 步同时发生，**不能单独证明项目 AGENTS.md 规则足以触发恢复**；规则注入只有 Agent 自述，无界面证据。需另做只放 AGENTS.md、不放 Skill 的对照。
+- 项目规则注入与 Skill 自动调用在第 8 步同时发生，**不能单独证明项目 AGENTS.md 规则足以触发恢复**；规则注入只有 Agent 自述，无界面证据。若以后要声明该独立能力，需另做只放 AGENTS.md、不放 Skill 的对照；本轮可选、未要求。
 - 两份同名 Skill（项目 `.agents/skills` 与用户 `~/.agents/skills`）的 SKILL.md 字节相同，界面无法区分；第 8 步实际运行项目那份 run.py 与 runtime.json（home 指向测试目录），用户级 `~/.codex` 无新写入。
 - 文件搜索异常：第 8 步在中文/空格工作区根目录查找 `.agent/**` 报错，本仓库会话无法复现（工作区路径为英文）。另在本仓库会话中对照：Glob/Grep 指定工作区外目录时（中文空格路径与纯英文路径均如此）静默返回本仓库文件、不报错，与第 5 节子代理现象一致。Skill 说明不依赖文件搜索工具，未修改。
 - 未执行：Settings → Rules/Skills 页截图；未经追加批准的 T1 草案边界（以第 6 步 T2“只建不开始”代替）。
+
+<a id="scope-closeout"></a>
+## 10. 用户决定与产品边界收口（2026-10-10）
+
+用户批准：以 Agent Skills 通用规范和已有真实证据为发布范围，不再进行 Claude Code、WorkBuddy 的真实客户端验收，也不要求每个客户端完成生命周期验收。这是范围调整，不能把未验证或历史失败改写为通过；GOAL 不变，任务不自动标记 done；该决定作出时 PR #1 保持 Draft。用户后续已授权全部提交、推送与 PR 合并，完成结果以远端核对及治理状态为准。
+
+### 10.1 对外声明
+
+1. 提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用治理 Skill：同一份 `SKILL.md` 与 `scripts/run.py` 调用同一 Python 核心 `kit.py`；项目状态唯一来源是 `.agent/`，任务事实来源是其中的 `tasks.json`。规范定义 Skill 格式；`.agents/skills` 及用户级同名目录的扫描由客户端实现。兼容扫描、可运行本地 Python 且获得相应权限的 Agent 可以发现并调用这份 Skill，不据此声称所有客户端已实测。
+2. 生命周期 Hook 仅在有真实执行证据的客户端和事件范围内声明可用。当前 Codex 有正式安装与 CLI 启动、手动压缩、压缩后接续证据；Desktop/IDE 仍未验证，属于可选、未要求项。Claude Hook 适配代码与历史片段记录保留，不声明 Claude 已验收。
+3. Cursor、OpenCode 采用通用 Skill 加项目 `AGENTS.md`，不要求新增客户端专用核心或 Hook。Cursor 3.23.12 主聊天已有第 9 节人工工作流证据；OpenCode 有第 5、7、8 节工作流证据，子代理与交替结果分别记录。
+4. Claude、WorkBuddy 为本轮范围外、未验证、不做，不是产品验收失败或发布阻塞。Claude 认证检查的 **0 通过 / 1 失败（401）** 与 WorkBuddy 未安装事实保持原样，不安装、不登录、不继续工作流。
+5. 不宣称所有 Agent 永久遵守规则；模型遵从、自动选择 Skill 与及时落盘仍是未验证层，已有通过仅覆盖受测场景。
+6. 第 9 节没有单独证明仅凭项目 `AGENTS.md`、不放 Skill 也能恢复；该限制及 Skill 来源未完全确认等问题保留，不扩大声称。本轮不要求补做该对照。
+
+README 按用户追加要求只保留产品说明、安装使用和能力边界，不列验收统计或历史失败；记录保留在本验证文档中。
+
+### 10.2 保留的证据与交付边界
+
+- 自动化回归历史结果 **157 通过 / 0 失败**；OpenCode 首轮拒绝、配置保持首次失败及 Claude 401 原始记录保留，不累加或替换为全客户端通过。
+- Codex CLI 会话 `01a1217a-1b09-71c0-83a3-f83ad6167522`：两项 Hook 在 `/hooks` 已启用且 Trusted；启动、手动 PreCompact、压缩后 SessionStart 共 3 条记录 PASS，压缩前后回答均说明合成项目目标未批准，快照与磁盘修订均为 0。两份 doctor 清单分别为 **21 PASS / 1 WARN / 0 FAIL / 4 UNVERIFIED**、**26 PASS / 0 WARN / 0 FAIL / 3 UNVERIFIED**，原始证据在 `.agent/runtime/universal/codex-lifecycle-20261010/`。CLI 首次后台启动及只读查询锁失败保留；使用 `--no-daemon` 的结果不能升级为 Desktop/IDE 通过。
+- 第 9 节人工步骤、用户转述和指纹证据保留，第 2 步来源部分确认与第 5 步提前建草案等限制不抹除。第 5 节子代理证据不代替主聊天验收。
+- 本轮只对齐文档、决策、任务说明与工作断点，不修改核心逻辑、目标或历史测试结果。PR 描述应按上述范围更新，是否提交、推送或转为可审查由用户另行决定。

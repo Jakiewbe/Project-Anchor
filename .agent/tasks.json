@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 66,
+  "revision": 70,
   "tasks": [
     {
       "task_id": "A",
@@ -395,15 +395,15 @@
       "plan": "approved",
       "milestone": "实际使用验收",
       "acceptance_criteria": [
-        "保存本地1.1.4提交，按实际结果记录Desktop启动/手动压缩、并发单轮测试、JEV接入、盲测和未落盘漂移；失败不修复、不重试到通过。",
+        "保存本地1.1.4提交，按实际结果记录并发单轮测试、JEV接入、盲测和未落盘漂移及历史Desktop样本；失败不修复、不重试到通过；当前分支Desktop/IDE补验可选未要求，不作通用Skill发布条件。",
         "按用户新增要求验证N自然决定主动落盘与O新会话恢复；五种措辞独立会话、正确项目cwd及Hook项目编号，保存当回合写入证据和未验证限制。"
       ],
-      "description": "本地发布检查点及严格独立验收",
+      "description": "保留本地发布检查点和严格独立验收历史，不把本次范围调整当作旧验收完成；当前通用Skill发布不要求Claude、WorkBuddy真实客户端验收，Codex Desktop/IDE补验可选、未要求；N/O等旧证据限制保留。",
       "status": "doing",
       "dependencies": [],
       "evidence": [],
       "blocker": "",
-      "updated_at": "2026-10-09T06:22:12.985773+00:00"
+      "updated_at": "2026-10-10T06:17:29.565259+00:00"
     },
     {
       "task_id": "BRAND1",
@@ -415,30 +415,30 @@
         "补验原生发现、自然自动压缩及锁缺口，保留失败与需用户参与的未验证项",
         "本机安装和入口验证，文档如实标明客户端能力及信任边界，提交推送与远端核对"
       ],
-      "description": "Project Anchor命名、兼容迁移与待验证项补验",
+      "description": "保留名称统一、兼容迁移与历史补验工作；当前Hook能力仅按Codex真实CLI事件声明，Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证、非发布阻塞。",
       "status": "blocked",
       "dependencies": [],
       "evidence": [],
-      "blocker": "名称、正式安装、可自动执行补验及发布已完成；新Hook当前未信任，待用户官方审核，独立多轮Desktop手动压缩待用户界面配合。",
-      "updated_at": "2026-10-09T08:36:30.342745+00:00"
+      "blocker": "Codex当前Hook已信任且CLI启动/手动压缩/接续有真实证据；保留历史自然自动压缩、锁及其他未验证边界，任务收尾登记待用户复核。Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证，不作发布阻塞。",
+      "updated_at": "2026-10-10T06:17:28.511844+00:00"
     },
     {
       "task_id": "UNI1",
       "title": "通用 Agent Skills 适配与可审查 PR",
-      "description": "复用唯一 Python 核心与 .agent 账本，提供脱离 Codex 的通用 Skill 入口和必要的客户端轻量适配；保留 Codex 集成；隔离合成项目验收后提交 Draft PR。",
+      "description": "提供符合Agent Skills规范的同一SKILL.md与run.py，调用唯一kit.py并共享.agent账本；保留Codex集成；本轮按已有真实证据交付通用Skill和Draft PR。Claude、WorkBuddy范围外未验证、不做、非发布阻塞；Hook只按真实执行证据声明。",
       "milestone": "1.3 通用客户端",
       "plan": "approved",
       "dependencies": [],
       "acceptance_criteria": [
-        "核对 Agent Skills 规范及 Cursor、Claude Code、OpenCode、WorkBuddy 官方文档，记录来源、版本、发现目录、显式调用、规则、脚本权限和生命周期能力",
+        "核对Agent Skills通用规范与发现/脚本执行条件；Cursor、OpenCode机制和真实证据分开记录；Claude、WorkBuddy保留历史资料并标为范围外未验证，不要求真实客户端验收",
         "通用入口脱离 CODEX_HOME 运行；客户端适配复用唯一核心；幂等安装、配置保留、安全更新、卸载、事务恢复及中文空格路径自动测试通过；现有 Codex 回归通过",
-        "隔离合成项目中自动化、模拟、真实客户端结果分别记录：发现与显式调用、自然语言正反向、初始化/任务/决策/交接、新会话恢复、双客户端交替及旧修订保护；不能执行的保留未验证并给出步骤",
-        "README、安装说明、客户端能力矩阵和项目状态更新；分支提交推送并创建 PR，未完成真实集成验收时为 Draft"
+        "隔离合成项目中自动化、模拟与已有真实客户端结果分别记录；保持Cursor主聊天、OpenCode工作流、交替及旧修订证据的限制；Hook仅按真实执行客户端和事件声明；模型遵从与仅AGENTS.md无Skill恢复保持未验证，不要求每个客户端生命周期验收",
+        "README、安装说明、能力矩阵和状态统一当前通用Skill范围；用户授权后提交推送、更新PR #1描述、转为可审查并合并；Claude、WorkBuddy与可选未要求的Codex Desktop/IDE不作发布阻塞"
       ],
-      "status": "blocked",
+      "status": "doing",
       "evidence": [],
-      "blocker": "Draft PR #1；OpenCode 新编号复验 8/0，真实 install-global 已完成且 doctor 0 FAIL；仍待人工：Codex Hook 审核与启动/压缩生命周期、Cursor 直接打开项目的主聊天与规则加载、Claude Code 认证（401）、WorkBuddy（步骤见 docs/CLIENT_VALIDATION.md 第 7.6、8.4 节）",
-      "updated_at": "2026-10-09T16:05:17.770243+00:00"
+      "blocker": "",
+      "updated_at": "2026-10-10T06:26:23.931363+00:00"
     }
   ],
   "history": [
@@ -1362,6 +1362,65 @@
         "blocker": "Draft PR #1；OpenCode 新编号复验 8/0，真实 install-global 已完成且 doctor 0 FAIL；仍待人工：Codex Hook 审核与启动/压缩生命周期、Cursor 直接打开项目的主聊天与规则加载、Claude Code 认证（401）、WorkBuddy（步骤见 docs/CLIENT_VALIDATION.md 第 7.6、8.4 节）"
       },
       "reason": "OpenCode复验通过、install-global完成，收窄剩余阻塞"
+    },
+    {
+      "revision": 67,
+      "timestamp": "2026-10-10T06:17:27.530616+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "description": "提供符合Agent Skills规范的同一SKILL.md与run.py，调用唯一kit.py并共享.agent账本；保留Codex集成；本轮按已有真实证据交付通用Skill和Draft PR。Claude、WorkBuddy范围外未验证、不做、非发布阻塞；Hook只按真实执行证据声明。",
+        "acceptance_criteria": [
+          "核对Agent Skills通用规范与发现/脚本执行条件；Cursor、OpenCode机制和真实证据分开记录；Claude、WorkBuddy保留历史资料并标为范围外未验证，不要求真实客户端验收",
+          "通用入口脱离 CODEX_HOME 运行；客户端适配复用唯一核心；幂等安装、配置保留、安全更新、卸载、事务恢复及中文空格路径自动测试通过；现有 Codex 回归通过",
+          "隔离合成项目中自动化、模拟与已有真实客户端结果分别记录；保持Cursor主聊天、OpenCode工作流、交替及旧修订证据的限制；Hook仅按真实执行客户端和事件声明；模型遵从与仅AGENTS.md无Skill恢复保持未验证，不要求每个客户端生命周期验收",
+          "README、安装说明、能力矩阵和状态统一当前通用Skill范围；保留Draft PR #1，任务完成与PR状态待用户复核，提交推送另等本轮授权；Claude、WorkBuddy与可选未要求的Codex Desktop/IDE不作发布阻塞"
+        ],
+        "blocker": "范围已按用户决定收口；等待用户复核文档、证据与Draft PR #1描述，并授权本轮提交/推送或任务收尾。Claude、WorkBuddy范围外未验证；Codex Desktop/IDE与仅AGENTS.md恢复对照可选、未要求，不作发布阻塞。"
+      },
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据"
+    },
+    {
+      "revision": 68,
+      "timestamp": "2026-10-10T06:17:28.511844+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "BRAND1",
+        "description": "保留名称统一、兼容迁移与历史补验工作；当前Hook能力仅按Codex真实CLI事件声明，Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证、非发布阻塞。",
+        "blocker": "Codex当前Hook已信任且CLI启动/手动压缩/接续有真实证据；保留历史自然自动压缩、锁及其他未验证边界，任务收尾登记待用户复核。Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证，不作发布阻塞。"
+      },
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据"
+    },
+    {
+      "revision": 69,
+      "timestamp": "2026-10-10T06:17:29.565259+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DPL6",
+        "description": "保留本地发布检查点和严格独立验收历史，不把本次范围调整当作旧验收完成；当前通用Skill发布不要求Claude、WorkBuddy真实客户端验收，Codex Desktop/IDE补验可选、未要求；N/O等旧证据限制保留。",
+        "acceptance_criteria": [
+          "保存本地1.1.4提交，按实际结果记录并发单轮测试、JEV接入、盲测和未落盘漂移及历史Desktop样本；失败不修复、不重试到通过；当前分支Desktop/IDE补验可选未要求，不作通用Skill发布条件。",
+          "按用户新增要求验证N自然决定主动落盘与O新会话恢复；五种措辞独立会话、正确项目cwd及Hook项目编号，保存当回合写入证据和未验证限制。"
+        ]
+      },
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据"
+    },
+    {
+      "revision": 70,
+      "timestamp": "2026-10-10T06:26:23.931363+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "status": "doing",
+        "blocker": "",
+        "acceptance_criteria": [
+          "核对Agent Skills通用规范与发现/脚本执行条件；Cursor、OpenCode机制和真实证据分开记录；Claude、WorkBuddy保留历史资料并标为范围外未验证，不要求真实客户端验收",
+          "通用入口脱离 CODEX_HOME 运行；客户端适配复用唯一核心；幂等安装、配置保留、安全更新、卸载、事务恢复及中文空格路径自动测试通过；现有 Codex 回归通过",
+          "隔离合成项目中自动化、模拟与已有真实客户端结果分别记录；保持Cursor主聊天、OpenCode工作流、交替及旧修订证据的限制；Hook仅按真实执行客户端和事件声明；模型遵从与仅AGENTS.md无Skill恢复保持未验证，不要求每个客户端生命周期验收",
+          "README、安装说明、能力矩阵和状态统一当前通用Skill范围；用户授权后提交推送、更新PR #1描述、转为可审查并合并；Claude、WorkBuddy与可选未要求的Codex Desktop/IDE不作发布阻塞"
+        ]
+      },
+      "reason": "用户明确授权全部提交推送与合并PR #1（包含README），开始发布收尾"
     }
   ]
 }
