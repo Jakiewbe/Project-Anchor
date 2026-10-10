@@ -221,6 +221,12 @@ class SkillTests(unittest.TestCase):
         self.assertEqual(next(c["detail"] for c in checks if c["check"]=="全局安装路径"),str(self.home))
         self.assertFalse((self.root / "wrong-home").exists())
 
+    def test_codex_adapter_ignores_inherited_client_selection(self):
+        self.env["PROJECT_ANCHOR_CLIENT"] = "claude"
+        result=self.run_skill("doctor",self.project,"--json")
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertIn("全局安装路径",[c["check"] for c in json.loads(result.stdout)])
+
     def test_shell_metacharacters_are_literal_arguments(self):
         name="任务 $x `echo nope` & other"
         result=self.run_skill("init-project",self.project,"--name",name)

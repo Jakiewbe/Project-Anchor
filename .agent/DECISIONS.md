@@ -41,3 +41,19 @@
 - 2026-10-09：用户确定对外名称Project Anchor，并授权将当前项目推送至Jakiewbe/Project-Anchor、编写README。当前仅更新介绍与公开验收摘要，保留codex-rules 1.1.4的CLI、Skill、配置和运行路径；通用智能体适配是未来方向，本轮不实现。远端初始提交及MIT许可证保留，不改写已有历史。
 
 - 2026-10-09：用户要求本机也统一Project Anchor名称，并逐步改成通用Skill，先补未验证项再推送。本轮将主Skill改为project-anchor、支持清单校验后的同父目录迁移，保留底层codex-rules存储标识以共享已有信任、日志、备份和锁；旧历史不抹除。不擅自完成其他客户端适配或原生Hook审核。
+
+- 2026-10-09：用户授权通用Agent Skills适配并在独立分支feat/universal-agent-skills提交、推送及创建PR（不推main、不合并、不强推、不建工作树）。架构：保留唯一kit.py与.agent账本；新增install-client agents（不依赖CODEX_HOME，清单PROJECT_ANCHOR_HOME）与claude（Skill、rules/project-anchor.md、settings.json两组Hook，管理目录<配置>/project-anchor），复用所有权、备份、锁、事务和卸载。Codex Hook命令、全局规则与runtime.json字节不变，VERSION不升级。Cursor/OpenCode/WorkBuddy不写空壳适配器，持久规则依靠项目AGENTS.md，生命周期标为不支持或未验证。GOAL未修改。
+
+
+## 2026-10-09：通用适配独立复核与真实安装授权边界
+用户授权在现有feat/universal-agent-skills提交推送和更新Draft PR #1；未授权修改真实Codex安装、认证、Hook信任、main或历史。选择：只做隔离安装/原生查询，真实工作流使用项目级通用Skill、现有登录、Codex本次关闭Hook；不把它升级为正式安装或生命周期验收。证据：原151项独立通过，修正测试器完整响应/哈希/失败退出后155项通过；OpenCode首轮3/1保留权限拒绝，独立补做交替5/0，旧修订拒绝。Claude一次请求连续401后超时，跳过后续；不放宽权限重跑、不处理认证。文档中残留Codex专属参数已修正；现有核心与版本不变。
+
+## 2026-10-10：通用 Skill 发布范围收口（用户批准）
+用户决定不再做 Claude Code 与 WorkBuddy 的真实客户端验收，按 Agent Skills 通用规范交付同一 SKILL.md 与 scripts/run.py、唯一 kit.py 核心和 .agent 状态来源。兼容 Skill 扫描与本地 Python 执行且获得权限的 Agent 可调用；不要求每个客户端完整生命周期验收。
+Hook 只在已有真实执行证据的客户端及事件范围声明可用：当前 Codex 有 install-global 与 CLI 生命周期证据；Claude 适配代码保留，不声明已验收。Cursor 3.23.12 主聊天与 OpenCode 工作流证据及限制保留。
+Claude、WorkBuddy 范围外、未验证、不做、非发布阻塞；401 原始失败、未安装事实和历史 Hook 片段不改写。Codex Desktop/IDE 与仅 AGENTS.md、无 Skill 恢复对照可选、未要求，未验证层不扩大声称；不保证所有 Agent 永久遵守规则。
+本轮只改文档、任务说明与状态，不改 GOAL、核心逻辑、客户端安装或任务完成状态；PR #1 保持 Draft，提交、推送及 PR 状态变更另等用户授权。依据：本轮用户批准及 docs/CLIENT_VALIDATION.md 第 10 节。
+用户追加要求：README 仅保留产品定位、安装使用与能力边界，不写验收统计或历史失败；完整记录保留在验证文档。
+
+## 2026-10-10：提交、推送与合并授权
+用户要求“全部合并，推送，包括redme，PR”，授权提交本轮全部已验证文档与治理状态（包含README），推送feat/universal-agent-skills，更新PR #1标题与描述，转为可审查并合并到main；合并结果通过正式程序记录后同步远端。不创建新分支/工作树、不改写历史、不安装客户端或扩大GOAL，按现有157/0测试与证据边界发布。

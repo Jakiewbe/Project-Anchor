@@ -1,5 +1,12 @@
 # 更新记录
 
+## 未发布 — 通用 Agent Skills 适配（Draft）
+
+- 新增 `install-client agents`：不依赖 CODEX_HOME 的通用 Skill 安装，清单位于 PROJECT_ANCHOR_HOME；`install-client claude`：Claude Code 的 Skill、用户规则文件和 SessionStart/PreCompact Hook。两者复用原有所有权校验、备份、锁、事务恢复与安全卸载。
+- 适配器按 runtime.json 安装来源设置环境；`doctor/trust-project/recover` 增加 `--client`。Codex 的 Hook 命令、全局规则和 runtime.json 字节不变；但核心脚本变化会让旧安装的 doctor 报告 Hook 脚本版本 WARN，需重新 install-global。
+- Skill 说明与项目模板改为客户端中立；新会话及压缩后先读最新状态，写入使用最新 revision。
+- 能力矩阵与验证记录见 docs/CLIENT_VALIDATION.md；未完成的真实客户端验收保持未验证。
+
 ## 1.2.0 — Project Anchor 名称与补验
 
 - 主Skill、软件包、全局路由和显示名称统一为project-anchor / Project Anchor；同父目录从旧Skill安全迁移，清单校验、备份、用户文件保留、回滚与崩溃恢复复用现有事务。

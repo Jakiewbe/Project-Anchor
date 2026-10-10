@@ -2,7 +2,9 @@
 
 [返回项目首页](../README.md) · [工作流参考](../skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](../skills/project-anchor/references/COMMANDS.md)
 
-适用版本：Project Anchor 1.2.0。当前安装器面向 Codex；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+适用版本：Project Anchor 1.2.0 及通用 Skill 适配。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+
+产品提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用 `SKILL.md` 与 `scripts/run.py`，始终调用同一 `kit.py`，项目状态唯一来源为 `.agent/`。兼容扫描 `.agents/skills` 及用户级同名目录、可执行本地 Python 且获得权限的 Agent 可以发现并调用；不要求逐个客户端完成生命周期验收。当前证据和范围以 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout) 为准。
 
 ## Windows 安装和初始化
 
@@ -33,6 +35,27 @@ Skill 只安装说明、参考文档和一个轻量适配器；runtime.json 保�
 安装后重新启动本地 Codex，在支持 Hook 的 CLI 输入 `/hooks`，逐条审核并信任 SessionStart 和 PreCompact 的当前定义，见 [官方 Hook 文档](https://learn.chatgpt.com/docs/hooks)。**配置完成不等于已信任，信任不等于模型必定遵守。** 全局 AGENTS.override.md 可能覆盖全局 AGENTS.md，doctor 会提示。
 
 Hook 是 Codex 在指定时机自动运行的本地脚本。一次审核启用后，进入/恢复/压缩后的会话提醒读取磁盘状态，压缩前保存已经落盘的状态快照，不依赖模型选择 Skill。重要决定仍需先保存，脚本不能替代聊天内容的总结。自然语言诊断会只读查询原生定义及信任状态；不会替用户写入信任数据库。初始化程序拒绝用户主目录和磁盘根目录，已有具体项目状态继续保留。
+
+### 不依赖 Codex 的安装
+
+通用入口为 `install-client agents`。以下 Claude 与 WorkBuddy 相关命令仅说明保留的安装能力，不是本轮执行清单；两者范围外、未验证、不做，不要求登录或安装，也不作为发布阻塞。
+
+```powershell
+py -3 kit.py install-client agents                                  # 通用 Skill
+py -3 kit.py install-client agents --home "D:\anchor\workbuddy" --skills-dir "$HOME\.workbuddy\skills"
+py -3 kit.py install-client claude                                  # Claude Code
+py -3 kit.py doctor "D:\项目 路径" --client claude
+py -3 kit.py trust-project "D:\项目 路径" --client claude --approved   # 用户审核后才注入 GOAL/CURRENT 摘要
+py -3 kit.py uninstall-client claude
+```
+
+- `agents`：Skill 默认装到 `~/.agents/skills/project-anchor`，清单、备份和事务在 `PROJECT_ANCHOR_HOME`（默认 `~/.project-anchor`）。不写任何客户端规则或 Hook。一个清单目录只管理一个 Skill 位置；给另一个目录安装时用新的 `--home`。
+- `claude`：配置目录取 `--home`、`CLAUDE_CONFIG_DIR` 或 `~/.claude`。写入 `skills/project-anchor/`、`rules/project-anchor.md`，并在 `settings.json` 的 `hooks` 中追加 SessionStart 与 PreCompact 两组；其他键和已有 Hook 保留，文件会按标准 JSON 重新排版。管理数据在 `<配置目录>/project-anchor/`。不修改 CLAUDE.md、认证或权限设置。
+- 两者都校验所有权和哈希：同名 Skill、规则文件或被人工修改的 Hook 不属于本安装时拒绝覆盖；更新前备份；卸载只删除自己的内容，并在 settings.json 原本不存在时删除它。中断后执行 `recover --client agents|claude [--client-home 目录] [--rollback]`。
+- 适配器根据 runtime.json 判断来源：Codex 安装设置 CODEX_HOME；`install-client` 安装设置 PROJECT_ANCHOR_CLIENT 与 PROJECT_ANCHOR_CLIENT_HOME，不读取或创建 `~/.codex`。
+- Claude Code 的 Hook 在 Windows 上通过 PowerShell 编码命令启动，路径作为独立参数传入。项目级 `.claude/settings.json` 中的 Hook 受 Claude 工作区信任约束；本工具不替用户确认信任或权限。
+
+生命周期 Hook 只在已有真实执行证据的客户端和事件范围声明可用：当前 Codex 有正式安装与 CLI 启动、手动压缩、压缩后接续证据；Desktop/IDE 未验证，可选、未要求。Claude Hook 适配代码保留，不声明已验收。Cursor 3.23.12 主聊天和 OpenCode 有工作流证据，采用通用 Skill 加项目 AGENTS.md；尚未单独证明仅凭 AGENTS.md、无 Skill 也能恢复。
 
 初始化一个新项目：
 
@@ -162,7 +185,7 @@ py -3 -X utf8 tests\native_probe.py
 
 完整验收边界见 [VALIDATION.md](VALIDATION.md)；模型切换后执行 [SMOKE_TEST.md](../SMOKE_TEST.md)。
 
-Skill 的原生发现和真实自然语言验收见 [SKILL_VALIDATION.md](SKILL_VALIDATION.md)。`doctor --native-skills` 使用公开 skills/list 检查当前客户端是否发现实际安装路径，不发送模型请求；自动触发与完整工作流仍需真实模型测试。
+Skill 的原生发现和历史自然语言验收见 [SKILL_VALIDATION.md](SKILL_VALIDATION.md)，本轮通用发布边界见 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout)。Codex 的 `doctor --native-skills` 使用公开 skills/list 检查实际安装路径，不发送模型请求；发现检查不证明模型遵从，也不要求范围外客户端继续真实工作流测试。不宣称所有 Agent 永久遵守规则，自动选择与及时落盘仍需按实际证据判断。
 
 ## 安全卸载、备份和迁移
 

@@ -1,35 +1,31 @@
 # 当前断点
 
 ## 当前阶段
-本轮完成README图文重写；1.2.0已发布，剩余原生审核、外部验收及通用化边界保留。
+通用 Agent Skills 边界收口已验证；用户已授权提交、推送并合并PR #1，正在执行发布收尾。
 
 ## 当前任务
-BRAND1 blocked：已发布，待用户官方Hook审核与独立多轮Desktop操作。DPL6 doing，保留失败。
+UNI1 doing，执行用户批准的提交/推送/PR合并；BRAND1 blocked、DPL6 doing保留，不混作本轮完成。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。
 
 ## 已完成工作
-README重写，新增3张主图及4枚本地标签；完整命令保留在docs/USAGE.md。
-本轮文档检查7通过0失败，电脑/手机本地渲染及图片目视检查通过；未改程序。
-1.2.0发布59ef1a2已与远端main核对；d98d24b、3e36159和b06588c历史均保留。
-自然Desktop自动压缩已确认：PreCompact(auto)、客户端compacted、SessionStart(compact)均匹配。
-快照99旧于磁盘102，正式校验stale=true、automatic_restore=false，最新磁盘有效。
-改名前获准环境原生查询26 PASS、0 WARN、0 FAIL、3 UNVERIFIED；两项接口退出不再复现。
-新增单轮顺序、活锁超时/释放、终止持锁进程和决策修订门测试4 PASS、重复状态1 FAIL。
-原始响应保存于系统临时目录，旧压力记录未覆盖，冲突错误仍缺明确未写入和重读提示。
-Project Anchor 1.2.0正式迁移安装通过；最终131项回归通过，0失败；九项迁移/恢复更名测试通过。
-原非管理规则、其他Hook、113个其他Skill文件、配置和内容审核记录保留；原生发现新入口通过。
-新定义原生未信任，doctor为23 PASS、1 WARN、0 FAIL、5 UNVERIFIED，等待用户官方审核。
-隔离Hook探针3通过；真实CLI新入口9通过、1连接失败；复盘及显式入口补做通过，未重跑失败样本。
+README、USAGE、CLIENTS 与 CLIENT_VALIDATION 第10节已统一通用Skill声明：同一SKILL.md/run.py、唯一kit.py和.agent状态来源。
+README 按用户追加要求只讲产品、安装使用与能力边界，移除验收统计与历史失败；记录留在验证文档。
+Claude、WorkBuddy 为范围外、未验证、本轮不做、非发布阻塞；不再要求登录、安装或真实工作流。
+Hook只按真实客户端和事件证据声明：Codex有正式安装与CLI启动/手动压缩/接续证据；Claude代码保留，不声明已验收。
+Cursor 3.23.12主聊天人工流程、OpenCode工作流与交替证据及限制保留；不升级为所有客户端通过。
+历史157/0、OpenCode权限拒绝、配置保持首次失败、Claude401和WorkBuddy未安装记录保留。
+本轮完整回归157通过、0失败；仅文档与治理状态变更，GOAL、SKILL.md、run.py和业务核心未改。
+三项任务的说明或验收边界及DECISIONS已通过正式程序更新；旧状态与证据未伪造完成。
 
 ## 当前阻塞
-同状态重复提交缺陷未修；其他客户端适配、第二台电脑、长期观察未验证。
-多轮独立Desktop手动压缩需要用户界面操作，已询问；不得用CLI替代。
-Hook定义改名后应在客户端重新审核当前定义，不代签信任。
+当前提交/推送/PR合并已获用户授权；合并前核对PR当前头、检查和冲突，尚未宣称已合并。
+Claude、WorkBuddy不是阻塞；Codex Desktop/IDE补验与仅AGENTS.md无Skill恢复对照为可选、未要求、未验证。
+模型长期遵从未验证；旧同状态重复提交缺陷及长期/跨平台/第二台电脑缺口保留，不在本轮扩大修复。
 
 ## 下一步动作
-等待用户官方审核后，只读核对新定义信任并继续相应验收；不代签，不重跑已失败样本。
+提交全部已验证改动（含README），推送当前分支；更新PR #1描述，转为可审查并合并，核对远端后保存完成状态。
 
 ## 状态修订
-以state.json/tasks.json为准；补验证据.agent/runtime/release-audit。
+以state.json/tasks.json为准；本轮日志在.agent/runtime/universal/scope-closeout-20261010；既有原始记录指针保留。
 
 ## Git 检查
-master跟踪origin/main；图文文档已验证并获准发布，提交及同步结果以Git记录为准；无新分支/工作树。
+基线8a779e4，分支feat/universal-agent-skills；已核对远端头一致，PR基线main；仅按用户授权提交/推送/合并，不新建分支/工作树、不改写历史。
