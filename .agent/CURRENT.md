@@ -1,31 +1,32 @@
 # 当前断点
 
 ## 当前阶段
-通用 Agent Skills 边界收口已验证；用户已授权提交、推送并合并PR #1，正在执行发布收尾。
+用户授权的通用Agent Skills交付已推送并合并PR #1至main；发布内容与受测提交一致，完成治理收尾同步。
 
 ## 当前任务
-UNI1 doing，执行用户批准的提交/推送/PR合并；BRAND1 blocked、DPL6 doing保留，不混作本轮完成。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。
+UNI1 done（四项标准均有真实证据）；BRAND1 blocked、DPL6 doing为旧验收记录，未在本轮冒充完成。
 
 ## 已完成工作
-README、USAGE、CLIENTS 与 CLIENT_VALIDATION 第10节已统一通用Skill声明：同一SKILL.md/run.py、唯一kit.py和.agent状态来源。
-README 按用户追加要求只讲产品、安装使用与能力边界，移除验收统计与历史失败；记录留在验证文档。
-Claude、WorkBuddy 为范围外、未验证、本轮不做、非发布阻塞；不再要求登录、安装或真实工作流。
-Hook只按真实客户端和事件证据声明：Codex有正式安装与CLI启动/手动压缩/接续证据；Claude代码保留，不声明已验收。
-Cursor 3.23.12主聊天人工流程、OpenCode工作流与交替证据及限制保留；不升级为所有客户端通过。
-历史157/0、OpenCode权限拒绝、配置保持首次失败、Claude401和WorkBuddy未安装记录保留。
-本轮完整回归157通过、0失败；仅文档与治理状态变更，GOAL、SKILL.md、run.py和业务核心未改。
-三项任务的说明或验收边界及DECISIONS已通过正式程序更新；旧状态与证据未伪造完成。
+通用SKILL.md/run.py复用唯一kit.py和.agent；README只保留产品定位、安装使用与能力边界。
+CLIENTS、USAGE、CLIENT_VALIDATION第10节及决策、任务与断点已统一用户批准范围。
+Claude、WorkBuddy范围外、未验证、本轮不做、非发布阻塞；历史401和未安装记录保留。
+Hook仅按真实客户端和事件声明；Codex CLI与Cursor/OpenCode受测场景及其限制保留，不升级为全部客户端通过。
+完整自动回归157通过、0失败；GOAL和本轮业务核心未修改。
+提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送现有分支，包含README和全部已验证文档/治理状态。
+PR：https://github.com/Jakiewbe/Project-Anchor/pull/1；标题与说明已更新，Draft已解除，GitHub确认merged=true、closed。
+合并main提交4e77c0df115cdd9a2841cfd61bb267dc309d04cf；已fetch并快进核对，Git树与受测提交完全相同。
+无远端CI检查项；不把空检查列表当作通过。当前真实安装的Skill参考文档尚未更新，未擅自重装。
+本轮复盘追加到RETRO，保留既有内容；原始日志/认证/私人配置未上传。
 
 ## 当前阻塞
-当前提交/推送/PR合并已获用户授权；合并前核对PR当前头、检查和冲突，尚未宣称已合并。
-Claude、WorkBuddy不是阻塞；Codex Desktop/IDE补验与仅AGENTS.md无Skill恢复对照为可选、未要求、未验证。
-模型长期遵从未验证；旧同状态重复提交缺陷及长期/跨平台/第二台电脑缺口保留，不在本轮扩大修复。
+本轮交付无阻塞。Codex Desktop/IDE、仅AGENTS.md无Skill恢复对照可选、未要求、未验证；范围外客户端不再等待验收。
+模型长期遵从、历史同状态重复提交缺陷及BRAND1/DPL6旧缺口保留，不在本轮扩大修复或声称解决。
 
 ## 下一步动作
-提交全部已验证改动（含README），推送当前分支；更新PR #1描述，转为可审查并合并，核对远端后保存完成状态。
+本轮提交、推送与PR合并结束；后续工作须另有用户目标，不自动继续客户端登录、安装或补验。
 
 ## 状态修订
-以state.json/tasks.json为准；本轮日志在.agent/runtime/universal/scope-closeout-20261010；既有原始记录指针保留。
+以state.json/tasks.json为准；本轮证据.agent/runtime/universal/scope-closeout-20261010；旧日志指针保留。
 
 ## Git 检查
-基线8a779e4，分支feat/universal-agent-skills；已核对远端头一致，PR基线main；仅按用户授权提交/推送/合并，不新建分支/工作树、不改写历史。
+仍在既有feat/universal-agent-skills，无新分支/工作树；治理收尾按本轮授权同步main及现有分支，不强推、不改写历史。

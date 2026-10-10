@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 70,
+  "revision": 71,
   "tasks": [
     {
       "task_id": "A",
@@ -435,10 +435,32 @@
         "隔离合成项目中自动化、模拟与已有真实客户端结果分别记录；保持Cursor主聊天、OpenCode工作流、交替及旧修订证据的限制；Hook仅按真实执行客户端和事件声明；模型遵从与仅AGENTS.md无Skill恢复保持未验证，不要求每个客户端生命周期验收",
         "README、安装说明、能力矩阵和状态统一当前通用Skill范围；用户授权后提交推送、更新PR #1描述、转为可审查并合并；Claude、WorkBuddy与可选未要求的Codex Desktop/IDE不作发布阻塞"
       ],
-      "status": "doing",
-      "evidence": [],
+      "status": "done",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "docs/CLIENT_VALIDATION.md第1、10节与CLIENTS按Agent Skills规范统一发现/执行条件，Claude、WorkBuddy为范围外未验证，未升级为全客户端通过。"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": "py -3 -X utf8 -m unittest discover -s tests：157通过、0失败；日志.agent/runtime/universal/scope-closeout-20261010/unittest.txt。覆盖通用安装、所有权、恢复、中文空格路径及现有Codex回归；核心代码本轮未改。"
+        },
+        {
+          "type": "file",
+          "criterion": 3,
+          "detail": "docs/CLIENT_VALIDATION.md第5–10节保留OpenCode工作流、Cursor主聊天与交替及Codex CLI真实记录；历史失败、模型遵从、仅AGENTS.md恢复与Desktop/IDE限制保留，不要求范围外客户端验收。"
+        },
+        {
+          "type": "command",
+          "criterion": 4,
+          "detail": "用户授权后提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送，包含README和边界文档；PR #1标题/描述已更新，已从Draft转为可审查并于2026-10-10合并main，merge SHA 4e77c0df115cdd9a2841cfd61bb267dc309d04cf；GitHub确认merged=true、closed，合并树与受测提交完全相同。"
+        }
+      ],
       "blocker": "",
-      "updated_at": "2026-10-10T06:26:23.931363+00:00"
+      "updated_at": "2026-10-10T06:31:00.532636+00:00",
+      "completed_at": "2026-10-10T06:31:00.532636+00:00"
     }
   ],
   "history": [
@@ -1421,6 +1443,39 @@
         ]
       },
       "reason": "用户明确授权全部提交推送与合并PR #1（包含README），开始发布收尾"
+    },
+    {
+      "revision": 71,
+      "timestamp": "2026-10-10T06:31:00.532636+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "UNI1",
+        "status": "done",
+        "blocker": "",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "docs/CLIENT_VALIDATION.md第1、10节与CLIENTS按Agent Skills规范统一发现/执行条件，Claude、WorkBuddy为范围外未验证，未升级为全客户端通过。"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": "py -3 -X utf8 -m unittest discover -s tests：157通过、0失败；日志.agent/runtime/universal/scope-closeout-20261010/unittest.txt。覆盖通用安装、所有权、恢复、中文空格路径及现有Codex回归；核心代码本轮未改。"
+          },
+          {
+            "type": "file",
+            "criterion": 3,
+            "detail": "docs/CLIENT_VALIDATION.md第5–10节保留OpenCode工作流、Cursor主聊天与交替及Codex CLI真实记录；历史失败、模型遵从、仅AGENTS.md恢复与Desktop/IDE限制保留，不要求范围外客户端验收。"
+          },
+          {
+            "type": "command",
+            "criterion": 4,
+            "detail": "用户授权后提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送，包含README和边界文档；PR #1标题/描述已更新，已从Draft转为可审查并于2026-10-10合并main，merge SHA 4e77c0df115cdd9a2841cfd61bb267dc309d04cf；GitHub确认merged=true、closed，合并树与受测提交完全相同。"
+          }
+        ]
+      },
+      "reason": "用户批准全部提交推送与PR合并；真实远端确认完成，证据覆盖收口后的四项验收"
     }
   ]
 }
