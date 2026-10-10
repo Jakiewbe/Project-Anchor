@@ -247,3 +247,30 @@
 - Claude Code 登录与 WorkBuddy 安装仍由用户处理。
 
 PR #1 保持 Draft。
+
+## 9. Cursor 主聊天人工验收（2026-10-10）
+
+Cursor 3.23.12。用户用 `cursor -n` 在新窗口直接打开第 8.3 节的人工项目（不在本仓库工作区内），每步在该窗口的 Agent 聊天中输入；每步后由本仓库终端运行 `cursor_setup.py fp` 记录指纹（revision、任务、CURRENT 哈希、决定、hello.py、提交数）。回答与工具调用由用户转述，截图仅有斜杠菜单一张。
+
+| # | 请求 | 结果 | 指纹证据 |
+| :--- | :--- | :--- | :--- |
+| 0 | 基线 | — | initialized false |
+| 1 | 新窗口打开 | 通过 | 不变 |
+| 2 | 确认 Skill 出现 | 部分 | 斜杠菜单只出现一项 `/project-anchor`；未截 Settings 页，界面来源未确认 |
+| 3 | 未接入只读问答（反向） | 通过 | 回答 `a + b`；initialized false |
+| 4 | 自然语言启用治理 | 通过 | revision 0，新建 `.agent/`、AGENTS.md、.gitignore、.gitattributes；hello.py 不变，0 次提交 |
+| 5 | 提供并批准目标 | 通过（流程提前） | goal_approved true。Agent 未经要求建 T1 草案；用户随后另发消息批准 T1，Agent 写 `test_hello.py`（6 例，`python -m unittest` 通过）并标 done，revision 6 |
+| 6 | 显式 `/project-anchor` 添加草案（因 T1 已完成改为 T2，并要求只建不开始） | 通过 | revision 8，T2 todo；`test_hello.py` 修改时间与哈希不变 |
+| 7 | 记录 UTF-8 决定并保存断点 | 通过 | revision 10，decisions_utf8 true，CURRENT 哈希变化，T2 仍 todo |
+| 8 | 全新聊天、不点名 Skill：“继续这个项目，只读…” | 通过 | 回答含目标、T1 done、T2 草案、D1 UTF-8；指纹不变，项目内无新写入文件 |
+| 9 | 全新聊天：“add(2, 3) 等于几？只回答数字。”（反向） | 通过 | 回答 5；指纹不变，项目内无新写入文件 |
+
+第 8 步工具调用（Agent 自述，按顺序）：同时读取项目 `.agents/skills/project-anchor/SKILL.md` 并用文件搜索查找 `.agent/**`（后者报“系统找不到指定的路径”）；PowerShell `-LiteralPath` 列出 `.agent/` 并读项目 runtime.json；运行项目 Skill 的 `run.py status`，读取 GOAL、CURRENT、DECISIONS、tasks.json。未用工具读取 AGENTS.md，Agent 称项目与用户目录 AGENTS.md 已作为常驻规则注入上下文。
+
+结论与限制：
+
+- Cursor 主聊天可在新会话中不点名 Skill 恢复目标、任务和决定，且只读请求不改状态；反向请求未误触发治理。
+- 项目规则注入与 Skill 自动调用在第 8 步同时发生，**不能单独证明项目 AGENTS.md 规则足以触发恢复**；规则注入只有 Agent 自述，无界面证据。需另做只放 AGENTS.md、不放 Skill 的对照。
+- 两份同名 Skill（项目 `.agents/skills` 与用户 `~/.agents/skills`）的 SKILL.md 字节相同，界面无法区分；第 8 步实际运行项目那份 run.py 与 runtime.json（home 指向测试目录），用户级 `~/.codex` 无新写入。
+- 文件搜索异常：第 8 步在中文/空格工作区根目录查找 `.agent/**` 报错，本仓库会话无法复现（工作区路径为英文）。另在本仓库会话中对照：Glob/Grep 指定工作区外目录时（中文空格路径与纯英文路径均如此）静默返回本仓库文件、不报错，与第 5 节子代理现象一致。Skill 说明不依赖文件搜索工具，未修改。
+- 未执行：Settings → Rules/Skills 页截图；未经追加批准的 T1 草案边界（以第 6 步 T2“只建不开始”代替）。

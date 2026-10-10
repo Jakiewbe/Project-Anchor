@@ -3,17 +3,17 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 136,
+  "revision": 141,
   "task_revision": 66,
-  "current_task_revision": 65,
+  "current_task_revision": 66,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-09T16:05:17.781996+00:00",
+  "updated_at": "2026-10-10T04:59:02.281367+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "09da6b83d609c4ea97c1e9add080a5ed1efefe872ed1ab965c364bdaa3558de7",
+    "CURRENT.md": "f903c83c6e31329d62ffe90602d303cab9d16ef6c15fc35888ec6683371a0904",
     "DECISIONS.md": "0d4fcd7471cd106ae5d3397df07b17f8db4c2aaed87b5b7ad5b5ce341e387c45",
     "LESSONS.md": "6d8107a98651ebb52d105d0a093a01499cd1a2f7ed8d7ef619eaf7defbb51d3e",
     "tasks.json": "cf7f0bcc6afc9d40f445412c8f7f57fbce384b589b7b867a334d5abeca3ae5f2"
@@ -1386,6 +1386,76 @@
       "action": "task:update",
       "reason": "OpenCode复验通过、install-global完成，收窄剩余阻塞",
       "timestamp": "2026-10-09T16:05:17.781996+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "09da6b83d609c4ea97c1e9add080a5ed1efefe872ed1ab965c364bdaa3558de7",
+      "content": "# 当前断点\n\n## 当前阶段\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\n\n## 当前任务\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\n\n## 已完成工作\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\n记录在docs/CLIENT_VALIDATION.md第7、8节。\n2026-10-10：原生CLI /hooks两项已启用且Trusted；会话01a1217a-1b09-71c0-83a3-f83ad6167522完成启动/手动压缩/压缩后接续，3条Hook记录PASS。\n两次模型回答正确说明草案未批准；快照revision0与磁盘一致；原始清单在runtime/universal/codex-lifecycle-20261010。\nCLI首次后台启动失败；按客户端提示使用--no-daemon。只读status锁失败后授权一次查询；失败均保留，不算Desktop验收。\n\n## 当前阻塞\nClaude认证失败；不自行改认证。\nCodex CLI已验证；Desktop/IDE启动与压缩仍未验证；Cursor终端PATH无codex，原生查询UNVERIFIED。\nCursor主聊天/项目规则、WorkBuddy未验证。\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\n\n## 下一步动作\n向用户交付两份doctor清单，由用户写入验证记录并判断Draft；Cursor主聊天、Claude认证及WorkBuddy仍待完成。\n\n## 状态修订\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\n\n## Git 检查\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T16:29:27.222859+00:00"
+    },
+    {
+      "revision": 137,
+      "action": "state:update",
+      "reason": "按本轮真实CLI证据更新工作断点；验证记录和PR决定留给用户，保留Desktop未验证及原始失败",
+      "timestamp": "2026-10-09T16:29:27.234423+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "9e6c46954deb907c88192825c7b142fa9ade981612ca64d2b208b5f599e9faa8",
+      "content": "# 当前断点\n\n## 当前阶段\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\n\n## 当前任务\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\n\n## 已完成工作\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\n记录在docs/CLIENT_VALIDATION.md第7、8节。\n2026-10-10：原生CLI /hooks两项已启用且Trusted；会话01a1217a-1b09-71c0-83a3-f83ad6167522完成启动/手动压缩/压缩后接续，3条Hook记录PASS。\n两次模型回答正确说明草案未批准；快照revision0与磁盘一致；原始清单在runtime/universal/codex-lifecycle-20261010。\nCLI首次后台启动失败；按客户端提示使用--no-daemon。只读status锁失败后，两次状态查询分别获准；失败均保留，不算Desktop验收。\n\n## 当前阻塞\nClaude认证失败；不自行改认证。\nCodex CLI已验证；Desktop/IDE启动与压缩仍未验证；Cursor终端PATH无codex，原生查询UNVERIFIED。\nCursor主聊天/项目规则、WorkBuddy未验证。\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\n\n## 下一步动作\n向用户交付两份doctor清单，由用户写入验证记录并判断Draft；Cursor主聊天、Claude认证及WorkBuddy仍待完成。\n\n## 状态修订\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\n\n## Git 检查\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T16:30:55.548315+00:00"
+    },
+    {
+      "revision": 138,
+      "action": "state:update",
+      "reason": "自检后保留原CRLF格式，准确记录两次状态查询授权；不改目标及任务",
+      "timestamp": "2026-10-09T16:30:55.559319+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "f15255699c1eedb79c84475befc00a9cc73eb8abfe0b367f4b0db1aead636eda",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\r\n\r\n## 当前任务\r\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\r\n\r\n## 已完成工作\r\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\r\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\r\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\r\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\r\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\r\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\r\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\r\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\r\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\r\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\r\n记录在docs/CLIENT_VALIDATION.md第7、8节。\r\n2026-10-10：原生CLI /hooks两项已启用且Trusted；会话01a1217a-1b09-71c0-83a3-f83ad6167522完成启动/手动压缩/压缩后接续，3条Hook记录PASS。\r\n两次模型回答正确说明草案未批准；快照revision0与磁盘一致；原始清单在runtime/universal/codex-lifecycle-20261010。\r\nCLI首次后台启动失败；按客户端提示使用--no-daemon。只读status锁失败后，两次状态查询分别获准；失败均保留，不算Desktop验收。\r\n\r\n## 当前阻塞\r\nClaude认证失败；不自行改认证。\r\nCodex CLI已验证；Desktop/IDE启动与压缩仍未验证；Cursor终端PATH无codex，原生查询UNVERIFIED。\r\nCursor主聊天/项目规则、WorkBuddy未验证。\r\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\r\n\r\n## 下一步动作\r\n向用户交付两份doctor清单，由用户写入验证记录并判断Draft；Cursor主聊天、Claude认证及WorkBuddy仍待完成。\r\n\r\n## 状态修订\r\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\r\n\r\n## Git 检查\r\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-09T16:31:38.586136+00:00"
+    },
+    {
+      "revision": 139,
+      "action": "state:update",
+      "reason": "经Review确认file输入会转换换行；改用官方stdin输入保留原CRLF",
+      "timestamp": "2026-10-09T16:31:38.597137+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "e11fa5490110e822be2db2cc9afb03986cd0a6cedb551dc6692dcfbeb6857051",
+      "content": "# 当前断点\n\n## 当前阶段\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\n\n## 当前任务\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\n\n## 已完成工作\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\n记录在docs/CLIENT_VALIDATION.md第7、8节。\n2026-10-10：原生CLI /hooks两项已启用且Trusted；会话01a1217a-1b09-71c0-83a3-f83ad6167522完成启动/手动压缩/压缩后接续，3条Hook记录PASS。\n两次模型回答正确说明草案未批准；快照revision0与磁盘一致；原始清单在runtime/universal/codex-lifecycle-20261010。\nCLI首次后台启动失败；按客户端提示使用--no-daemon。只读status锁失败后，两次状态查询分别获准；失败均保留，不算Desktop验收。\n2026-10-10：Cursor 3.23.12主聊天人工验收9步通过（第2步来源未确认），新聊天不点名Skill恢复T1/T2/UTF-8且状态不变；记录在第9节。\n第8步规则注入与Skill调用同时发生，未单独证明项目AGENTS.md；运行的是项目级Skill。\n\n## 当前阻塞\nClaude认证失败；不自行改认证。\nCodex CLI已验证；Desktop/IDE启动与压缩仍未验证；Cursor终端PATH无codex，原生查询UNVERIFIED。\nCursor仅AGENTS.md对照、Settings页来源截图未做；WorkBuddy未验证。\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\n\n## 下一步动作\n用户要求准备推送：提交第9节与状态更新到feat/universal-agent-skills，推送前由用户确认；Claude认证及WorkBuddy仍待完成。\n\n## 状态修订\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\n\n## Git 检查\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-10T04:55:52.048134+00:00"
+    },
+    {
+      "revision": 140,
+      "action": "state:update",
+      "reason": "记录Cursor主聊天人工验收结果并准备推送",
+      "timestamp": "2026-10-10T04:55:52.064133+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "69a8faebb6a780495563d8cd3674bfa4e149f61a353cae5876d6c7f4b4bce8c2",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n通用Agent适配补充验收进行中；Draft PR #1保持，不合并或发布。\r\n\r\n## 当前任务\r\nUNI1 blocked；BRAND1 blocked、DPL6 doing保留。PR：https://github.com/Jakiewbe/Project-Anchor/pull/1。\r\n\r\n## 已完成工作\r\n原151项独立回归通过；Codex命令、runtime字节、全局模板和VERSION四项核对通过。\r\n补完整响应、全目录哈希、异常记录及失败退出码；新增6项后完整回归157通过0失败。\r\n单独模拟3通过0失败（包含在157中）；通用说明按runtime来源区分诊断参数，补plan合法值。\r\nOpenCode第7节首轮3通过1失败（读工具箱源码越界被自动拒绝），记录保留。\r\nOpenCode补充说明后新编号复验8通过0失败；任务添加全程在项目内，无权限拒绝。\r\n独立补做Codex/OpenCode交替5通过0失败；任务由程序预置，旧修订CLI拒绝且状态不变。\r\nClaude认证检查0通过1失败：一次请求连续401，120秒超时。\r\n用户授权后已备份并真实install-global：仅install.json与Skill五文件变化，AGENTS.md/hooks.json/config.toml不变；doctor 0 FAIL，原两项版本WARN消除。\r\nCursor人工项目的项目级Skill已刷新到本分支；另备Codex生命周期合成项目（路径见runtime/universal/codex_lifecycle_project.txt）。\r\nCodex自动登记临时项目造成配置首次检查失败；精确撤销后恢复，新增失败守卫。\r\n记录在docs/CLIENT_VALIDATION.md第7、8节。\r\n2026-10-10：原生CLI /hooks两项已启用且Trusted；会话01a1217a-1b09-71c0-83a3-f83ad6167522完成启动/手动压缩/压缩后接续，3条Hook记录PASS。\r\n两次模型回答正确说明草案未批准；快照revision0与磁盘一致；原始清单在runtime/universal/codex-lifecycle-20261010。\r\nCLI首次后台启动失败；按客户端提示使用--no-daemon。只读status锁失败后，两次状态查询分别获准；失败均保留，不算Desktop验收。\r\n2026-10-10：Cursor 3.23.12主聊天人工验收9步通过（第2步来源未确认），新聊天不点名Skill恢复T1/T2/UTF-8且状态不变；记录在第9节。\r\n第8步规则注入与Skill调用同时发生，未单独证明项目AGENTS.md；运行的是项目级Skill。\r\n\r\n## 当前阻塞\r\nClaude认证失败；不自行改认证。\r\nCodex CLI已验证；Desktop/IDE启动与压缩仍未验证；Cursor终端PATH无codex，原生查询UNVERIFIED。\r\nCursor仅AGENTS.md对照、Settings页来源截图未做；WorkBuddy未验证。\r\n旧同状态重复提交缺陷、长期/跨平台/第二台电脑验证仍未关闭，本轮不扩大修复。\r\n\r\n## 下一步动作\r\n用户要求准备推送：提交第9节与状态更新到feat/universal-agent-skills，推送前由用户确认；Claude认证及WorkBuddy仍待完成。\r\n\r\n## 状态修订\r\n以state.json/tasks.json为准；原始日志指针.agent/runtime/universal/independent_review_folder.txt；备份在用户目录.project-anchor-manual-backups。\r\n\r\n## Git 检查\r\n仅feat/universal-agent-skills获准提交推送及更新PR描述；不推main、无新分支/工作树。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-10T04:59:02.264367+00:00"
+    },
+    {
+      "revision": 141,
+      "action": "state:update",
+      "reason": "改用stdin输入恢复CURRENT原CRLF换行，内容不变",
+      "timestamp": "2026-10-10T04:59:02.281367+00:00"
     }
   ]
 }
