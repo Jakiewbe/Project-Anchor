@@ -1,229 +1,194 @@
 <div align="center">
   <img src="docs/assets/hero.svg" alt="Project Anchor — Keep the goal. Carry the context." width="100%">
 
-  <p><strong>让长期项目的目标、记忆和进度，有据可查。</strong></p>
+  <p><strong>让 AI 项目的目标、进度和重要决定，换个会话也能接着用。</strong></p>
   <p>File-based project memory and governance for AI agents.</p>
 
-  <a href="CHANGELOG.md"><img src="docs/assets/badge-version.svg" alt="Version 1.3.0"></a>
+  <a href="https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0"><img src="docs/assets/badge-version.svg" alt="Version 1.3.0"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-python.svg" alt="Python 3.11 or later"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-runtime.svg" alt="Python standard library runtime"></a>
   <a href="LICENSE"><img src="docs/assets/badge-license.svg" alt="MIT License"></a>
 
   <p>
-    <a href="#why">为什么需要它</a> ·
-    <a href="#architecture">工作原理</a> ·
-    <a href="#quick-start">快速开始</a> ·
+    <a href="#why">功能</a> ·
+    <a href="#quick-start">安装</a> ·
     <a href="#usage">日常使用</a> ·
-    <a href="#validation">能力边界</a>
+    <a href="#upgrade">升级</a> ·
+    <a href="#clients">客户端</a> ·
+    <a href="#docs">文档</a>
   </p>
 </div>
 
 ---
 
-Project Anchor 为 AI 辅助开发提供一套**随项目保存、可以校验、可以通过 Git 维护的工作记录**。即使对话压缩、会话更换，智能体仍能从项目文件重新读取目标、任务、决策和工作断点。
+Project Anchor 为 AI 辅助开发保留一份**随项目保存、可以校验、可以通过 Git 维护的工作记录**。目标、任务、决策和断点写入项目的 `.agent/`；会话切换或对话压缩后，智能体可以重新读取这些记录，继续已确认的工作。
 
-你表达意图，通用 Skill 选择工作流并调用同一 `kit.py`；项目状态唯一来源是 `.agent/`，项目 AGENTS.md 提供行为约定。生命周期 Hook 仅按客户端和事件的真实执行证据声明可用。
+日常用自然语言表达需求，Skill 选择流程并调用同一套 Python 程序。项目规则约束行为，支持的客户端还可通过 Hook 在启动和压缩时提醒读盘、保存已有状态。它们各有职责，文件与程序检查不能保证模型每次都正确执行。
 
-> **当前定位 · v1.3.0 · 通用 Skill 与日常使用优化**<br>
-> 提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的同一份 `SKILL.md` 与 `scripts/run.py`，共享 Python 核心和项目账本，不需要安装 Codex。兼容扫描 `.agents/skills` 及用户级同名目录、可运行本地 Python 且获得权限的 Agent 可以发现并调用；不等于所有客户端已实测。Claude、WorkBuddy 本轮范围外、未验证，不作发布阻塞；各客户端证据见[能力矩阵](#clients)。
+**当前版本：1.3.0** · [发布说明](https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0) · [更新记录](CHANGELOG.md)
 
 <a id="why"></a>
-## 为长项目保留六个锚点
+## 它能帮你做什么
 
-| 你遇到的问题 | Project Anchor 提供的机制 |
+| 长期项目中的问题 | Project Anchor 的处理方式 |
 | :--- | :--- |
-| 对话变长，项目逐渐偏离初衷 | 将目标、约束、非目标和验收条件固定在 `GOAL.md`，接续时读取最新磁盘记录 |
-| 改动不断积累，却缺少版本检查点 | 检查 Git 工作区，保留既有修改；提交、推送由用户授权 |
-| 看不清任务做到了哪里 | 用唯一任务账本保存状态、依赖和证据，生成可阅读的 `PROGRESS.md` |
-| 不知道规则和自动保存是否生效 | 用 `doctor` 分别检查文件、配置、原生发现、信任与执行记录 |
-| 规则和经验难以保存、迁移 | 使用文件、安装清单、备份和可重复安装流程；不迁移认证信息 |
-| 项目结束，走过的弯路又被遗忘 | 保存决策与已验证教训，生成复盘草案；确认后进入跨项目知识库 |
+| 换会话后忘了最初目标 | 保存目标、约束、非目标和验收条件，接续时读取最新磁盘记录 |
+| 不清楚哪些任务能开始 | 记录草案、批准、依赖和状态；明确的局部任务可以单独获批 |
+| 讨论确定了路线，却没有记录 | 在允许治理写入时保存决定与原因，并区分记录决定和实施授权 |
+| 看进度时被历史长记录淹没 | 简洁查询保留目标与断点，支持按明确任务或里程碑查看细节 |
+| 重复更新制造无效修订 | 相同内容返回 `changed=false`，保留原修订、历史和完成时间 |
+| 不确定安装与规则是否正常 | 诊断安装差异、文件完整性、Hook 配置及可核对的执行记录 |
+| 项目结束后经验又丢了 | 保存已验证的教训，生成复盘草案，经确认后进入跨项目知识库 |
 
-<a id="architecture"></a>
-## 一套核心，四种职责
-
-![Project Anchor 架构：自然语言经 Skill 调用 Python，规则与 Hook 独立协作，所有入口共享项目状态](docs/assets/architecture.svg)
-
-| 组件 | 职责 | 边界 |
-| :--- | :--- | :--- |
-| **Skill** | 理解意图、选择流程、调用程序、说明结果 | 按需使用，不要求每条回复调用 |
-| **Python 核心** | 校验、写入、任务管理、锁、事务、快照和诊断 | 所有入口复用 `kit.py`，不建立第二份账本 |
-| **AGENTS.md** | 持续约束目标、质量、授权和状态维护 | 规则是约束，不能证明模型始终遵守 |
-| **Hook** | 在已验证客户端的启动与压缩事件中运行 | 需审核当前定义；仅在真实执行证据覆盖的范围声明可用 |
-
-项目状态保存在目标项目的 `.agent/` 中：
-
-```text
-.agent/
-├── GOAL.md        已确认目标、约束、非目标与验收条件
-├── CURRENT.md     当前阶段、工作断点、阻塞与下一步
-├── DECISIONS.md   重要决定及原因
-├── LESSONS.md     有证据的经验和失败教训
-├── tasks.json     唯一任务账本
-├── PROGRESS.md    从账本生成的进度视图
-├── state.json     内容哈希、修订号与变更历史
-└── runtime/       本地日志、输入草稿和快照，不提交 Git
-```
-
-复盘时另生成 `RETRO.md` 草案。受保护状态通过程序修改；`PROGRESS.md` 是展示文件，`tasks.json` 才是任务事实来源。
+修改任务需要当前修订号，完成任务需要对应验收条件的证据。冲突、损坏和事务中断会明确报错，不自动覆盖其他会话的修改。提交、推送和知识入库由用户授权。
 
 <a id="quick-start"></a>
 ## 快速开始
 
-### 1. 安装工具箱
+主要验证环境是 **Windows + PowerShell**。准备 **Python 3.11+**、Git，以及支持 Skill 发现和本地 Python 执行的 Agent。项目运行时只依赖 Python 标准库。
 
-主要验证环境为 **Windows + PowerShell**。准备 Python **3.11+**、Git 和支持 Agent Skills、本地脚本执行的 Agent。下面先演示 Codex 集成；通用 Skill 安装见“不使用 Codex 时”，不要求客户端具有 Hook。
+### 1. 获取工具箱
 
 ```powershell
 git clone https://github.com/Jakiewbe/Project-Anchor.git
 Set-Location Project-Anchor
 py -3 --version
+py -3 kit.py --version
+```
+
+### 2. 选择一种安装方式
+
+**使用 Codex 集成：**
+
+```powershell
 py -3 kit.py install-global
 ```
 
-安装会合并全局规则、配置工具自身的 Hook，并安装用户级 Skill。管理文件更新前会校验、备份；其他 Skill 和非管理配置会保留。当前安装器不修改 `config.toml`。
-
-| 安装内容 | 默认位置 |
-| :--- | :--- |
-| 用户级 Skill | `~/.agents/skills/project-anchor/` |
-| Codex 规则与 Hook 配置 | `CODEX_HOME`；未设置时为 `~/.codex/` |
-| 安装清单、备份与运行记录 | `CODEX_HOME/codex-rules/`，保留旧标识以兼容既有安装 |
-
-工具目录需要继续保留：Skill 中的 `runtime.json` 指向实际 Python 和 `kit.py`，没有复制核心程序。移动目录或换电脑后需要重新安装。
-
-**不使用 Codex 时**，优先使用通用入口，复用同一 `kit.py` 和项目 `.agent/`：
-
-```powershell
-py -3 kit.py install-client agents   # 通用 Skill：~/.agents/skills，Cursor、OpenCode 可发现；不写规则或 Hook
-```
-
-Claude 专用安装与 Hook 适配代码保留，操作方式见[使用手册](docs/USAGE.md)；Claude、WorkBuddy 本轮不做真实客户端验收，不声明已验收，也不要求安装或登录。
-
-已用 `install-global` 安装到 `~/.agents/skills` 时，Cursor、OpenCode 可直接使用这份 Skill，不要再装 agents。同一目录只允许一个管理方，冲突时拒绝覆盖。卸载用 `uninstall-client`，中断后用 `recover --client`。细节见 [客户端机制](skills/project-anchor/references/CLIENTS.md)。
-
-### 2. 核对安装（Codex 集成另需审核 Hook）
-
-重新打开 Codex 会话，在支持 Hook 的 CLI 中输入 `/hooks`，审核当前 **SessionStart** 和 **PreCompact** 定义，然后运行：
+安装用户级 Skill、全局规则管理块和工具自身的 Hook。其他 Skill 与非管理配置会保留，不修改 `config.toml`。在支持 Hook 的 Codex CLI 中打开 `/hooks`，审核 **SessionStart**、**PreCompact** 当前定义，再检查安装：
 
 ```powershell
 py -3 kit.py doctor --native-hooks --native-skills
 ```
 
-`PASS`、`WARN`、`FAIL`、`UNVERIFIED` 分开报告。文件存在、配置完成、已信任和实际执行是不同的检查层级；出现未验证项不代表全部通过。
+**使用通用 Agent Skills 入口：**
 
-### 3. 在目标项目里开始工作
-
-打开你的**业务项目目录**，直接说：
-
-```text
-帮我初始化项目管理。
+```powershell
+py -3 kit.py install-client agents
+py -3 kit.py doctor --client agents
 ```
 
-确认目标后继续：
+这一路径安装同一份 Skill，不需要安装 Codex，也不配置客户端规则或 Hook。Agent 需支持扫描该 Skill 目录，并获得执行本地脚本的权限。
+
+> 按原使用方式选择一个管理方。Codex 集成默认安装的 Skill 也位于 `~/.agents/skills/project-anchor/`；扫描该目录的其他 Agent 可以使用同一份安装，不必再执行 `install-client agents`。同名目录归属冲突时，安装器会拒绝覆盖。
+
+Skill 的 `runtime.json` 指向实际 Python 和 `kit.py`，工具箱目录需要保留。安装路径、客户端差异和卸载方式见[使用手册](docs/USAGE.md)。诊断中的 `PASS`、`WARN`、`FAIL`、`UNVERIFIED` 分开报告；配置完成不代表实际行为已验收。
+
+### 3. 在业务项目中启用
+
+在 Agent 中打开你要处理的**业务项目目录**，说：
 
 ```text
-根据我的项目目标制定任务草案。
+在当前项目启用 Project Anchor 项目管理，保留已有工程和改动。
 ```
 
-自动选择没有确定性保证，需要时可以显式输入（Codex 用 `$project-anchor`，Claude Code、Cursor 用 `/project-anchor`，OpenCode 点名 project-anchor skill）：
+接入会创建 `.agent/`，并保留、追加 `AGENTS.md`、`.gitignore`、`.gitattributes` 中的治理约定。目标模板仍待用户确认；接入不会重建业务工程、修改依赖或自动初始化 Git。已有治理状态先读取，不重复初始化。
 
-```text
-$project-anchor 查看当前项目进度，只读，不修改。
-```
+Codex 集成的全局规则会在明确项目的首次实际工作时检查接入。通用 Skill 按用户请求和已有规则运行；只读问答、限定文件修改或明确禁止治理写入时不自动接入。不要在用户主目录、磁盘根目录或工具箱目录中初始化业务项目。
 
-安装后的全局策略会在明确项目目录首次开展实际工作时检查接入。已有治理记录先读取；只读问答、用户主目录、磁盘根目录和限定单文件工作不自动初始化。接入只创建 `.agent/` 并保留、追加治理约定，**不重建业务工程，不修改业务源码或依赖，不自动初始化 Git**。明确禁止治理写入时不接入。
+需要显式调用时，Codex 可用 `$project-anchor`；支持斜杠入口的客户端可用 `/project-anchor`，也可以直接点名技能。
 
 <a id="usage"></a>
-## 用自然语言推进项目
+## 日常怎么用
 
 ![项目工作流：确认目标，批准任务草案，实施并保留证据，保存断点并交接](docs/assets/workflow.svg)
 
-| 场景 | 你可以这样说 |
+| 你想做什么 | 可以这样说 |
 | :--- | :--- |
-| 规划 | “根据目标制定任务草案，列出依赖和验收条件。” |
-| 查看进度 | “现在项目进度如何？还有哪些阻塞？” |
-| 完成任务 | “将 T1 标记为完成，验收证据是……” |
-| 保存决定 | “记录我们刚才确定的技术路线和原因。” |
-| 检查目标 | “对照最初目标，检查当前工作是否跑偏。” |
-| 切换会话 | “整理工作状态，保存断点，准备切换会话。” |
-| 诊断环境 | “检查全局规则、Skill 和 Hook 是否正常。” |
-| 项目复盘 | “生成复盘草案，总结已验证的经验和失败原因。” |
+| 制定计划 | “根据项目目标制定任务草案，列出依赖和验收条件，先不执行。” |
+| 处理局部任务 | “本次只修复这个问题，我已批准这个范围，不扩大到其他模块。” |
+| 查看本轮进度 | “只查看里程碑 X 的任务、进度和阻塞，不修改状态。” |
+| 保存决定 | “路线确定为 JSON，记录原因；这轮先看模板，不开始实现。” |
+| 完成任务 | “将 T1 标记为完成，真实验收证据是……” |
+| 切换会话 | “保存当前断点、已确认决定和下一步，准备换会话。” |
+| 诊断或复盘 | “只检查安装与规则是否正常。”或“生成复盘草案，先不入库。” |
 
-任务草案批准后才能开始；完成需要覆盖验收条件的真实证据。顶层目标变更和跨项目知识入库需要用户确认。Python 检查证据的结构与覆盖范围，**不会替你执行验收，也不能判断模型提供的证据是否真实**。
+项目总目标与局部任务的批准分别记录。批准目标不等于要求生成计划，制定计划不等于批准实施；全部只读或限定修改文件时，不额外写治理记录。程序检查验收证据的结构与覆盖范围，真实结果仍需核对。
 
-已明确授权的局部任务可以单独处理，项目总目标待确认不会要求你重复批准同一任务。批准目标不会顺便生成计划；只看、只评估或只做计划时停在该阶段。允许治理写入时，已确认决定当回合保存；全部只读或限定修改文件时不额外写记录。
-
-日常先用简洁状态读取完整目标和断点，再按明确任务或里程碑查看细节。原查询和旧项目格式继续可用：
+排错或独立查询时，在**工具箱目录**运行以下命令，将示例路径与任务 ID 换成自己的：
 
 ```powershell
-py -3 kit.py status . --brief
-py -3 kit.py status . --brief --milestone "本轮里程碑"
-py -3 kit.py status . --task T1
+py -3 kit.py status "D:\Projects\my-app" --brief
+py -3 kit.py status "D:\Projects\my-app" --brief --milestone "本轮里程碑"
+py -3 kit.py status "D:\Projects\my-app" --task T1
 ```
 
-重复提交相同内容返回 `changed=false`，不会增加修订或重写完成时间。`doctor` 会列出待更新的技能文件，以及被修改或缺失的安装文件，便于区分升级与文件损坏。
+简洁查询保留完整目标和断点；不带 `--brief` 时可查看任务的验收条件与证据。筛选范围外的直接依赖单列，草案单独统计，不按更新时间猜测“当前任务”。
 
-### 会话变更时，记忆如何保留？
+<a id="architecture"></a>
+### 工作记录如何保留
 
-以下 Hook 行为只适用于有对应真实执行证据的客户端；通用 Skill 与项目规则要求接续时读取状态，不承诺生命周期自动化。
+![Project Anchor 架构：Skill 调用 Python 核心，规则与 Hook 独立协作，共享项目状态](docs/assets/architecture.svg)
 
-- **重要决定发生时**：由智能体识别，并通过程序保存到 `DECISIONS.md`；Hook 无法读取和判断未落盘的聊天决定。
-- **压缩前**：受信的 `PreCompact` 保存已经落盘的项目状态快照。
-- **启动、恢复或压缩后**：`SessionStart` 提醒读取当前磁盘状态；内容审核有效时才注入项目摘要。
-- **继续工作时**：以最新项目文件为准；快照用于检查，不自动覆盖当前状态。
+| 组件 | 职责 |
+| :--- | :--- |
+| **Skill** | 理解当前意图、选择治理流程、调用程序 |
+| **Python 核心** | 校验修订和状态，执行锁、事务、快照及诊断 |
+| **项目规则** | 约束范围、授权和状态维护 |
+| **Hook** | 在已有支持与执行证据的客户端事件中运行 |
 
-Hook 绑定会话工作目录。在 A 项目的会话里处理 B 项目，不能据此认定 B 的生命周期保护已执行。模型自动选择 Skill、及时记录决定以及长期遵守规则，仍需要实际使用检验。
+项目的 `.agent/` 保存 `GOAL.md`（目标）、`CURRENT.md`（断点）、`DECISIONS.md`（决定）、`LESSONS.md`（教训）和唯一任务账本 `tasks.json`。`PROGRESS.md` 由账本生成，`state.json` 保存哈希与修订；运行日志和快照位于不提交 Git 的 `runtime/`。
+
+重要决定需先通过程序保存，Hook 无法恢复尚未落盘的聊天决定。压缩前的快照只保存已有状态；接续时以当前磁盘记录为准，不自动用旧快照覆盖新状态。Hook 绑定会话工作目录，不能把 A 项目的事件当成 B 项目的保护已执行。
+
+<a id="upgrade"></a>
+## 更新已有安装
+
+在工作区干净的工具箱 `main` 分支中获取更新：
+
+```powershell
+git status --short
+git pull --ff-only origin main
+```
+
+随后重新执行首次安装时选择的**同一条安装命令**：Codex 集成用 `py -3 kit.py install-global`，通用入口用 `py -3 kit.py install-client agents`，再运行对应的 `doctor`。移动目录或换电脑后，也需要重新安装定位信息。
+
+**升级到 1.3.0 不需要迁移旧项目。** 默认 `status`、原 `PROGRESS.md` 统计口径和 `schema 1` 保持兼容。安装器校验管理文件并创建更新备份；遇到人工修改或归属冲突时停止，不覆盖。Hook 当前定义的信任仍通过客户端原生入口核对。
+
+固定版本可从 [v1.3.0 发布页](https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0)获取源码；各版本变化见 [CHANGELOG](CHANGELOG.md)。
 
 <a id="clients"></a>
-## 客户端与入口
+## 客户端与能力边界
 
-优先使用通用 Skill；客户端特定能力复用同一核心和项目状态。
-
-| 入口 | 接续方式 | 能力边界 |
+| 入口 | 安装与接续方式 | 范围 |
 | :--- | :--- | :--- |
-| 通用 Agent Skills | 同一 Skill 调用 `kit.py`，读取项目 `.agent/` | Agent 需支持 Skill 发现、本地 Python 执行及相应权限 |
-| Codex 集成 | Skill、全局与项目 AGENTS.md、生命周期 Hook | Hook 仅按真实执行证据声明；不承诺 Desktop/IDE 的生命周期效果 |
-| Cursor / OpenCode | 通用 Skill 加项目 AGENTS.md | 本工具不配置其生命周期 Hook |
-| Claude / WorkBuddy | 保留相关适配代码与安装能力 | 本轮范围外、未验证，不作发布阻塞 |
-
-安装目录和机制差异见[客户端机制](skills/project-anchor/references/CLIENTS.md)。
+| 通用 Agent Skills | 同一 Skill 调用 `kit.py`，读取 `.agent/` | 需支持 Skill 发现、本地 Python 执行及相应权限 |
+| Codex 集成 | `install-global`，Skill、规则和 Hook | 生命周期能力按真实客户端和事件证据声明 |
+| Cursor / OpenCode | 通用 Skill 与项目规则 | 本工具不配置其生命周期 Hook；效果以对应验证记录为准 |
+| Claude Code | 已提供 `install-client claude` 专用入口 | 真实客户端未完整验证，具体安装见使用手册 |
+| WorkBuddy | 通用 Skill 入口 | 发现目录与脚本权限需按客户端确认，未完成真实验收 |
 
 <a id="validation"></a>
-## 能力边界
+自动选择 Skill、及时保存决定和长期遵守规则仍依赖 Agent 的实际行为。文件存在、Hook 配置、信任、脚本执行和模型遵从是不同层级；不能将一项通过扩大为所有客户端、Desktop/IDE 或多轮压缩均可靠。详细机制见[客户端说明](skills/project-anchor/references/CLIENTS.md)，具体证据见下方验证文档。
 
-- 不保证所有 Agent 永久遵守规则，或每次都自动选择 Skill、及时保存决定。
-- 项目 AGENTS.md 提供行为约定，不单独承诺没有 Skill 也能自动恢复项目状态。
-- Hook 需要当前定义受信，并以真实客户端和事件证据为准；未验证能力不作为可用性承诺。
-
-## 文档与源码导航
+<a id="docs"></a>
+## 文档与开发
 
 | 文档 | 内容 |
 | :--- | :--- |
-| [使用与维护手册](docs/USAGE.md) | CLI 示例、任务证据、快照、备份、迁移、卸载和恢复 |
-| [Skill 工作流](skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](skills/project-anchor/references/COMMANDS.md) | 自然语言意图到正式程序的执行路径 |
-| [客户端机制](skills/project-anchor/references/CLIENTS.md) · [通用适配验证](docs/CLIENT_VALIDATION.md) | 各客户端安装位置、规则与生命周期差异，及验证证据 |
-| [架构说明](docs/ARCHITECTURE.md) · [故障排查](docs/TROUBLESHOOTING.md) | 实现约束与错误处理 |
-| [验证记录](docs/VALIDATION.md) · [Skill 验证](docs/SKILL_VALIDATION.md) · [冒烟检查](SMOKE_TEST.md) | 不同阶段的测试方法与证据 |
+| [发布说明](https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0) · [更新记录](CHANGELOG.md) | 当前版本及历史变化 |
+| [使用手册](docs/USAGE.md) | 安装、任务证据、备份、迁移、卸载和恢复 |
+| [Skill 工作流](skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](skills/project-anchor/references/COMMANDS.md) | 自然语言流程与命令输入 |
+| [1.3.0 验证记录](docs/ITERATION_1_3_VALIDATION.md) · [客户端验证](docs/CLIENT_VALIDATION.md) | 实测范围、失败与未验证事项 |
+| [架构说明](docs/ARCHITECTURE.md) · [故障排查](docs/TROUBLESHOOTING.md) | 实现约束及错误处理 |
+| [冒烟检查](SMOKE_TEST.md) | 规则或客户端变更后的核对方法 |
 
-```text
-kit.py                    唯一 CLI 入口
-core/                     状态、任务、事务、安装与诊断
-skills/project-anchor/    Skill、参考资料与轻量执行入口
-global/AGENTS.md           全局行为约定
-project-template/         项目治理模板
-hooks/                    Codex 与 Claude Code 共用的生命周期脚本
-knowledge/                经确认的跨项目知识
-tests/                    自动测试与客户端验收工具
-docs/                     使用、架构、验证与排错文档
-```
-
-运行自动回归：
+所有入口复用 `kit.py` 和 `core/`，Skill 位于 `skills/project-anchor/`，自动化检查在 `tests/`。运行回归：
 
 ```powershell
 py -3 -X utf8 -m unittest discover -s tests -q
 ```
 
-提交前检查差异、执行相关检查，并保留失败证据。运行时日志、快照、认证信息和密钥不应提交。兼容 Agent Skills 发现与本地脚本执行的 Agent 可使用同一通用入口；客户端实际效果仅按已记录证据声明，不承诺所有 Agent 永久遵守规则。
+开发改动需检查差异并执行相关验证。认证信息、密钥、原始会话日志和本地运行数据不应提交。
 
 ## 许可证
 
