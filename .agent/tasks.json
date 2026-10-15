@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 75,
+  "revision": 78,
   "tasks": [
     {
       "task_id": "A",
@@ -501,6 +501,34 @@
       "blocker": "",
       "updated_at": "2026-10-15T06:07:17.616968+00:00",
       "completed_at": "2026-10-15T06:07:17.616968+00:00"
+    },
+    {
+      "task_id": "REL130",
+      "title": "发布1.3.0更新说明",
+      "plan": "approved",
+      "milestone": "1.3.0 发布说明",
+      "description": "用户要求发布更新说明；在GitHub创建v1.3.0 Release，固定到已验证提交5cc849b，不合并PR或main，不覆盖既有发布/标签。",
+      "acceptance_criteria": [
+        "说明与真实改动、兼容范围和验证结果一致，未验证及客户端失败边界清楚",
+        "GitHub发布成功，读回说明、发布状态、标签与目标提交一致"
+      ],
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "GitHub v1.3.0说明基于CHANGELOG.md、docs/ITERATION_1_3_VALIDATION.md和已验证源码；包括授权/阶段、决定保存、无变化写入、简洁查询、安装差异和兼容范围。174/0、原生3/0、格式1/0与真实对话失败边界分别保留，未宣称长期或全客户端通过。"
+        },
+        {
+          "type": "command",
+          "criterion": 2,
+          "detail": "https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0；release id413477248，draft=false、prerelease=false；发布后API读回body一致，SHA256=070efb6a38a285e1c48679112a40439cf9626e9d49ca76657d01d8e3a7fd4f1a；v1.3.0标签指向5cc849b87d39b49cafeddc7f94b918686199e46a。未合并PR/main；本机证据.agent/runtime/release-1.3.0/result.json。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-15T06:19:07.905074+00:00",
+      "completed_at": "2026-10-15T06:19:07.905074+00:00"
     }
   ],
   "history": [
@@ -1603,6 +1631,55 @@
         ]
       },
       "reason": "代码、限定客户端验证、本机安装及GitHub可审查交付均已有对应真实证据"
+    },
+    {
+      "revision": 76,
+      "timestamp": "2026-10-15T06:18:14.755968+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "REL130",
+        "title": "发布1.3.0更新说明",
+        "plan": "approved",
+        "milestone": "1.3.0 发布说明",
+        "description": "用户要求发布更新说明；在GitHub创建v1.3.0 Release，固定到已验证提交5cc849b，不合并PR或main，不覆盖既有发布/标签。",
+        "acceptance_criteria": [
+          "说明与真实改动、兼容范围和验证结果一致，未验证及客户端失败边界清楚",
+          "GitHub发布成功，读回说明、发布状态、标签与目标提交一致"
+        ]
+      },
+      "reason": "用户明确要求发布更新说明"
+    },
+    {
+      "revision": 77,
+      "timestamp": "2026-10-15T06:18:15.058182+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "REL130",
+        "status": "doing"
+      },
+      "reason": "已核对源码与原始验收记录，GitHub无现有发布及同名标签"
+    },
+    {
+      "revision": 78,
+      "timestamp": "2026-10-15T06:19:07.905074+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "REL130",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": "GitHub v1.3.0说明基于CHANGELOG.md、docs/ITERATION_1_3_VALIDATION.md和已验证源码；包括授权/阶段、决定保存、无变化写入、简洁查询、安装差异和兼容范围。174/0、原生3/0、格式1/0与真实对话失败边界分别保留，未宣称长期或全客户端通过。"
+          },
+          {
+            "type": "command",
+            "criterion": 2,
+            "detail": "https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0；release id413477248，draft=false、prerelease=false；发布后API读回body一致，SHA256=070efb6a38a285e1c48679112a40439cf9626e9d49ca76657d01d8e3a7fd4f1a；v1.3.0标签指向5cc849b87d39b49cafeddc7f94b918686199e46a。未合并PR/main；本机证据.agent/runtime/release-1.3.0/result.json。"
+          }
+        ]
+      },
+      "reason": "更新说明已公开发布并读回核对正文、标签、提交和状态"
     }
   ]
 }

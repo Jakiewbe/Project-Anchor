@@ -69,3 +69,7 @@ UNI1按收口后的标准和真实证据登记done；BRAND1与DPL6的旧验收�
 
 ## 2026-10-15：1.3.0本机与GitHub交付完成
 本机安装1.3.0完成，原配置/信任/Hook组、其他Skill及六业务项目保留。代码提交b65d758已推送既有分支并创建可审查PR #2：https://github.com/Jakiewbe/Project-Anchor/pull/2；GitHub确认open、非draft、mergeable=true，远端head与本地一致。未合并main、未创建分支/worktree、未改写历史。ITER1按四项标准和公开验证文档登记完成；自动174/0、原生3/0、真实Codex完整回合4/1及OpenCode401阶段0/5分别保留。statuses为空不代表CI通过。第二轮和历史任务不自动继续，原始日志/配置/临时依赖不上传。
+
+
+## 2026-10-15：发布v1.3.0更新说明
+用户要求发布更新说明。预检仓库无既有Release及v1.3.0标签后，正式发布 https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0（id413477248，非草稿、非预发布），标签固定至已验证提交5cc849b。正文与标签已API读回核对。说明明确PR #2尚未合并main、旧项目兼容及客户端验证限制；不把发布说明当作合并授权。没有覆盖发布、修改凭据或改动源码；REL130有证据后登记完成。
