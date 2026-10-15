@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 78,
+  "revision": 81,
   "tasks": [
     {
       "task_id": "A",
@@ -529,6 +529,40 @@
       "blocker": "",
       "updated_at": "2026-10-15T06:19:07.905074+00:00",
       "completed_at": "2026-10-15T06:19:07.905074+00:00"
+    },
+    {
+      "task_id": "MAIN130",
+      "title": "合并1.3.0到main并优化README",
+      "plan": "approved",
+      "milestone": "1.3.0 main与产品说明",
+      "description": "用户明确要求将更新合并main并优化README。已按固定head合并PR#2；随后仅修改README和必要治理状态，直接同步main，不新增分支/worktree、不改变已发布标签。",
+      "acceptance_criteria": [
+        "PR#2真实合并main并与本地同步，合并树与已验证提交一致",
+        "README保持产品介绍、安装使用及真实能力边界，1.3.0发布/升级/验证入口清楚，内容和链接检查通过",
+        "README及收尾记录已提交到main，远端内容与本地一致"
+      ],
+      "status": "done",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "command",
+          "criterion": 1,
+          "detail": "GitHub确认PR#2 merged=true、closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地ff-only同步且git diff 9f43513 HEAD合并树为空，原自动174/0代码保持不变。"
+        },
+        {
+          "type": "review",
+          "criterion": 2,
+          "detail": "README产品说明精简为195行；保留横幅、7个图片和旧锚点，理顺Codex/通用安装、业务项目启用、查询路径与升级步骤，新增1.3.0发布/验证导航，保留真实客户端边界、不放验收统计。检查11通过0失败，GitHub官方Markdown渲染5表/7图/7二级标题/8代码块；示例命令符合实际parser。首次脚本标题数量误写8已纠正为源文档真实7，原始结果保留于.agent/runtime/readme-main-20261015。HTML结构已核对，不声称像素截图验收。"
+        },
+        {
+          "type": "command",
+          "criterion": 3,
+          "detail": "README提交87aa54bfefeab3d5b04b3a4574723283d8363792已推送main，ls-remote SHA一致；GitHub读取main/README.md的blob SHA414b3112376cf99969b8f53323340c4ccab5403a与本地hash-object一致，链接https://github.com/Jakiewbe/Project-Anchor/blob/main/README.md。未改代码/安装/标签，无新分支/worktree。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-15T06:31:48.753011+00:00",
+      "completed_at": "2026-10-15T06:31:48.753011+00:00"
     }
   ],
   "history": [
@@ -1680,6 +1714,61 @@
         ]
       },
       "reason": "更新说明已公开发布并读回核对正文、标签、提交和状态"
+    },
+    {
+      "revision": 79,
+      "timestamp": "2026-10-15T06:26:46.393892+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "MAIN130",
+        "title": "合并1.3.0到main并优化README",
+        "plan": "approved",
+        "milestone": "1.3.0 main与产品说明",
+        "description": "用户明确要求将更新合并main并优化README。已按固定head合并PR#2；随后仅修改README和必要治理状态，直接同步main，不新增分支/worktree、不改变已发布标签。",
+        "acceptance_criteria": [
+          "PR#2真实合并main并与本地同步，合并树与已验证提交一致",
+          "README保持产品介绍、安装使用及真实能力边界，1.3.0发布/升级/验证入口清楚，内容和链接检查通过",
+          "README及收尾记录已提交到main，远端内容与本地一致"
+        ]
+      },
+      "reason": "用户明确要求合并main并优化README"
+    },
+    {
+      "revision": 80,
+      "timestamp": "2026-10-15T06:26:46.644258+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "MAIN130",
+        "status": "doing"
+      },
+      "reason": "PR#2已合并且本地快进，开始优化产品说明"
+    },
+    {
+      "revision": 81,
+      "timestamp": "2026-10-15T06:31:48.753011+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "MAIN130",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "command",
+            "criterion": 1,
+            "detail": "GitHub确认PR#2 merged=true、closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地ff-only同步且git diff 9f43513 HEAD合并树为空，原自动174/0代码保持不变。"
+          },
+          {
+            "type": "review",
+            "criterion": 2,
+            "detail": "README产品说明精简为195行；保留横幅、7个图片和旧锚点，理顺Codex/通用安装、业务项目启用、查询路径与升级步骤，新增1.3.0发布/验证导航，保留真实客户端边界、不放验收统计。检查11通过0失败，GitHub官方Markdown渲染5表/7图/7二级标题/8代码块；示例命令符合实际parser。首次脚本标题数量误写8已纠正为源文档真实7，原始结果保留于.agent/runtime/readme-main-20261015。HTML结构已核对，不声称像素截图验收。"
+          },
+          {
+            "type": "command",
+            "criterion": 3,
+            "detail": "README提交87aa54bfefeab3d5b04b3a4574723283d8363792已推送main，ls-remote SHA一致；GitHub读取main/README.md的blob SHA414b3112376cf99969b8f53323340c4ccab5403a与本地hash-object一致，链接https://github.com/Jakiewbe/Project-Anchor/blob/main/README.md。未改代码/安装/标签，无新分支/worktree。"
+          }
+        ]
+      },
+      "reason": "合并、README验证和远端main内容均已核对"
     }
   ]
 }
