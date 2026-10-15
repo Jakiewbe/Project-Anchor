@@ -23,7 +23,8 @@ def main():
         version = subprocess.run([str(interpreter), "-X", "utf8", str(kit), "--version"],
                                  capture_output=True, encoding="utf-8", timeout=10)
         if version.returncode or version.stdout.strip() != runtime["version"]:
-            raise ValueError("安装定位版本与实际工具箱不同，请重新运行原安装命令")
+            raise ValueError(f"安装版本 {runtime['version']} 与工具箱版本 {version.stdout.strip() or '查询失败'} 不同；"
+                             "先用 runtime.json 指定的 Python/kit 运行 doctor 查看差异，再执行原安装命令")
         if len(sys.argv) > 1 and sys.argv[1] == "--locate":
             print(json.dumps(runtime, ensure_ascii=False))
             return 0

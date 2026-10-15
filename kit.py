@@ -18,6 +18,7 @@ from core.diagnostics import doctor
 from core.memory import (doc_change, init_project, knowledge_add, load, paths,
                          project_root, rebuild, retro, snapshot, snapshot_check,
                          task_change, git_info, rename_project)
+from core.tasks import task_view
 
 
 def parser():
@@ -61,6 +62,9 @@ def parser():
     child = sub.add_parser("status")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--rebuild", action="store_true")
+    child.add_argument("--brief", action="store_true", help="保留完整目标和断点，仅省略任务长证据与描述")
+    child.add_argument("--task", action="append", metavar="ID", help="按明确任务 ID 查询，可重复")
+    child.add_argument("--milestone", help="按里程碑精确查询；不猜测本轮任务")
     child = sub.add_parser("snapshot")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--session-id", default="manual")
@@ -203,6 +207,8 @@ def main(argv=None):
         else:
             root = project_root(args.path)
             if args.command == "status":
+                if args.rebuild and (args.task or args.milestone is not None):
+                    raise KitError("筛选查询不能重建全项目进度；请单独执行 status PATH --rebuild")
                 if args.rebuild:
                     rebuild(root)
                 _, lock, _ = paths(root)
@@ -213,19 +219,25 @@ def main(argv=None):
                           "current_stale": state["current_task_revision"] != ledger["revision"],
                           "task_revision": ledger["revision"], "tasks": ledger["tasks"],
                           "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root)}
+                if args.brief or args.task or args.milestone is not None:
+                    selected, summary, external = task_view(ledger, args.brief, args.task, args.milestone)
+                    result.update(tasks=selected, summary=summary, external_dependencies=external,
+                                  selection={"task_ids": args.task or [], "milestone": args.milestone})
             elif args.command == "snapshot":
                 result = snapshot_check(root, args.check) if args.check else {"snapshot": str(snapshot(root, args.session_id))}
             elif args.command == "retro":
                 result = {"retro": str(retro(root))}
             elif args.command == "task":
                 payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
-                result = {"revision": task_change(root, args.expected_revision, args.action, payload, args.reason)}
+                revision = task_change(root, args.expected_revision, args.action, payload, args.reason)
+                result = {"revision": revision, "changed": revision != args.expected_revision}
             elif args.command == "rename-project":
                 result = {"revision": rename_project(root, args.expected_revision, args.name, args.reason)}
             elif args.command == "state":
                 value = sys.stdin.buffer.read().decode("utf-8-sig") if args.text_input else Path(args.file).read_text(encoding="utf-8-sig")
-                result = {"revision": doc_change(root, args.expected_revision, args.document, value, args.reason,
-                                                args.approved, args.action == "adopt")}
+                revision = doc_change(root, args.expected_revision, args.document, value, args.reason,
+                                      args.approved, args.action == "adopt")
+                result = {"revision": revision, "changed": revision != args.expected_revision}
             elif args.command == "trust-project":
                 if args.client == "claude":
                     from core.clients import client_home, client_locations

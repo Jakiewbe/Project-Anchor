@@ -4,7 +4,7 @@
   <p><strong>让长期项目的目标、记忆和进度，有据可查。</strong></p>
   <p>File-based project memory and governance for AI agents.</p>
 
-  <a href="docs/RENAME_VALIDATION.md"><img src="docs/assets/badge-version.svg" alt="Version 1.2.0"></a>
+  <a href="CHANGELOG.md"><img src="docs/assets/badge-version.svg" alt="Version 1.3.0"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-python.svg" alt="Python 3.11 or later"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-runtime.svg" alt="Python standard library runtime"></a>
   <a href="LICENSE"><img src="docs/assets/badge-license.svg" alt="MIT License"></a>
@@ -24,7 +24,7 @@ Project Anchor 为 AI 辅助开发提供一套**随项目保存、可以校验�
 
 你表达意图，通用 Skill 选择工作流并调用同一 `kit.py`；项目状态唯一来源是 `.agent/`，项目 AGENTS.md 提供行为约定。生命周期 Hook 仅按客户端和事件的真实执行证据声明可用。
 
-> **当前定位 · v1.2.0 + 通用 Skill 适配**<br>
+> **当前定位 · v1.3.0 · 通用 Skill 与日常使用优化**<br>
 > 提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的同一份 `SKILL.md` 与 `scripts/run.py`，共享 Python 核心和项目账本，不需要安装 Codex。兼容扫描 `.agents/skills` 及用户级同名目录、可运行本地 Python 且获得权限的 Agent 可以发现并调用；不等于所有客户端已实测。Claude、WorkBuddy 本轮范围外、未验证，不作发布阻塞；各客户端证据见[能力矩阵](#clients)。
 
 <a id="why"></a>
@@ -150,6 +150,18 @@ $project-anchor 查看当前项目进度，只读，不修改。
 | 项目复盘 | “生成复盘草案，总结已验证的经验和失败原因。” |
 
 任务草案批准后才能开始；完成需要覆盖验收条件的真实证据。顶层目标变更和跨项目知识入库需要用户确认。Python 检查证据的结构与覆盖范围，**不会替你执行验收，也不能判断模型提供的证据是否真实**。
+
+已明确授权的局部任务可以单独处理，项目总目标待确认不会要求你重复批准同一任务。批准目标不会顺便生成计划；只看、只评估或只做计划时停在该阶段。允许治理写入时，已确认决定当回合保存；全部只读或限定修改文件时不额外写记录。
+
+日常先用简洁状态读取完整目标和断点，再按明确任务或里程碑查看细节。原查询和旧项目格式继续可用：
+
+```powershell
+py -3 kit.py status . --brief
+py -3 kit.py status . --brief --milestone "本轮里程碑"
+py -3 kit.py status . --task T1
+```
+
+重复提交相同内容返回 `changed=false`，不会增加修订或重写完成时间。`doctor` 会列出待更新的技能文件，以及被修改或缺失的安装文件，便于区分升级与文件损坏。
 
 ### 会话变更时，记忆如何保留？
 

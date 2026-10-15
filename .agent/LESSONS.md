@@ -26,3 +26,6 @@
 
 
 - 2026-10-09独立复核：Codex原生CLI即使关闭Hook并用ephemeral，仍自动向用户config.toml添加合成项目的信任表。不能把未执行install-global等同配置从未变化。本轮11文件首次比较发现该项，删除唯一新增表的候选字节与初始完整SHA-256一致后精确撤销，最终11哈希相同；保留首次失败，测试器新增配置哈希变化即失败的守卫，不自行覆盖未知修改。证据：本机独立复核config-restore-plan/result和comparison-before-restore，最终156回归通过。
+
+
+- 2026-10-15：相同值比较不能代替输入校验；Python中True/1.0可与整数1相等，证据序号仍须严格为整数。重复更新先验证候选任务再判无变化，174回归包含该边界；筛选与重建组合在写入前拒绝。真实客户端需同时核对文件和成功回合：本轮仅草案已保存但最终额度限制turn.failed，保留失败，不因文件正确而计完整通过。证据docs/ITERATION_1_3_VALIDATION.md与tests/test_iteration.py。

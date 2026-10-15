@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 71,
+  "revision": 74,
   "tasks": [
     {
       "task_id": "A",
@@ -461,6 +461,40 @@
       "blocker": "",
       "updated_at": "2026-10-10T06:31:00.532636+00:00",
       "completed_at": "2026-10-10T06:31:00.532636+00:00"
+    },
+    {
+      "task_id": "ITER1",
+      "title": "第一轮日常使用优化与GitHub更新",
+      "plan": "approved",
+      "milestone": "1.3.0 日常使用优化",
+      "description": "用户批准上一轮六项方案；保留旧项目格式，在既有分支开发、验证、更新本机安装并推送可审查PR；第二轮写入接口和证据格式不做。",
+      "acceptance_criteria": [
+        "无变化不写入且保留冲突、任务约束和事务保护；新旧查询与旧项目兼容测试通过",
+        "阶段与局部授权、决定保存说明已精简并完成隔离行为验证，如实记录限制",
+        "版本、文档、安装差异说明同步；本机升级保留用户配置及其他Skill",
+        "已审查相关改动、推送现有分支并在GitHub提供可审查结果"
+      ],
+      "status": "doing",
+      "dependencies": [],
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "tests/test_iteration.py新增17项；完整174通过0失败。原始日志.agent/runtime/iteration-20261015/unittest-final-174.txt；默认status/schema1/PROGRESS口径兼容，冲突与事务保护保留。"
+        },
+        {
+          "type": "review",
+          "criterion": 2,
+          "detail": "docs/ITERATION_1_3_VALIDATION.md：技能入口精简并区分阶段、局部授权及决定保存；Codex完整回合4通过1失败，末项quota导致turn.failed；OpenCode0通过5失败(401阶段)，不计行为验收。"
+        },
+        {
+          "type": "test",
+          "criterion": 3,
+          "detail": "1.3.0版本/文档同步，原安装器正式更新；配置、信任、Hook组、114个其他Skill文件和六业务项目哈希保留；正式查询入口成功。doctor25通过0失败0警告4未验证，见本机installation-result.json与公开验证文档。"
+        }
+      ],
+      "blocker": "",
+      "updated_at": "2026-10-15T06:04:54.125853+00:00"
     }
   ],
   "history": [
@@ -1476,6 +1510,61 @@
         ]
       },
       "reason": "用户批准全部提交推送与PR合并；真实远端确认完成，证据覆盖收口后的四项验收"
+    },
+    {
+      "revision": 72,
+      "timestamp": "2026-10-15T01:25:14.101247+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "ITER1",
+        "title": "第一轮日常使用优化与GitHub更新",
+        "plan": "approved",
+        "milestone": "1.3.0 日常使用优化",
+        "description": "用户批准上一轮六项方案；保留旧项目格式，在既有分支开发、验证、更新本机安装并推送可审查PR；第二轮写入接口和证据格式不做。",
+        "acceptance_criteria": [
+          "无变化不写入且保留冲突、任务约束和事务保护；新旧查询与旧项目兼容测试通过",
+          "阶段与局部授权、决定保存说明已精简并完成隔离行为验证，如实记录限制",
+          "版本、文档、安装差异说明同步；本机升级保留用户配置及其他Skill",
+          "已审查相关改动、推送现有分支并在GitHub提供可审查结果"
+        ]
+      },
+      "reason": "用户要求按照评估方案修改并更新GitHub"
+    },
+    {
+      "revision": 73,
+      "timestamp": "2026-10-15T01:25:14.308408+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "ITER1",
+        "status": "doing"
+      },
+      "reason": "开始执行用户批准的第一轮迭代"
+    },
+    {
+      "revision": 74,
+      "timestamp": "2026-10-15T06:04:54.125853+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "ITER1",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "tests/test_iteration.py新增17项；完整174通过0失败。原始日志.agent/runtime/iteration-20261015/unittest-final-174.txt；默认status/schema1/PROGRESS口径兼容，冲突与事务保护保留。"
+          },
+          {
+            "type": "review",
+            "criterion": 2,
+            "detail": "docs/ITERATION_1_3_VALIDATION.md：技能入口精简并区分阶段、局部授权及决定保存；Codex完整回合4通过1失败，末项quota导致turn.failed；OpenCode0通过5失败(401阶段)，不计行为验收。"
+          },
+          {
+            "type": "test",
+            "criterion": 3,
+            "detail": "1.3.0版本/文档同步，原安装器正式更新；配置、信任、Hook组、114个其他Skill文件和六业务项目哈希保留；正式查询入口成功。doctor25通过0失败0警告4未验证，见本机installation-result.json与公开验证文档。"
+          }
+        ]
+      },
+      "reason": "登记已完成的代码、行为范围与本机安装证据，GitHub交付仍进行中"
     }
   ]
 }

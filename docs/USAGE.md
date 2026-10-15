@@ -2,7 +2,7 @@
 
 [返回项目首页](../README.md) · [工作流参考](../skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](../skills/project-anchor/references/COMMANDS.md)
 
-适用版本：Project Anchor 1.2.0 及通用 Skill 适配。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+适用版本：Project Anchor 1.3.0。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
 
 产品提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用 `SKILL.md` 与 `scripts/run.py`，始终调用同一 `kit.py`，项目状态唯一来源为 `.agent/`。兼容扫描 `.agents/skills` 及用户级同名目录、可执行本地 Python 且获得权限的 Agent 可以发现并调用；不要求逐个客户端完成生命周期验收。当前证据和范围以 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout) 为准。
 
@@ -75,6 +75,19 @@ Linux/macOS/WSL 使用 Python 3.11+ 的 `python3 kit.py ...`。每个环境各�
 
 日常主要用 `status`、`task`、`state`，里程碑可用 `snapshot`，收尾用 `retro`。所有任务与状态修改必须带 `status` 显示的**项目 revision**，不是 task_revision；过期修订会拒绝写入。
 
+先按用户请求判断阶段。已明确批准的局部任务可单独登记执行，description 和 reason 记录其范围，不要求先批准项目总目标；全项目规划仍须确认总目标。只批准目标不自动生成计划，只计划不执行，全部只读不写治理记录。决定已确认且允许治理写入时当回合保存，不把“先看模板”当作允许实施。
+
+简洁与筛选查询都是只读，保留完整 GOAL/CURRENT，不靠更新时间猜测当前任务：
+
+```powershell
+py -3 $kit status $project --brief
+py -3 $kit status $project --brief --milestone "v1"
+py -3 $kit status $project --task T1 --task T2
+```
+
+--brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 返回结构及原 PROGRESS 完成率保持不变，旧项目不需要迁移。
+筛选查询不允许 --rebuild；重建全项目进度单独执行原命令，失败查询不会顺便修复视图。
+
 先确认真实目标。复制 .agent/GOAL.md 到一个编辑文件，填写所有章节，取得用户批准后保存：
 
 ```powershell
@@ -130,6 +143,8 @@ py -3 $kit status $project
 以上证据文字是格式示例，必须替换为实际结果。证据类型可为 test、file、review、manual、command；每条必须有 detail 和对应验收标准的 criterion（从 1 开始）。**程序校验证据结构和覆盖范围，不会代替用户执行或判断实际验收。** 禁止用虚构记录标记 done。
 
 状态转移：todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing（清空旧证据重新验收）；cancelled → todo。草案不能 doing/done，依赖全部 done 才可开始/完成；blocked 需要 blocker。所有变更保存原因和历史，取消代替物理删除。
+
+task/state 输出额外的 changed 字段。相同内容且元数据已同步时为 `changed=false`，不写文件、不增加修订、不改变完成时间。旧修订和未授权 GOAL 请求仍拒绝；CURRENT 内容相同但需要同步任务修订、GOAL 首次批准以及外部编辑登记仍可能写入。BOM/CRLF 相同文本保留原字节，不为了统一编码制造更新。
 
 重要进展后及时更新 CURRENT，重要决策更新 DECISIONS，已验证教训更新 LESSONS：
 
