@@ -157,7 +157,7 @@ def init_project(path, name, git_init=False, snapshot_keep=20, log_max_bytes=655
 
 def _revision(state, expected):
     if state["revision"] != expected:
-        raise KitError(f"修订冲突: 当前 {state['revision']}，请求 {expected}")
+        raise KitError(f"修订冲突: 当前 {state['revision']}，请求 {expected}；本次未写入，请重新读取状态并判断")
 
 
 def _save(root, state, ledger, changes, action, reason):
@@ -188,6 +188,8 @@ def task_change(root, expected, action, payload, reason):
         state, _, ledger = load(root)
         _revision(state, expected)
         revised = mutate(copy.deepcopy(ledger), action, payload, reason)
+        if revised == ledger:
+            return state["revision"]
         return _save(root, state, revised, {"tasks.json": encode_json(revised)}, f"task:{action}", reason)
 
 
@@ -228,8 +230,16 @@ def doc_change(root, expected, name, value, reason, approved=False, adopt=False)
             state, _, ledger = load(root, state)
             state["hashes"][name] = old_hash
         else:
-            state, _, ledger = load(root)
+            state, content, ledger = load(root)
         _revision(state, expected)
+        same_bytes = digest(document_data) == state["hashes"][name]
+        same_text = not adopt and content[name].replace("\r\n", "\n") == value.replace("\r\n", "\n")
+        metadata_changed = ((name == "GOAL.md" and not state["goal_approved"])
+                            or (name == "CURRENT.md" and state["current_task_revision"] != ledger["revision"]))
+        if (same_bytes or same_text) and not metadata_changed:
+            return state["revision"]
+        if same_text:
+            document_data = (agent / name).read_bytes()
         if name == "GOAL.md":
             state["goal_version"] += 1
             state["goal_approved"] = True

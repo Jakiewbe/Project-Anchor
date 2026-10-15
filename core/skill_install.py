@@ -96,12 +96,20 @@ def inspect_skill(home, manifest, client="codex"):
     target = Path(info["path"])
     expected = skill_payload(home, client)
     checks = [("PASS", "Skill 安装位置", str(target))]
-    intact = all(raw(safe_path(target / name, target)) is not None and
-                 digest(raw(target / name)) == value for name, value in info["hashes"].items())
-    checks.append(("PASS" if intact else "FAIL", "Skill 安装完整性", "按安装清单检查所有管理文件"))
+    modified = []
+    for name, value in info["hashes"].items():
+        data = raw(safe_path(target / name, target))
+        if data is None or digest(data) != value:
+            modified.append(name)
+    checks.append(("FAIL" if modified else "PASS", "Skill 安装完整性",
+                   "安装文件已修改或缺失，拒绝覆盖: " + ", ".join(sorted(modified)) if modified else "管理文件与安装清单一致"))
     current = {name: digest(data) for name, data in expected.items()}
-    checks.append(("PASS" if current == info["hashes"] and info["version"] == VERSION else "WARN",
-                   "Skill 模板版本", "模板、适配器和运行定位信息比对"))
+    changed = sorted(name for name in set(current) | set(info["hashes"]) if current.get(name) != info["hashes"].get(name))
+    up_to_date = not changed and info["version"] == VERSION
+    detail = "模板与安装版本一致" if up_to_date else f"模板已更新：工具 {VERSION}，安装 {info['version']}"
+    if changed:
+        detail += "；待更新文件: " + ", ".join(changed)
+    checks.append(("PASS" if up_to_date else "WARN", "Skill 模板版本", detail))
     for path in (target / "runtime.json",):
         if not path.is_file():
             checks.append(("FAIL", "Skill 程序定位", "runtime.json 缺失"))

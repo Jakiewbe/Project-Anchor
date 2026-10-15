@@ -1,6 +1,14 @@
 # 更新记录
 
-## 未发布 — 通用 Agent Skills 适配（Draft）
+## 1.3.0 — 2026-10-15
+
+- 区分项目总目标与已授权局部任务、路线决定与执行阶段；批准目标不自动生成计划，允许治理写入时当回合保存决定。
+- task/state 无变化返回 changed=false，保留修订、历史、原始编码与完成时间；首次目标批准和断点修订同步仍正常写入，旧修订仍拒绝。
+- 新增 status --brief、--task 和 --milestone；保留完整目标/断点、单列范围外直接依赖，草案与已批准有效任务分别统计。旧 status、PROGRESS 和 schema 1 保持兼容。
+- doctor 列出模板待更新文件及安装文件修改/缺失；精简 Skill 入口，保留客户端参考与唯一核心。
+- 验证及本机升级边界见 docs/ITERATION_1_3_VALIDATION.md；第二轮追加/批量写入和证据格式未实现。
+
+## 通用 Agent Skills 适配 — 2026-10-10 合并
 
 - 新增 `install-client agents`：不依赖 CODEX_HOME 的通用 Skill 安装，清单位于 PROJECT_ANCHOR_HOME；`install-client claude`：Claude Code 的 Skill、用户规则文件和 SessionStart/PreCompact Hook。两者复用原有所有权校验、备份、锁、事务恢复与安全卸载。
 - 适配器按 runtime.json 安装来源设置环境；`doctor/trust-project/recover` 增加 `--client`。Codex 的 Hook 命令、全局规则和 runtime.json 字节不变；但核心脚本变化会让旧安装的 doctor 报告 Hook 脚本版本 WARN，需重新 install-global。

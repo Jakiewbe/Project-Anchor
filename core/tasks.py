@@ -95,6 +95,9 @@ def validate(ledger, project_id=None):
 
 def mutate(ledger, action, payload, reason):
     text(reason, "变更原因")
+    validate(ledger)
+    if not isinstance(payload, dict):
+        raise KitError("任务输入必须为对象")
     tasks = ledger["tasks"]
     tid = payload.get("task_id")
     previous = next((t for t in tasks if t["task_id"] == tid), None)
@@ -121,21 +124,53 @@ def mutate(ledger, action, payload, reason):
         status = payload.get("status", previous["status"])
         if status != previous["status"] and status not in TRANSITIONS[previous["status"]]:
             raise KitError(f"不允许从 {previous['status']} 转为 {status}")
+        candidate = {**previous, **payload}
+        validate({**ledger, "tasks": [candidate if item is previous else item for item in tasks]})
+        if all(previous.get(key) == value for key, value in payload.items()):
+            return ledger
         if previous["status"] == "done" and any(key in payload for key in {"acceptance_criteria", "dependencies", "evidence"}) and status == "done":
             raise KitError("先重新打开任务再更改验收范围或证据")
         if previous["status"] == "done" and status == "doing":
             previous["evidence"] = []
+        old_status = previous["status"]
         previous.update(payload)
         previous["updated_at"] = now()
-        if status == "done":
+        if status == "done" and old_status != "done":
             previous["completed_at"] = now()
-        else:
+        elif status != "done":
             previous.pop("completed_at", None)
     else:
         raise KitError("未知任务操作（删除请使用 cancelled 保留历史）")
     ledger["revision"] += 1
     ledger["history"].append({"revision": ledger["revision"], "timestamp": now(), "action": action, "payload": payload, "reason": reason})
     return validate(ledger)
+
+
+def task_view(ledger, brief=False, task_ids=None, milestone=None):
+    """An explicit selection; never infer the current scope from timestamps."""
+    validate(ledger)
+    items = ledger["tasks"]
+    ids = set(task_ids or [])
+    unknown = ids - {item["task_id"] for item in items}
+    if unknown:
+        raise KitError(f"任务不存在: {', '.join(sorted(unknown))}")
+    if milestone is not None and not any(item["milestone"] == milestone for item in items):
+        raise KitError(f"里程碑不存在: {milestone}")
+    selected = [item for item in items if (not ids or item["task_id"] in ids)
+                and (milestone is None or item["milestone"] == milestone)]
+    if (ids or milestone is not None) and not selected:
+        raise KitError("任务与里程碑筛选没有交集")
+    counts = {status: sum(item["status"] == status for item in selected) for status in sorted(STATUSES)}
+    approved = [item for item in selected if item["plan"] == "approved" and item["status"] != "cancelled"]
+    summary = {"total": len(selected), "draft": sum(item["plan"] == "draft" for item in selected),
+               "approved_active": len(approved), "approved_done": sum(item["status"] == "done" for item in approved),
+               "statuses": counts}
+    fields = ("task_id", "title", "milestone", "plan", "status", "dependencies", "blocker")
+    visible = [{key: item[key] for key in fields} for item in selected] if brief else selected
+    by_id = {item["task_id"]: item for item in items}
+    external = sorted({dep for item in selected for dep in item["dependencies"]} - {item["task_id"] for item in selected})
+    dependencies = [{key: by_id[tid][key] for key in fields} for tid in external]
+    return visible, summary, dependencies
 
 
 def cell(value):

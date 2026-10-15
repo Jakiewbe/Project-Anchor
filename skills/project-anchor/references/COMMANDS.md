@@ -10,6 +10,8 @@
 | 初始化 | init-project PATH --name NAME [--git-init] |
 | 用户授权项目更名 | rename-project PATH --name NAME --expected-revision N --reason TEXT |
 | 读取状态/目标/断点/任务 | status PATH |
+| 简洁查询（完整目标和断点） | status PATH --brief |
+| 明确任务/里程碑查询 | status PATH [--brief] [--task ID ...] [--milestone NAME] |
 | 明确授权重建进度 | status PATH --rebuild |
 | 任务创建/更新 | task add/update PATH --file JSON --expected-revision N --reason TEXT |
 | 状态更新 | state update PATH GOAL.md/CURRENT.md/DECISIONS.md/LESSONS.md --file MARKDOWN --expected-revision N --reason TEXT [--approved] |
@@ -21,6 +23,11 @@
 | 知识入库 | knowledge-add --file JSON --approved |
 
 写入 task 可用 `--json-input` 代替 --file，将 UTF-8 JSON 通过 stdin 输入；state 用 `--text-input` 提交 Markdown。两者不允许与 --file 同时使用。revision 是 status 中的项目 revision，不是 task_revision。每次写入后重新读取；冲突需看新状态并重新判断，不能自动覆盖。
+
+task/state 返回 `revision` 和 `changed`。`changed=false` 是有效请求没有实质变化，本次未写入，修订、历史和完成时间保持；仍检查旧修订、非法字段和状态约束。CURRENT 文字不变但落后于任务修订、GOAL 首次批准及外部编辑登记仍可能实际更新。
+
+原 status 返回结构保持不变。新查询增加 selection、summary 和 external_dependencies；--brief 仅省略任务描述、验收长证据等，保留 ID、标题、里程碑、批准/执行状态、依赖、阻塞。--task 可重复，和 --milestone 同时使用取交集；未知任务、里程碑或空交集报错，不扩大查询。summary 的 approved_active 排除草案与取消任务，approved_done 是其中已完成数；原 PROGRESS 完成率口径保持不变。
+筛选查询不能与 --rebuild 组合；重建全项目进度须单独明确请求，避免局部查询顺便修改全局视图。
 
 `init-project` 的“初始化”指新增治理记录：创建 `.agent/`，保留并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`；默认不初始化Git，不改业务代码或依赖。审批和用户说明必须包含这四处写入范围；传入 `--git-init` 需要另有明确授权。
 

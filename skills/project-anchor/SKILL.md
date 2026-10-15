@@ -1,20 +1,18 @@
 ---
 name: project-anchor
-description: "用自然语言进行首次项目接入、初始化项目管理、制定目标任务草案、查询进度、更新任务、保存决策与长期记忆、会话交接、检查目标偏离、诊断规则和 Hook、项目复盘。Use for first project onboarding under an authorized global policy, project governance initialization, task planning/status, project memory, session handoff, goal alignment, rules/hook diagnostics, and retrospectives. 适用于已启用项目的治理需求、明确初始化/诊断请求，或全局规则已授权的首次实际项目工作；只读代码解释、知识问答、指定单文件修改不触发初始化。"
+description: "用自然语言管理项目目标、任务、进度、决策、交接、规则诊断和复盘。Use for project governance, planning/status, decisions, handoff and rule/Hook diagnostics. 在用户要求治理或可信全局规则授权的首次实际项目工作时接入；只读问答和指定文件修改不初始化项目。"
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # project-anchor
 
-根据用户意图选择治理工作流，用唯一 Python 核心执行。状态与任务操作不依赖智能体品牌，不需要安装 Codex；规则、生命周期和安装按客户端能力处理，见 [CLIENTS.md](references/CLIENTS.md)，不假定各客户端支持相同事件。日常用户不需要输入命令。
+按用户当前意图调用唯一 `kit.py` 核心，项目事实来源是 `.agent/`。日常用户无需输入命令；不依赖 Codex 安装，客户端能力见 [CLIENTS.md](references/CLIENTS.md)。
 
-1. 确认用户指向的项目目录，以当前工作目录为默认，不能把 Skill、工具箱、用户主目录或磁盘根目录当成目标项目。先查 `.agent/state.json` 和 Git 根目录；已有治理状态先只读加载。用户明确要求启用治理，或可信全局规则已授权首次实际项目工作接入时，调用 init-project 新增治理记录，不重建业务工程。依据原文区分“不要重新初始化业务项目”和“禁止新增治理记录”；明确禁止治理、禁止修改接入文件、只读及限定文件范围时不接入，含义无法确定才澄清。接入实际写入范围及审批说明见 [WORKFLOWS.md](references/WORKFLOWS.md) 首节。目标模板仍待用户确认，不猜测顶层目标。
-2. 读取本 Skill 同目录 `runtime.json` 获取安装的 Python、kit.py 和安装来源（Codex 安装为 `codex_home`，其他安装为 `client` 与 `home`）。用其中 `python` 的绝对路径启动 `scripts/run.py` 调用已有 CLI；不要依赖 PATH 中的默认 Python 或启动器。路径必须是独立参数；PowerShell 用 `&` 和参数数组，Python 用 `subprocess.run([...], shell=False)`。适配器定位失败就报告，不猜路径、不复制业务实现。
-3. 已初始化项目先执行 `status <项目绝对路径>`，读取真实目标、断点、修订和任务。规划、记忆、交接、目标核对或复盘时按需读取相应决策/教训。状态损坏或修订冲突立即停止相关修改。
-4. 按意图读取 [WORKFLOWS.md](references/WORKFLOWS.md) 中对应流程；需要参数和数据格式时读取 [COMMANDS.md](references/COMMANDS.md)。只读请求使用 status/doctor，不能顺便改变任务或初始化项目。
-5. 用户明确要求的任务/状态操作可以执行；任务有歧义、缺验收证据、未批准重大目标变化时先澄清。写入前重新取得项目 revision，使用 task/state 程序修改，所有结果仍由 tasks.json 统一管理。不要直接编辑受保护状态、全局配置或 Hook 信任。
-6. JSON/Markdown 输入草稿放入 `.agent/runtime/skill-input/`；未初始化项目使用系统临时目录。可用原生 `--json-input`/`--text-input` 从 stdin 提交，避免把 JSON 拼入 shell。CURRENT 更新保留必要章节并不超过 50 行。
-7. 成功后核对程序退出码、重新读取状态和进度；报告实际变更、证据和必要限制。FAIL 与 UNVERIFIED 如实报告；程序不可用时说明 CLI 也可能受影响，不能宣称已校验。此 Skill 不取代 SessionStart/PreCompact，不自动提交或推送 Git，不替用户批准知识入库。
+1. **定位与读取。** 默认使用用户指向的当前项目，先核对 Git 根目录与 `.agent/state.json`。不能把 Skill、工具箱、主目录或磁盘根目录当目标项目。读取本 Skill 的 `runtime.json`，用其中绝对 Python 路径运行本目录 `scripts/run.py`；路径作为独立参数，不依赖 PATH、不猜安装位置。已有项目先 `status PATH --brief`，完整读取目标和断点；按明确任务 ID/里程碑查细节，按需读决策与教训。历史任务不凭更新时间升级为本轮任务。
+2. **判断范围与阶段。** 用户已明确授权的局部任务可单独登记，不因总目标待确认而重复询问，也不替用户批准总目标。全项目规划或目标变更须有相应批准。批准目标不等于要求制定计划；只评估、只看、只做计划、确认后继续时停在指定阶段。路线已确定与允许执行是两件事：允许治理写入时当回合保存决定，明确全部只读或限定修改文件时不额外写记录。
+3. **选择流程。** 初始化、计划、任务、决策、交接、诊断或复盘时，读 [WORKFLOWS.md](references/WORKFLOWS.md) 对应节；参数与输入格式见 [COMMANDS.md](references/COMMANDS.md)。只读请求不初始化或顺便写入。首次治理接入只在用户或可信全局规则授权且未被当前范围限制时执行；旧业务初始化限制与治理写入按原文区分。
+4. **受控写入。** 写前取得最新项目 revision；task/state 复用程序的锁、校验和事务，不直接编辑受保护状态。任务草案未经批准不能开始，done 必须有真实验收证据。损坏、修订冲突或事务中断即停止相关写入，不自动重试到成功。优先用 UTF-8 stdin 的 `--json-input`/`--text-input`；需草稿文件时放 `.agent/runtime/skill-input/`，未初始化项目放临时目录。CURRENT 保留必要章节、50 行以内。
+5. **核对结果。** 检查退出码并重新读状态；`changed=false` 表示内容无变化、未写入，不能报告新增保存。区分程序校验、真实客户端行为与未验证结果。安装版本不一致先查看具体差异，不自动重装或修改信任；程序不可用就如实说明，不绕过程序直接写文件。
 
-显式调用是可选入口：Codex 用 `$project-anchor`，Claude Code、Cursor 用 `/project-anchor`，OpenCode 通过原生 skill 工具或点名“project-anchor”，WorkBuddy 以其技能入口为准。自动选择由客户端模型根据描述判断，没有确定性保证；持续约束由客户端规则文件承担，不依赖本 Skill 每次被选中。
+本 Skill 不替代 Hook，不自动提交、推送或批准知识入库。自动选择没有确定性保证；可显式使用 `$project-anchor`（Codex）、`/project-anchor`（支持该入口的客户端）或点名该技能。

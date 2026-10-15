@@ -1,32 +1,35 @@
 # 当前断点
 
 ## 当前阶段
-用户授权的通用Agent Skills交付已推送并合并PR #1至main；发布内容与受测提交一致，完成治理收尾同步。
+第一轮1.3.0交付及v1.3.0更新说明发布完成；PR #2仍未合并main。
 
 ## 当前任务
-UNI1 done（四项标准均有真实证据）；BRAND1 blocked、DPL6 doing为旧验收记录，未在本轮冒充完成。
+ITER1 done、REL130 done；DPL6 doing、BRAND1 blocked保留历史缺口。
+第二轮追加/批量写入与证据格式未开展。
 
 ## 已完成工作
-通用SKILL.md/run.py复用唯一kit.py和.agent；README只保留产品定位、安装使用与能力边界。
-CLIENTS、USAGE、CLIENT_VALIDATION第10节及决策、任务与断点已统一用户批准范围。
-Claude、WorkBuddy范围外、未验证、本轮不做、非发布阻塞；历史401和未安装记录保留。
-Hook仅按真实客户端和事件声明；Codex CLI与Cursor/OpenCode受测场景及其限制保留，不升级为全部客户端通过。
-完整自动回归157通过、0失败；GOAL和本轮业务核心未修改。
-提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送现有分支，包含README和全部已验证文档/治理状态。
-PR：https://github.com/Jakiewbe/Project-Anchor/pull/1；标题与说明已更新，Draft已解除，GitHub确认merged=true、closed。
-合并main提交4e77c0df115cdd9a2841cfd61bb267dc309d04cf；已fetch并快进核对，Git树与受测提交完全相同。
-无远端CI检查项；不把空检查列表当作通过。当前真实安装的Skill参考文档尚未更新，未擅自重装。
-本轮复盘追加到RETRO，保留既有内容；原始日志/认证/私人配置未上传。
+六项已批准改动实现并审查：阶段/局部授权、决定保存、无变化写入、简洁筛选、安装差异、技能精简。
+完整自动回归174通过0失败，原生探针3通过0失败，Skill格式1通过0失败。
+Codex完整对话4通过1失败；末项写入读回后遇额度限制，仍计失败。
+OpenCode0通过5失败（401阶段），未验收行为，不处理认证或重试到通过。
+本机1.3.0正式入口通过；原配置/信任/Hook组、114个其他Skill文件与六业务项目保留。
+doctor25通过0失败0警告、4项未验证；未重新验收压缩或长期遵从。
+提交b65d758已推送既有分支；PR #2 open、非draft，GitHub确认mergeable=true。
+PR：https://github.com/Jakiewbe/Project-Anchor/pull/2；远端head已与本地核对。
+
+更新说明：https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0；标签固定5cc849b，正文/状态/标签已读回核对。
 
 ## 当前阻塞
-本轮交付无阻塞。Codex Desktop/IDE、仅AGENTS.md无Skill恢复对照可选、未要求、未验证；范围外客户端不再等待验收。
-模型长期遵从、历史同状态重复提交缺陷及BRAND1/DPL6旧缺口保留，不在本轮扩大修复或声称解决。
+本轮代码与可审查交付无阻塞；客户端额度/认证限制已记录，不声称全客户端通过。
 
 ## 下一步动作
-本轮提交、推送与PR合并结束；后续工作须另有用户目标，不自动继续客户端登录、安装或补验。
+本轮结束，等待用户后续需求；不自动合并PR、开启第二轮或修改认证/Hook信任。
 
 ## 状态修订
-以state.json/tasks.json为准；本轮证据.agent/runtime/universal/scope-closeout-20261010；旧日志指针保留。
+以state.json/tasks.json为准；公开验证docs/ITERATION_1_3_VALIDATION.md。
+原始证据.agent/runtime/iteration-20261015与release-1.3.0不上传；复盘已追加RETRO。
 
 ## Git 检查
-仍在既有feat/universal-agent-skills，无新分支/工作树；治理收尾按本轮授权同步main及现有分支，不强推、不改写历史。
+既有feat/universal-agent-skills，无新分支/worktree、无强推或历史改写。
+源码提交b65d758，治理收尾通过同一分支同步；当前提交及工作区以Git命令为准。
+远端statuses为空，不当作CI通过；main未合并。
