@@ -3,17 +3,17 @@
   "kit_version": "1.0.0",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 176,
+  "revision": 177,
   "task_revision": 81,
   "current_task_revision": 81,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-15T06:31:49.210156+00:00",
+  "updated_at": "2026-10-15T06:40:53.849246+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "7a3f1c174784d3da14192e1d56e99ee6239ca1391f26037b8c20190242267a10",
+    "CURRENT.md": "16ecb1204e5ab3109e05831e56347fdd7ff9077a7c6fc049caeff05dec2ecfa0",
     "DECISIONS.md": "38e91ddfbdc16b68158843c21c505ee4f419ff7e42d54b8e5afd389ef938f789",
     "LESSONS.md": "f17e79ac12706eef2e23f6c36a17f08a41045c1cde07ecde3ecac398d5ba8c11",
     "tasks.json": "79629928b0aab7430079c802c3721fd6e806b45cd2a576829ef41e33b4ad82ab"
@@ -1826,6 +1826,20 @@
       "action": "state:update",
       "reason": "保存main与README完成断点及验证边界",
       "timestamp": "2026-10-15T06:31:49.210156+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "7a3f1c174784d3da14192e1d56e99ee6239ca1391f26037b8c20190242267a10",
+      "content": "# 当前断点\n\n## 当前阶段\n1.3.0更新已合并main，README优化已推送main；本轮完成。\n\n## 当前任务\nMAIN130 done；ITER1、REL130已完成，旧DPL6/BRAND1验收缺口保留。\n第二轮功能未开展，不自动继续。\n\n## 已完成工作\nPR#2 merged/closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地仅快进。\nREADME产品页与Git前置安装说明同步main；本次补充官方安装入口、WinGet、PATH和终端重启/版本检查。\n产品定位、Codex/通用安装、业务项目启用、查询、升级和文档导航已整理。\n保留横幅、图示、旧锚点和能力边界；链接1.3.0发布及验证，不在正文放验收统计。\n前轮文档核对11/0；本次Git说明范围与结构检查4通过0失败，未改其他README内容。\nGitHub正文通过提交和文件哈希核对；当前README以main为准，本轮未安装或重装Git。\n首次检查脚本标题数量误写8已修正为实际7，首次结果保留，不改README凑测试。\n业务核心未变，原自动回归174/0、原生3/0等历史结果不冒充本轮重测。\n原Codex对话4/1、OpenCode认证阶段0/5等限制继续保留，不重复模型请求。\n\n## 当前阻塞\n本轮无阻塞；历史压缩/长期遵从和客户端限制不因合并或README优化升级为通过。\n\n## 下一步动作\n本轮结束，等待用户下一项明确需求；不自动开展第二轮或改动发布标签。\n\n## 状态修订\n以state.json/tasks.json为准；本轮证据.agent/runtime/readme-main-20261015不上传。\n详细功能验证仍在docs/ITERATION_1_3_VALIDATION.md，复盘追加RETRO。\n\n## Git 检查\n保留既有feat/universal-agent-skills检出，直接推送用户授权的main；无新分支/worktree。\nmain已包含PR#2和README，治理收尾同样同步main；无强推、历史改写或标签移动。\n当前工作区与最终提交以Git命令为准；没有远端CI项不当作CI通过。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-15T06:40:53.837245+00:00"
+    },
+    {
+      "revision": 177,
+      "action": "state:update",
+      "reason": "记录用户要求的Git安装前提文档补充及4项实际检查",
+      "timestamp": "2026-10-15T06:40:53.849246+00:00"
     }
   ]
 }

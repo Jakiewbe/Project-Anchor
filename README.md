@@ -47,6 +47,24 @@ Project Anchor 为 AI 辅助开发保留一份**随项目保存、可以校验�
 
 主要验证环境是 **Windows + PowerShell**。准备 **Python 3.11+**、Git，以及支持 Skill 发现和本地 Python 执行的 Agent。项目运行时只依赖 Python 标准库。
 
+### 0. 先安装并检查 Git
+
+下方克隆和更新工具箱的步骤**需要先安装 Git，并确保 PowerShell 能找到 `git` 命令**。
+
+Windows 用户可从 [Git 官方 Windows 安装页](https://git-scm.com/install/windows)下载安装包，安装时保留将 Git 加入 PATH 的选项；也可以使用 WinGet：
+
+```powershell
+winget install --id Git.Git -e --source winget
+```
+
+安装完成后，关闭并重新打开 PowerShell；如果使用 Agent 内置终端，也需重启对应应用。先检查：
+
+```powershell
+git --version
+```
+
+看到 Git 版本号后再继续。若提示“无法识别 git”，先检查是否安装成功、是否已加入 PATH，并重新打开终端，再执行下面的克隆命令。
+
 ### 1. 获取工具箱
 
 ```powershell

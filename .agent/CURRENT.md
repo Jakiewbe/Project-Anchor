@@ -9,11 +9,11 @@ MAIN130 done；ITER1、REL130已完成，旧DPL6/BRAND1验收缺口保留。
 
 ## 已完成工作
 PR#2 merged/closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地仅快进。
-README提交87aa54bfefeab3d5b04b3a4574723283d8363792已推送main。
+README产品页与Git前置安装说明同步main；本次补充官方安装入口、WinGet、PATH和终端重启/版本检查。
 产品定位、Codex/通用安装、业务项目启用、查询、升级和文档导航已整理。
 保留横幅、图示、旧锚点和能力边界；链接1.3.0发布及验证，不在正文放验收统计。
-文档核对11通过0失败，GitHub官方Markdown结构与源码一致；未做像素截图验收。
-GitHub main/README.md blob414b3112376cf99969b8f53323340c4ccab5403a与本地一致。
+前轮文档核对11/0；本次Git说明范围与结构检查4通过0失败，未改其他README内容。
+GitHub正文通过提交和文件哈希核对；当前README以main为准，本轮未安装或重装Git。
 首次检查脚本标题数量误写8已修正为实际7，首次结果保留，不改README凑测试。
 业务核心未变，原自动回归174/0、原生3/0等历史结果不冒充本轮重测。
 原Codex对话4/1、OpenCode认证阶段0/5等限制继续保留，不重复模型请求。
