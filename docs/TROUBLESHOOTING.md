@@ -8,6 +8,11 @@
 | 项目文件内容未注入 | 未审核或 GOAL/CURRENT 哈希已变 | 先审核资料，再 trust-project --approved；不必为任务账本单独信任 |
 | CURRENT 修订警告 | 任务已更新但断点未同步 | 更新 CURRENT，保留必要章节，用当前项目修订号写入 |
 | 修订冲突 | 另一个进程已经写入 | 重新 status，阅读新状态后重新决定修改，不自动重试覆盖 |
+| 任务写入提示 schema 1 | 旧账本只读，尚未迁移 | 先 status/doctor 核对，再 migrate --expected-revision N --reason "..."; 失败时用备份恢复 |
+| 已批准任务改不了验收标准 | 批准范围已冻结 | 先 task revise 回到草案，修改后 task approve 重新批准；不要试图用 task update 绕过 |
+| 旧任务不能直接开始/完成 | 迁移后标记 legacy_unverified | 先 task approve 记录新批准范围；旧证据会被标记失效，重新验收 |
+| 旧版客户端拒绝 schema 2 | 旧写入器不支持新协议 | 统一升级各机器；不要删除 schema 字段或绕过迁移让旧版继续写 |
+| DSH 安装后未发现 Skill | 原生扫描/规则注入/脚本权限未验证 | 用 doctor --client dsh 核对文件；再在真实 DSH 会话确认 $DSH_HOME/skills 与 AGENTS.md 注入 |
 | 状态哈希不一致 | 文档被外部修改或损坏 | 先查文件；已审阅单个 Markdown 用 state adopt，损坏则从可靠检查点恢复 |
 | 事务未完成 | 进程终止或回滚失败 | 停止其他写入，检查事务内旧/新内容，recover 继续或 --rollback；冲突文件需人工判断 |
 | 锁超时 | 另一个进程持有写锁 | 等其结束；崩溃后 OS 自动释放，锁文件存在本身不代表锁被占用，不要盲目删锁 |

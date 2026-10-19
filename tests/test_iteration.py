@@ -35,8 +35,19 @@ class IterationTests(unittest.TestCase):
 
     def add(self, tid="T1", **fields):
         s, _, _ = load(self.project)
-        return task_change(self.project, s["revision"], "add",
-                           {"task_id": tid, "title": tid, "acceptance_criteria": ["输出5"], **fields}, "授权测试范围")
+        plan = fields.pop("plan", "draft")
+        revision = task_change(self.project, s["revision"], "add",
+                               {"task_id": tid, "title": tid, "acceptance_criteria": ["输出5"], **fields}, "授权测试范围")
+        if plan == "approved":
+            s, _, _ = load(self.project)
+            revision = task_change(self.project, s["revision"], "approve", {"task_id": tid},
+                                   "测试批准", source="user")
+        return revision
+
+    def approve(self, tid="T1"):
+        s, _, _ = load(self.project)
+        return task_change(self.project, s["revision"], "approve", {"task_id": tid},
+                           "测试批准", source="user")
 
     def update(self, tid="T1", **fields):
         s, _, _ = load(self.project)
@@ -61,7 +72,9 @@ class IterationTests(unittest.TestCase):
                 s, _, ledger = load(self.project)
                 task = next(t for t in ledger["tasks"] if t["task_id"] == status)
                 before = self.fingerprint()
-                fields = {k: v for k, v in task.items() if k not in ("updated_at", "completed_at")}
+                fields = {k: v for k, v in task.items()
+                          if k in {"task_id", "title", "description", "milestone", "status", "dependencies",
+                                   "acceptance_criteria", "blocker"}}
                 rev = task_change(self.project, s["revision"], "update", fields, "重复完整字段")
                 self.assertEqual(rev, s["revision"])
                 self.assertEqual(before, self.fingerprint())
@@ -162,7 +175,7 @@ class IterationTests(unittest.TestCase):
         self.assertEqual(legacy.returncode, 0, legacy.stderr)
         old = json.loads(legacy.stdout)
         self.assertEqual(set(old), {"project", "name", "revision", "goal_version", "goal_approved", "current_stale",
-                                    "task_revision", "tasks", "goal", "current", "git"})
+                                    "task_revision", "task_schema", "tasks", "goal", "current", "git"})
         result = self.cli("status", self.project, "--brief", "--milestone", "本轮", "--task", "T1")
         self.assertEqual(result.returncode, 0, result.stderr)
         view = json.loads(result.stdout)
@@ -228,7 +241,7 @@ class IterationTests(unittest.TestCase):
             if Path(path).name == "PROGRESS.md":
                 raise OSError("测试事务失败")
             return original(path, data)
-        self.update(plan="approved")
+        self.approve()
         before = self.fingerprint()
         with patch("core.atomic_io.atomic_write", side_effect=fail):
             with self.assertRaises(OSError):

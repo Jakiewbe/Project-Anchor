@@ -297,3 +297,12 @@ README 按用户追加要求只保留产品说明、安装使用和能力边界�
 - Codex CLI 会话 `01a1217a-1b09-71c0-83a3-f83ad6167522`：两项 Hook 在 `/hooks` 已启用且 Trusted；启动、手动 PreCompact、压缩后 SessionStart 共 3 条记录 PASS，压缩前后回答均说明合成项目目标未批准，快照与磁盘修订均为 0。两份 doctor 清单分别为 **21 PASS / 1 WARN / 0 FAIL / 4 UNVERIFIED**、**26 PASS / 0 WARN / 0 FAIL / 3 UNVERIFIED**，原始证据在 `.agent/runtime/universal/codex-lifecycle-20261010/`。CLI 首次后台启动及只读查询锁失败保留；使用 `--no-daemon` 的结果不能升级为 Desktop/IDE 通过。
 - 第 9 节人工步骤、用户转述和指纹证据保留，第 2 步来源部分确认与第 5 步提前建草案等限制不抹除。第 5 节子代理证据不代替主聊天验收。
 - 本轮只对齐文档、决策、任务说明与工作断点，不修改核心逻辑、目标或历史测试结果。PR 描述应按上述范围更新，是否提交、推送或转为可审查由用户另行决定。
+
+## 11. DeepSeek Harness 适配（2026-10-19）
+
+新增 `install-client dsh`，默认写入 `$DSH_HOME/skills/project-anchor/`、`$DSH_HOME/AGENTS.md` 管理块和 `$DSH_HOME/project-anchor/install.json`；不配置生命周期 Hook。`doctor --client dsh` 检查安装清单、Skill 文件和规则块完整性，并把 DSH 原生 Skill 发现、`AGENTS.md` 注入、脚本执行和模型遵守分别标为 UNVERIFIED。
+
+已完成的验证：临时 `DSH_HOME` 中安装、幂等重装、用户规则保留、SKILL.md/规则块漂移拒绝、卸载、中文空格路径、`runtime.json` 客户端字段、`client_home` 的 `DSH_HOME`/`~/.dsh` 解析，以及 CLI `install-client dsh`/`doctor --client dsh`/`uninstall-client dsh`。上述为安装器与文件层证据，不等于真实 DSH 会话已加载该 Skill 或执行脚本。
+
+未完成：真实 DeepSeek Harness 会话中的原生发现、Skill 自动/显式调用、全局/项目规则注入、脚本权限、模型行为验收。不得把安装检查通过扩大为客户端整体通过；DSH 能力以真实会话证据为准。
+说明：本文件第 5、8、10 节中 1.3 及更早的 `task add plan=approved` 记录是历史证据，保留原文；1.4 起该路径改为 `task add` 草案 + `task approve`，旧记录不能作为新协议行为验证。

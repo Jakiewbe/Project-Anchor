@@ -15,10 +15,10 @@ from core import VERSION, NAME, LEGACY_NAME
 from core.atomic_io import KitError, locked, read_json, recover
 from core.config import codex_home, install, uninstall, locations, trust_project
 from core.diagnostics import doctor
-from core.memory import (doc_change, init_project, knowledge_add, load, paths,
+from core.memory import (doc_change, init_project, knowledge_add, load, migrate, paths,
                          project_root, rebuild, retro, snapshot, snapshot_check,
                          task_change, git_info, rename_project)
-from core.tasks import task_view
+from core.tasks import decorate, task_view
 
 
 def parser():
@@ -33,19 +33,20 @@ def parser():
         if command == "doctor":
             child.add_argument("path", nargs="?", default=".")
             child.add_argument("--json", action="store_true")
-            child.add_argument("--client", choices=["codex", "agents", "claude"],
+            child.add_argument("--client", choices=["codex", "agents", "claude", "dsh"],
                                help="检查对象；默认取 PROJECT_ANCHOR_CLIENT，否则 codex")
-            child.add_argument("--client-home", help="agents/claude 安装目录；默认取 PROJECT_ANCHOR_CLIENT_HOME 或客户端默认目录")
+            child.add_argument("--client-home", help="agents/claude/dsh 安装目录；默认取 PROJECT_ANCHOR_CLIENT_HOME 或客户端默认目录")
             child.add_argument("--native-skills", action="store_true", help="通过真实 Codex skills/list 核对发现情况（不调用模型）")
             child.add_argument("--native-hooks", action="store_true", help="查询 Codex 实际 Hook 配置与当前定义审核状态；不设置信任")
             child.add_argument("--session-id", help="只核对指定会话的 Hook 调用记录")
             child.add_argument("--expect-event", action="append", choices=["SessionStart", "PreCompact"], default=[],
                                help="已确认应触发的事件；缺少该会话记录时报告 FAIL，需要 --session-id")
     for command in ("install-client", "uninstall-client"):
-        child = sub.add_parser(command, help="不依赖 Codex 的 Skill 安装；agents=通用目录，claude=Claude Code 适配")
-        child.add_argument("client", choices=["agents", "claude"])
+        child = sub.add_parser(command, help="不依赖 Codex 的 Skill 安装；agents=通用目录，claude=Claude Code，dsh=DeepSeek Harness")
+        child.add_argument("client", choices=["agents", "claude", "dsh"])
         child.add_argument("--home", help="agents: 清单目录，默认 PROJECT_ANCHOR_HOME 或 ~/.project-anchor；"
-                                          "claude: 配置目录，默认 CLAUDE_CONFIG_DIR 或 ~/.claude")
+                                          "claude: 配置目录，默认 CLAUDE_CONFIG_DIR 或 ~/.claude；"
+                                          "dsh: 配置目录，默认 DSH_HOME 或 ~/.dsh")
         if command == "install-client":
             child.add_argument("--skills-dir", help="agents 的 Skill 父目录；默认用户目录/.agents/skills")
     child = sub.add_parser("init-project")
@@ -65,6 +66,11 @@ def parser():
     child.add_argument("--brief", action="store_true", help="保留完整目标和断点，仅省略任务长证据与描述")
     child.add_argument("--task", action="append", metavar="ID", help="按明确任务 ID 查询，可重复")
     child.add_argument("--milestone", help="按里程碑精确查询；不猜测本轮任务")
+    child = sub.add_parser("migrate")
+    child.add_argument("path")
+    child.add_argument("--expected-revision", type=int, required=True)
+    child.add_argument("--reason", required=True)
+    child.add_argument("--dry-run", action="store_true", help="只报告迁移范围，不写文件")
     child = sub.add_parser("snapshot")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--session-id", default="manual")
@@ -72,11 +78,13 @@ def parser():
     child = sub.add_parser("retro")
     child.add_argument("path", nargs="?", default=".")
     child = sub.add_parser("task")
-    child.add_argument("action", choices=["add", "update"])
+    child.add_argument("action", choices=["add", "update", "approve", "revise"])
     child.add_argument("path")
-    inputs = child.add_mutually_exclusive_group(required=True)
+    inputs = child.add_mutually_exclusive_group()
     inputs.add_argument("--file", help="包含任务或修改字段的 UTF-8 JSON")
     inputs.add_argument("--json-input", action="store_true", help="从 stdin 读取 UTF-8 JSON")
+    child.add_argument("--task-id", help="approve/revise 的任务 ID")
+    child.add_argument("--source", choices=["user", "policy"], help="approve 的批准来源声明（不是身份验证）")
     child.add_argument("--expected-revision", type=int, required=True)
     child.add_argument("--reason", required=True)
     child = sub.add_parser("state")
@@ -104,7 +112,7 @@ def parser():
     child.add_argument("--knowledge", action="store_true")
     child.add_argument("--codex-home")
     child.add_argument("--skills-dir", help="恢复首次安装时使用的 Skill 父目录")
-    child.add_argument("--client", choices=["agents", "claude"], help="恢复 install-client 安装事务")
+    child.add_argument("--client", choices=["agents", "claude", "dsh"], help="恢复 install-client 安装事务")
     child.add_argument("--client-home")
     child.add_argument("--rollback", action="store_true")
     return p
@@ -114,7 +122,7 @@ def _doctor_client(args):
     if args.client or args.codex_home:
         return args.client or "codex"
     client = os.environ.get("PROJECT_ANCHOR_CLIENT", "codex")
-    if client not in ("codex", "agents", "claude"):
+    if client not in ("codex", "agents", "claude", "dsh"):
         raise KitError(f"PROJECT_ANCHOR_CLIENT 无效: {client}")
     return client
 
@@ -217,19 +225,36 @@ def main(argv=None):
                 result = {"project": str(root), "name": state["name"], "revision": state["revision"],
                           "goal_version": state["goal_version"], "goal_approved": state["goal_approved"],
                           "current_stale": state["current_task_revision"] != ledger["revision"],
-                          "task_revision": ledger["revision"], "tasks": ledger["tasks"],
+                          "task_revision": ledger["revision"], "task_schema": ledger["schema"],
+                          "tasks": [decorate(task) for task in ledger["tasks"]],
                           "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root)}
                 if args.brief or args.task or args.milestone is not None:
                     selected, summary, external = task_view(ledger, args.brief, args.task, args.milestone)
                     result.update(tasks=selected, summary=summary, external_dependencies=external,
                                   selection={"task_ids": args.task or [], "milestone": args.milestone})
+            elif args.command == "migrate":
+                result = migrate(root, args.expected_revision, args.reason, args.dry_run)
             elif args.command == "snapshot":
                 result = snapshot_check(root, args.check) if args.check else {"snapshot": str(snapshot(root, args.session_id))}
             elif args.command == "retro":
                 result = {"retro": str(retro(root))}
             elif args.command == "task":
-                payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
-                revision = task_change(root, args.expected_revision, args.action, payload, args.reason)
+                if args.action in ("add", "update"):
+                    if args.task_id:
+                        raise KitError("add/update 的任务 ID 放在 JSON 中，不接受 --task-id")
+                    if not (args.file or args.json_input):
+                        raise KitError("add/update 需要 --file 或 --json-input")
+                    payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
+                else:
+                    if args.file or args.json_input:
+                        raise KitError("approve/revise 不接受 --file/--json-input；使用 --task-id")
+                    if not args.task_id:
+                        raise KitError("approve/revise 需要 --task-id")
+                    if args.action == "approve" and not args.source:
+                        raise KitError("task approve 需要 --source user|policy（调用者声明，不是身份验证）")
+                    payload = {"task_id": args.task_id}
+                revision = task_change(root, args.expected_revision, args.action, payload, args.reason,
+                                       source=args.source)
                 result = {"revision": revision, "changed": revision != args.expected_revision}
             elif args.command == "rename-project":
                 result = {"revision": rename_project(root, args.expected_revision, args.name, args.reason)}

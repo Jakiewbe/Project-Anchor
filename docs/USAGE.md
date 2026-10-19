@@ -2,7 +2,7 @@
 
 [返回项目首页](../README.md) · [工作流参考](../skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](../skills/project-anchor/references/COMMANDS.md)
 
-适用版本：Project Anchor 1.3.0。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+适用版本：Project Anchor 1.4.0。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
 
 产品提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用 `SKILL.md` 与 `scripts/run.py`，始终调用同一 `kit.py`，项目状态唯一来源为 `.agent/`。兼容扫描 `.agents/skills` 及用户级同名目录、可执行本地 Python 且获得权限的 Agent 可以发现并调用；不要求逐个客户端完成生命周期验收。当前证据和范围以 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout) 为准。
 
@@ -38,7 +38,7 @@ Hook 是 Codex 在指定时机自动运行的本地脚本。一次审核启用�
 
 ### 不依赖 Codex 的安装
 
-通用入口为 `install-client agents`。以下 Claude 与 WorkBuddy 相关命令仅说明保留的安装能力，不是本轮执行清单；两者范围外、未验证、不做，不要求登录或安装，也不作为发布阻塞。
+通用入口为 `install-client agents`。以下 Claude 与 WorkBuddy 相关命令仅说明保留的安装能力，不是本轮执行清单；两者范围外、未验证、不做，不要求登录或安装，也不作为发布阻塞。DeepSeek Harness 使用 `install-client dsh`，完成 Skill 与全局规则安装，不配置 Hook。
 
 ```powershell
 py -3 kit.py install-client agents                                  # 通用 Skill
@@ -46,12 +46,15 @@ py -3 kit.py install-client agents --home "D:\anchor\workbuddy" --skills-dir "$H
 py -3 kit.py install-client claude                                  # Claude Code
 py -3 kit.py doctor "D:\项目 路径" --client claude
 py -3 kit.py trust-project "D:\项目 路径" --client claude --approved   # 用户审核后才注入 GOAL/CURRENT 摘要
-py -3 kit.py uninstall-client claude
+py -3 kit.py install-client dsh                                     # DeepSeek Harness
+py -3 kit.py doctor "D:\项目 路径" --client dsh
+py -3 kit.py uninstall-client dsh
 ```
 
 - `agents`：Skill 默认装到 `~/.agents/skills/project-anchor`，清单、备份和事务在 `PROJECT_ANCHOR_HOME`（默认 `~/.project-anchor`）。不写任何客户端规则或 Hook。一个清单目录只管理一个 Skill 位置；给另一个目录安装时用新的 `--home`。
 - `claude`：配置目录取 `--home`、`CLAUDE_CONFIG_DIR` 或 `~/.claude`。写入 `skills/project-anchor/`、`rules/project-anchor.md`，并在 `settings.json` 的 `hooks` 中追加 SessionStart 与 PreCompact 两组；其他键和已有 Hook 保留，文件会按标准 JSON 重新排版。管理数据在 `<配置目录>/project-anchor/`。不修改 CLAUDE.md、认证或权限设置。
-- 两者都校验所有权和哈希：同名 Skill、规则文件或被人工修改的 Hook 不属于本安装时拒绝覆盖；更新前备份；卸载只删除自己的内容，并在 settings.json 原本不存在时删除它。中断后执行 `recover --client agents|claude [--client-home 目录] [--rollback]`。
+- `dsh`：配置目录取 `--home`、`DSH_HOME` 或 `~/.dsh`。写入 `$DSH_HOME/skills/project-anchor/`，并在 `$DSH_HOME/AGENTS.md` 追加管理块；管理数据在 `$DSH_HOME/project-anchor/`。不配置 Hook、不修改 DSH 凭据或会话数据。DSH 同时扫描 `~/.agents/skills`；若该处已有 Codex 安装的同名 Skill，`$DSH_HOME/skills` 的优先级更高，不要同时让两个安装管理同一目录。使用 `--skills-dir` 指定自定义目录时，还需在 DSH 的 `customSkillDirs` 中声明该目录，否则 DSH 不会扫描。
+- 两者都校验所有权和哈希：同名 Skill、规则文件或被人工修改的 Hook 不属于本安装时拒绝覆盖；更新前备份；卸载只删除自己的内容，并在 settings.json 原本不存在时删除它。中断后执行 `recover --client agents|claude|dsh [--client-home 目录] [--rollback]`。
 - 适配器根据 runtime.json 判断来源：Codex 安装设置 CODEX_HOME；`install-client` 安装设置 PROJECT_ANCHOR_CLIENT 与 PROJECT_ANCHOR_CLIENT_HOME，不读取或创建 `~/.codex`。
 - Claude Code 的 Hook 在 Windows 上通过 PowerShell 编码命令启动，路径作为独立参数传入。项目级 `.claude/settings.json` 中的 Hook 受 Claude 工作区信任约束；本工具不替用户确认信任或权限。
 
@@ -85,7 +88,7 @@ py -3 $kit status $project --brief --milestone "v1"
 py -3 $kit status $project --task T1 --task T2
 ```
 
---brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 返回结构及原 PROGRESS 完成率保持不变，旧项目不需要迁移。
+--brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 保留原字段并增量增加 `task_schema`、`scope_dirty`、`legacy_unverified`，原 PROGRESS 完成率口径保持不变。旧 schema 1 项目可读，但写入前需要显式 `migrate`。
 筛选查询不允许 --rebuild；重建全项目进度单独执行原命令，失败查询不会顺便修复视图。
 
 先确认真实目标。复制 .agent/GOAL.md 到一个编辑文件，填写所有章节，取得用户批准后保存：
@@ -117,13 +120,14 @@ $taskFile = Join-Path $project "task-change.json"
 py -3 $kit task add $project --file $taskFile --expected-revision 1 --reason "根据目标提出任务草案"
 ```
 
-用户批准任务后再开始：
+用户批准任务后，先登记批准范围，再开始：
 
 ```powershell
+py -3 $kit task approve $project --task-id T1 --source user --expected-revision 2 --reason "用户批准计划"
 @'
-{"task_id":"T1","plan":"approved","status":"doing"}
+{"task_id":"T1","status":"doing"}
 '@ | Set-Content -LiteralPath $taskFile -Encoding UTF8
-py -3 $kit task update $project --file $taskFile --expected-revision 2 --reason "用户批准计划并开始"
+py -3 $kit task update $project --file $taskFile --expected-revision 3 --reason "开始实施"
 ```
 
 取得真实验收证据后完成：
@@ -136,13 +140,23 @@ py -3 $kit task update $project --file $taskFile --expected-revision 2 --reason 
   "evidence":[{"type":"manual","criterion":1,"detail":"用户已按 README 操作并确认成功；填写真实日期及结果"}]
 }
 '@ | Set-Content -LiteralPath $taskFile -Encoding UTF8
-py -3 $kit task update $project --file $taskFile --expected-revision 3 --reason "实际验收通过"
+py -3 $kit task update $project --file $taskFile --expected-revision 4 --reason "实际验收通过"
 py -3 $kit status $project
 ```
 
-以上证据文字是格式示例，必须替换为实际结果。证据类型可为 test、file、review、manual、command；每条必须有 detail 和对应验收标准的 criterion（从 1 开始）。**程序校验证据结构和覆盖范围，不会代替用户执行或判断实际验收。** 禁止用虚构记录标记 done。
+`--source` 记录的是调用者声明（user/policy），不是身份认证。已批准任务的描述、验收标准或依赖变化时，先执行 `task revise` 回到草案，修改后重新 `task approve`；不要在 `task update` 中改 plan 或批准范围。一次 update 不能同时改范围并完成。
 
-状态转移：todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing（清空旧证据重新验收）；cancelled → todo。草案不能 doing/done，依赖全部 done 才可开始/完成；blocked 需要 blocker。所有变更保存原因和历史，取消代替物理删除。
+以上证据文字是格式示例，必须替换为实际结果。证据类型可为 test、file、review、manual、command；每条必须有 detail 和对应验收标准的 criterion（从 1 开始）。程序为证据写入批准版本和标准文本哈希；旧证据保留但标记失效。**程序校验证据结构、范围和绑定，不会代替用户执行或判断实际验收。** 禁止用虚构记录标记 done。
+
+状态转移：todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing（旧证据保留但标记失效）；cancelled → todo。草案不能 doing/done，依赖全部 done 才可开始/完成；blocked 需要 blocker。所有变更保存原因和历史，取消代替物理删除。
+
+旧 schema 1 账本只读。先确认 `status` 可读，再执行：
+
+```powershell
+py -3 $kit migrate $project --expected-revision 4 --reason "升级到审批协议 schema 2"
+```
+
+迁移会备份 `.agent/` 状态、把旧批准任务标记为 `legacy_unverified`，不会自动补造批准记录。旧任务重新开始或完成前需要先 `task revise` 或 `task approve`。迁移后旧版 v1.3 会拒绝读取 schema 2；多台机器应统一升级。
 
 task/state 输出额外的 changed 字段。相同内容且元数据已同步时为 `changed=false`，不写文件、不增加修订、不改变完成时间。旧修订和未授权 GOAL 请求仍拒绝；CURRENT 内容相同但需要同步任务修订、GOAL 首次批准以及外部编辑登记仍可能写入。BOM/CRLF 相同文本保留原字节，不为了统一编码制造更新。
 

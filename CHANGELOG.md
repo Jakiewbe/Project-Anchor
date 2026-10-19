@@ -1,5 +1,13 @@
 # 更新记录
 
+## 1.4.0 — 2026-10-19
+
+- 任务账本升级到 `schema 2`：批准范围成为程序拥有的快照，记录描述、验收标准、依赖、版本和哈希；`task add` 只建草案，批准只能通过 `task approve`，范围变更先 `task revise` 再重新批准。
+- `task update` 不再接受 `plan`、`approved_scope` 或内部证据字段；一次更新不能同时改范围并完成，也不能删除依赖并同时开始。证据绑定批准版本和标准文本哈希，旧证据保留但标记失效。
+- 新增 `migrate`：schema 1 只读，显式迁移并备份；旧任务标记 `legacy_unverified`，不自动补造批准记录；v1.3 读取 schema 2 会拒绝，避免旧写入器静默降级。
+- 新增 `install-client dsh`：DeepSeek Harness 的 Skill 与全局 `AGENTS.md` 管理块，不配置 Hook；`doctor --client dsh` 只声明安装检查，原生发现/规则注入/执行保持 UNVERIFIED。
+- 新增审批、迁移、旧写入器拒绝和 DSH 安装测试；未实现 observed 证据执行器、Git 自动合并和正式 Python 包分发。
+
 ## 1.3.0 — 2026-10-15
 
 - 区分项目总目标与已授权局部任务、路线决定与执行阶段；批准目标不自动生成计划，允许治理写入时当回合保存决定。

@@ -15,6 +15,7 @@
 | `install-global` | `CODEX_HOME` 规则块与 hooks.json；Skill 默认 `~/.agents/skills` | Codex 集成，原有行为不变 |
 | `install-client agents` | Skill 默认 `~/.agents/skills`，清单在 `PROJECT_ANCHOR_HOME`（默认 `~/.project-anchor`） | 不依赖 Codex 的通用 Skill；不写规则或 Hook |
 | `install-client claude` | `CLAUDE_CONFIG_DIR`（默认 `~/.claude`）下的 `skills/`、`rules/project-anchor.md` 与 `settings.json` 中两个 Hook 组 | 保留的 Claude Code 适配代码；本轮范围外、未验证 |
+| `install-client dsh` | `DSH_HOME`（默认 `~/.dsh`）下的 `skills/project-anchor/`、`AGENTS.md` 管理块和 `<DSH_HOME>/project-anchor/install.json` | DeepSeek Harness 适配；配置 Skill 与全局规则，不配置生命周期 Hook |
 
 同一个 Skill 目录只能有一个管理方。`~/.agents/skills` 已由 Codex 安装时，Cursor、OpenCode 可直接发现同一 Skill，不需要再装；runtime.json 记录实际 Python 与 kit.py。各安装的清单、备份和事务彼此独立，项目 `.agent/` 只有一份。
 
@@ -25,6 +26,7 @@
 - Cursor：扫描 `.agents/skills`、`.cursor/skills` 及用户级 `~/.agents/skills`、`~/.cursor/skills`；`/project-anchor` 显式调用；项目 AGENTS.md 为持续规则。Cursor Hook 的输入输出协议与 Codex/Claude 不同，本工具未配置 Cursor Hook。
 - OpenCode：扫描 `.opencode/skills`、`.claude/skills`、`.agents/skills` 及对应用户目录，经原生 skill 工具加载；项目 AGENTS.md 为持续规则。生命周期只能通过 JS 插件实现，本工具未提供。
 - WorkBuddy：官方文档说明工作区 `.codebuddy/skills/`；用户级 `~/.workbuddy/skills/` 来自社区资料。通用安装可指定独立清单和 Skill 目录，但本机未安装，全部能力未验证；本轮范围外、不做、不作为发布阻塞。
+- DeepSeek Harness：原生扫描项目 `.dsh/skills`、`.agents/skills` 与用户 `$DSH_HOME/skills`、`$DSH_AGENTS_HOME/skills`；全局规则来自 `$DSH_HOME/AGENTS.md` 与 `$DSH_AGENTS_HOME/AGENTS.md`，项目规则来自 `AGENTS.md`。`install-client dsh` 默认写入 `$DSH_HOME/skills/project-anchor/`，并在 `$DSH_HOME/AGENTS.md` 追加管理块；不配置 Hook。DSH 同时扫描 `~/.agents/skills`，若那里已有 Codex 安装的同名 Skill，DSH 的 `$DSH_HOME/skills` 优先级更高；不要同时让两个安装管理同一目录。原生发现、规则注入和脚本执行仍以真实 DSH 会话证据为准。
 
 项目规则来自 `init-project` 追加的 AGENTS.md，供支持该机制的客户端在已接入项目中读取；Cursor、OpenCode 的接续采用 Skill 加项目规则。Cursor 3.23.12 主聊天已有人工作流证据，OpenCode 有工作流证据；Cursor 规则注入与 Skill 调用同时发生，未单独证明仅凭 AGENTS.md、无 Skill 也能恢复。
 

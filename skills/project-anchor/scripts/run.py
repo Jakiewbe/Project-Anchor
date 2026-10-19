@@ -13,7 +13,7 @@ def main():
         if not isinstance(runtime, dict) or runtime.get("schema") != 1:
             raise ValueError("不支持的定位文件版本")
         codex = "codex_home" in runtime
-        if not codex and runtime.get("client") not in ("agents", "claude"):
+        if not codex and runtime.get("client") not in ("agents", "claude", "dsh"):
             raise ValueError("定位文件缺少安装来源")
         kit, interpreter, home = (Path(runtime[key]) for key in ("kit", "python", "codex_home" if codex else "home"))
         if not kit.is_absolute() or not interpreter.is_absolute() or not home.is_absolute():

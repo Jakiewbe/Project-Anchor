@@ -10,7 +10,7 @@ from .atomic_io import KitError, digest, read_json
 from .config import (BEGIN, END, _hooks, codex_home, definition_hash, hook_groups,
                      locations, read_toml, has_inline_hooks)
 from .memory import KIT_ROOT, load, project_root, validate_snapshot, git_info
-from .tasks import progress
+from .tasks import progress, scope_dirty
 from .skill_install import inspect_skill
 
 
@@ -139,6 +139,9 @@ def client_doctor(client, home, cwd=None, session_id=None, expected_events=()):
     if client == "claude":
         managed, _, _ = client_locations(client, home)
         _hook_checks(add, managed / "runtime/hooks.jsonl", session_id, expected_events)
+    elif client == "dsh":
+        if session_id or expected_events:
+            raise KitError("DeepSeek Harness 适配不提供生命周期 Hook 检查")
     root = None
     if (cwd / ".agent/.transaction.json").exists():
         add("FAIL", "项目未完成事务", "执行 recover，初始化中断时也必须先恢复")
@@ -186,6 +189,14 @@ def _project_checks(add, root):
         try:
             state, content, ledger = load(root)
             add("PASS", "项目状态完整性", f"{state['name']}；修订 {state['revision']}；任务修订 {ledger['revision']}")
+            add("PASS" if ledger["schema"] == 2 else "WARN", "任务账本版本",
+                "schema 2（审批协议）" if ledger["schema"] == 2 else "schema 1（只读；写入前执行 migrate）")
+            legacy = sum(bool(item.get("legacy_unverified")) for item in ledger["tasks"])
+            if legacy:
+                add("WARN", "旧批准任务", f"{legacy} 个 legacy_unverified；开始/完成前先 task approve")
+            dirty = sum(scope_dirty(item) for item in ledger["tasks"]) if ledger["schema"] == 2 else 0
+            if dirty:
+                add("WARN", "批准范围漂移", f"{dirty} 个任务当前范围与批准快照不一致；执行 task revise 后重新批准")
             add("PASS" if state["goal_approved"] else "WARN", "目标批准", "已登记批准" if state["goal_approved"] else "目标仍是草案")
             add("PASS" if state["current_task_revision"] == ledger["revision"] else "WARN", "CURRENT 修订", "与任务修订比对")
             expected = progress(state["name"], ledger)

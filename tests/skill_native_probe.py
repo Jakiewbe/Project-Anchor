@@ -32,8 +32,9 @@ def fixture(project, initialized=True, task=True):
         goal=content['GOAL.md'].replace('待用户确认：填写一句话目标。','交付一个可运行的 Python 演示脚本及使用说明。').replace('待确认：填写可验证的交付条件。','main.py 输出可以验证，说明文档可供用户独立运行。').replace('待确认。','用户确认：只涉及本项目演示文件，不增加外部服务。')
         doc_change(project,0,'GOAL.md',goal,'测试用户已确认的固定目标',approved=True)
         if task:
-            task_change(project,1,'add',{'task_id':'T1','title':'验证演示输出','plan':'approved','acceptance_criteria':['main.py 实际输出 5']},'固定验收任务')
-            task_change(project,2,'update',{'task_id':'T1','status':'doing'},'实际进入验收阶段')
+            task_change(project,1,'add',{'task_id':'T1','title':'验证演示输出','acceptance_criteria':['main.py 实际输出 5']},'固定验收任务')
+            task_change(project,2,'approve',{'task_id':'T1'},'固定验收任务批准',source='user')
+            task_change(project,3,'update',{'task_id':'T1','status':'doing'},'实际进入验收阶段')
 
 
 def state_bytes(project):

@@ -35,8 +35,19 @@ class Environment(unittest.TestCase):
 
     def add(self, tid="T1", **fields):
         state, _, _ = memory.load(self.project)
+        plan = fields.pop("plan", "draft")
         task = {"task_id": tid, "title": tid, "acceptance_criteria": ["可验证"], **fields}
-        return memory.task_change(self.project, state["revision"], "add", task, "测试创建")
+        revision = memory.task_change(self.project, state["revision"], "add", task, "测试创建")
+        if plan == "approved":
+            state, _, _ = memory.load(self.project)
+            revision = memory.task_change(self.project, state["revision"], "approve",
+                                          {"task_id": tid}, "测试批准", source="user")
+        return revision
+
+    def approve(self, tid="T1"):
+        state, _, _ = memory.load(self.project)
+        return memory.task_change(self.project, state["revision"], "approve",
+                                  {"task_id": tid}, "测试批准", source="user")
 
     def update(self, tid="T1", **fields):
         state, _, _ = memory.load(self.project)
@@ -340,12 +351,14 @@ class TaskTests(Environment):
             ledger["tasks"].append({"task_id": f"T{i}", "title": "任务", "description": "任务", "milestone": "m", "status": "todo", "plan": "draft", "acceptance_criteria": ["完成"], "evidence": [], "blocker": "", "dependencies": [f"T{i-1}"] if i else []})
         tasks.validate(ledger)
 
-    def test_reopen_clears_old_evidence(self):
+    def test_reopen_invalidates_old_evidence(self):
         self.add(plan="approved")
         self.update(status="doing")
         self.update(status="done", evidence=[{"type": "test", "criterion": 1, "detail": "上次测试"}])
         self.update(status="doing")
-        self.assertEqual(memory.load(self.project)[2]["tasks"][0]["evidence"], [])
+        evidence = memory.load(self.project)[2]["tasks"][0]["evidence"]
+        self.assertEqual(len(evidence), 1)
+        self.assertTrue(evidence[0].get("invalidated_at"))
 
     def test_unknown_field_rejected(self):
         with self.assertRaises(io.KitError):
@@ -719,12 +732,14 @@ class KnowledgeAndCLITests(Environment):
         result = self.cli("init-project", self.project, "--name", "研发项目", "--git-init")
         self.assertEqual(result.returncode, 0, result.stderr)
         source = self.base / "task.json"
-        source.write_bytes(io.encode_json({"task_id": "T1", "title": "检查", "plan": "approved", "acceptance_criteria": ["检查通过"]}))
-        self.assertEqual(self.cli("task", "add", self.project, "--file", source, "--expected-revision", 0, "--reason", "用户批准").returncode, 0)
+        source.write_bytes(io.encode_json({"task_id": "T1", "title": "检查", "acceptance_criteria": ["检查通过"]}))
+        self.assertEqual(self.cli("task", "add", self.project, "--file", source, "--expected-revision", 0, "--reason", "创建草案").returncode, 0)
+        self.assertEqual(self.cli("task", "approve", self.project, "--task-id", "T1", "--expected-revision", 1,
+                                  "--reason", "用户批准", "--source", "user").returncode, 0)
         source.write_bytes(io.encode_json({"task_id": "T1", "status": "doing"}))
-        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 1, "--reason", "开始").returncode, 0)
+        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 2, "--reason", "开始").returncode, 0)
         source.write_bytes(io.encode_json({"task_id": "T1", "status": "done", "evidence": [{"type": "command", "criterion": 1, "detail": "用户验证通过"}]}))
-        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 2, "--reason", "完成").returncode, 0)
+        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 3, "--reason", "完成").returncode, 0)
         for args in [("status", self.project, "--rebuild"), ("snapshot", self.project), ("retro", self.project), ("install-global",), ("doctor", self.project), ("uninstall-global",)]:
             result = self.cli(*args)
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)

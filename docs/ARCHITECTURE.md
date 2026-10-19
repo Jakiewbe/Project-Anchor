@@ -27,6 +27,12 @@ doctor 的可选原生检查使用公开 app-server skills/list，不推断模�
 - PROGRESS 是可重建视图；账本和视图一同更新。视图单独被改动可以 rebuild。
 - 初始化对 .agent/** 设置 Git -text 属性，保持状态的原始字节，避免 Windows 自动换行转换导致克隆后哈希失效；保留现有 .gitattributes 其他规则。
 
+## 任务批准协议（1.4）
+
+tasks.json 使用 schema 2。新增任务只能建立草案；`task approve` 是唯一批准入口，程序把描述、验收标准、依赖、版本、批准声明来源和 SHA-256 快照写入 `approved_scope`。`task update` 不接受 `plan`、`approved_scope` 或内部证据字段；已批准任务的实质范围变化必须先 `task revise` 回到草案，再重新批准。证据记录 `scope_version`、标准文本哈希、记录时间和级别；`done` 只接受当前批准版本、标准文本匹配且未失效的证据。旧证据保留并标记 `invalidated_at`，不直接删除。
+
+schema 1 可只读解析，但 `task`/`state` 写入前必须显式 `migrate`。迁移备份原状态，把旧批准任务标记为 `legacy_unverified`，不补造批准记录；旧任务重新开始或完成前需要重新批准。旧 v1.3 读取 schema 2 会拒绝，避免旧写入器静默降级。该协议是本地程序不变量，不是 L3 身份验证：Agent 若能调用 `task approve` 仍可自批；真正独立的批准来源需要 OS 权限边界或独立 runner。
+
 ## 信任与边界
 
 SessionStart 默认只注入固定提醒，不读取未审核项目内容作为高级指令。用户执行 trust-project 后，在 CODEX_HOME 中登记真实根目录、项目 UUID 和 GOAL/CURRENT 的精确哈希；文件变化需要重新审核。摘要以 JSON 数据呈现，限制长度，并声明不是规则。此措施不能数学上阻止模型误读数据，仍需人工冒烟验收。

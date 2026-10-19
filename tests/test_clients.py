@@ -11,6 +11,7 @@ from unittest.mock import patch
 from core import atomic_io as io
 from core.clients import claude_hook_groups, client_home, install_client, recover_client, uninstall_client
 from core.config import install
+from core.diagnostics import client_doctor
 from core.memory import init_project, load
 from core.skill_install import skill_payload
 
@@ -53,7 +54,8 @@ class ClientBase(unittest.TestCase):
         self.project.mkdir(parents=True)
         # The child sees a fake home and no CODEX_HOME, so any Codex fallback would be visible.
         self.env = {k: v for k, v in os.environ.items() if k not in ("CODEX_HOME", "PROJECT_ANCHOR_CLIENT",
-                                                                     "PROJECT_ANCHOR_CLIENT_HOME", "CLAUDE_CONFIG_DIR")}
+                                                                     "PROJECT_ANCHOR_CLIENT_HOME", "CLAUDE_CONFIG_DIR",
+                                                                     "DSH_HOME")}
         self.env.update(USERPROFILE=str(self.user), HOME=str(self.user), PYTHONUTF8="1")
 
     def tearDown(self):
@@ -152,13 +154,16 @@ class AgentsInstallTests(ClientBase):
         for args in steps:
             result = self.run_skill(self.skill, *args)
             self.assertEqual(result.returncode, 0, result.stderr)
-        task = {"task_id": "T1", "title": "核对", "plan": "approved", "acceptance_criteria": ["通过"]}
+        task = {"task_id": "T1", "title": "核对", "acceptance_criteria": ["通过"]}
         result = self.run_skill(self.skill, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "规划", payload=json.dumps(task, ensure_ascii=False))
         self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.run_skill(self.skill, "task", "approve", self.project, "--task-id", "T1", "--source", "user",
+                                "--expected-revision", 1, "--reason", "用户批准")
+        self.assertEqual(result.returncode, 0, result.stderr)
         decisions = load(self.project)[1]["DECISIONS.md"] + "\n- 合成决定：使用通用入口。\n"
         result = self.run_skill(self.skill, "state", "update", self.project, "DECISIONS.md", "--text-input",
-                                "--expected-revision", 1, "--reason", "保存决定", payload=decisions)
+                                "--expected-revision", 2, "--reason", "保存决定", payload=decisions)
         self.assertEqual(result.returncode, 0, result.stderr)
         doctor = self.run_skill(self.skill, "doctor", self.project, "--json")
         self.assertEqual(doctor.returncode, 0, doctor.stdout + doctor.stderr)
@@ -278,6 +283,75 @@ class ClaudeInstallTests(ClientBase):
         self.assertEqual(checks["Claude 原生加载"], "UNVERIFIED")
 
 
+class DshInstallTests(ClientBase):
+    def setUp(self):
+        super().setUp()
+        self.home = self.root / "dsh 配置"
+        self.result = install_client("dsh", self.home)
+        self.skill = self.home / "skills/project-anchor"
+        self.agents = self.home / "AGENTS.md"
+
+    def test_layout_and_runtime(self):
+        runtime = io.read_json(self.skill / "runtime.json")
+        self.assertEqual((runtime["client"], runtime["home"]), ("dsh", str(self.home)))
+        self.assertNotIn("codex_home", runtime)
+        self.assertTrue((self.skill / "SKILL.md").is_file())
+        data = self.agents.read_text(encoding="utf-8")
+        self.assertEqual(data.count("<!-- project-anchor:begin -->"), 1)
+        self.assertEqual(data.count("<!-- project-anchor:end -->"), 1)
+        self.assertIn("Project Anchor 项目治理约定", data)
+        self.assertFalse((self.home / "hooks.json").exists())
+        self.assertFalse((self.home / "settings.json").exists())
+
+    def test_default_home_uses_dsh_home(self):
+        with patch.dict(os.environ, {"DSH_HOME": str(self.home)}):
+            self.assertEqual(client_home("dsh"), self.home.resolve())
+        with patch.dict(os.environ, {}, clear=True), patch("core.clients.Path.home", return_value=self.user):
+            self.assertEqual(client_home("dsh"), (self.user / ".dsh").resolve())
+
+    def test_idempotent_and_uninstall_preserves_user_rules(self):
+        self.agents.write_bytes(self.agents.read_bytes() + b"\nuser note\n")
+        before = self.files(self.skill)
+        self.assertFalse(install_client("dsh", self.home)["changed"])
+        self.assertEqual(before, self.files(self.skill))
+        uninstall_client("dsh", self.home)
+        self.assertIn("user note", self.agents.read_text(encoding="utf-8"))
+        self.assertFalse((self.skill / "SKILL.md").exists())
+        self.assertFalse((self.home / "project-anchor/install.json").exists())
+
+    def test_drift_refuses_update_and_uninstall(self):
+        (self.skill / "SKILL.md").write_text("user change", encoding="utf-8")
+        with self.assertRaises(io.KitError):
+            install_client("dsh", self.home)
+        with self.assertRaises(io.KitError):
+            uninstall_client("dsh", self.home)
+        self.assertEqual((self.skill / "SKILL.md").read_text(encoding="utf-8"), "user change")
+
+    def test_modified_rules_refuse_uninstall(self):
+        self.agents.write_bytes(self.agents.read_bytes().replace(b"Project Anchor", b"Project Anchor X", 1))
+        with self.assertRaises(io.KitError):
+            uninstall_client("dsh", self.home)
+
+    def test_doctor_reports_install_and_unverified_native_layer(self):
+        init_project(self.project, "合成项目")
+        checks = {item["check"]: item["status"] for item in client_doctor("dsh", self.home, self.project)}
+        self.assertEqual(checks["dsh 安装清单"], "PASS")
+        self.assertEqual(checks["DSH 用户规则完整性"], "PASS")
+        self.assertEqual(checks["DSH 原生加载"], "UNVERIFIED")
+        with self.assertRaises(io.KitError):
+            client_doctor("dsh", self.home, self.project, session_id="x", expected_events=("SessionStart",))
+
+    def test_cli_entrypoints(self):
+        import kit
+        home = self.root / "cli dsh"
+        self.assertEqual(kit.main(["install-client", "dsh", "--home", str(home)]), 0)
+        self.assertTrue((home / "skills/project-anchor/SKILL.md").is_file())
+        self.assertEqual(kit.main(["doctor", str(self.project), "--client", "dsh",
+                                   "--client-home", str(home)]), 0)
+        self.assertEqual(kit.main(["uninstall-client", "dsh", "--home", str(home)]), 0)
+        self.assertFalse((home / "skills/project-anchor/SKILL.md").exists())
+
+
 class CrossClientTests(ClientBase):
     def test_two_clients_share_one_ledger_and_reject_stale_revision(self):
         agents = install_client("agents", self.root / "anchor", self.root / "agents skills")
@@ -285,9 +359,12 @@ class CrossClientTests(ClientBase):
         install_client("claude", claude_home)
         first, second = Path(agents["skill"]), claude_home / "skills/project-anchor"
         init_project(self.project, "共享项目")
-        task = {"task_id": "T1", "title": "共享", "plan": "approved", "acceptance_criteria": ["通过"]}
+        task = {"task_id": "T1", "title": "共享", "acceptance_criteria": ["通过"]}
         result = self.run_skill(first, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "客户端一", payload=json.dumps(task, ensure_ascii=False))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.run_skill(first, "task", "approve", self.project, "--task-id", "T1", "--source", "user",
+                                "--expected-revision", 1, "--reason", "客户端一批准")
         self.assertEqual(result.returncode, 0, result.stderr)
         snapshot = json.loads(self.run_skill(second, "snapshot", self.project).stdout)["snapshot"]
         before = (self.project / ".agent/tasks.json").read_bytes()

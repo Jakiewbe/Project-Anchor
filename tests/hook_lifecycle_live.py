@@ -69,8 +69,10 @@ def fixture(project):
     s, content, _ = load(project)
     doc_change(project, s["revision"], "DECISIONS.md", content["DECISIONS.md"] + "\n测试已确认：使用JSON文件，不使用数据库；决策标记 DECISION-4826。\n", "合成测试已确认决策")
     s, _, _ = load(project)
-    task_change(project, s["revision"], "add", {"task_id": "T1", "title": "验证输出5", "plan": "approved",
+    task_change(project, s["revision"], "add", {"task_id": "T1", "title": "验证输出5",
                 "acceptance_criteria": ["演示实际输出5"]}, "合成验收任务")
+    s, _, _ = load(project)
+    task_change(project, s["revision"], "approve", {"task_id": "T1"}, "合成验收任务批准", source="user")
     snapshot(project, "synthetic-old-checkpoint")
     s, content, _ = load(project)
     current = content["CURRENT.md"] + "\n最新工作断点 CURRENT-9462：任务T1尚未完成。\n"

@@ -178,27 +178,34 @@ class SkillTests(unittest.TestCase):
 
     def test_adapter_task_and_memory_handoff(self):
         init_project(self.project,"project")
-        task={"task_id":"T1","title":"检查","plan":"approved","acceptance_criteria":["通过"]}
-        for action, payload, rev in [("add",task,0),("update",{"task_id":"T1","status":"doing"},1),
-                                     ("update",{"task_id":"T1","status":"done","evidence":[{"type":"manual","criterion":1,"detail":"实际检查通过"}]},2)]:
+        task={"task_id":"T1","title":"检查","acceptance_criteria":["通过"]}
+        for action, payload, rev in [("add",task,0)]:
             result=self.run_skill("task",action,self.project,"--json-input","--expected-revision",rev,"--reason","验收",payload=json.dumps(payload,ensure_ascii=False))
+            self.assertEqual(result.returncode,0,result.stderr)
+        result=self.run_skill("task","approve",self.project,"--task-id","T1","--source","user",
+                              "--expected-revision",1,"--reason","用户批准")
+        self.assertEqual(result.returncode,0,result.stderr)
+        for payload, rev in [({"task_id":"T1","status":"doing"},2),
+                             ({"task_id":"T1","status":"done","evidence":[{"type":"manual","criterion":1,"detail":"实际检查通过"}]},3)]:
+            result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",rev,"--reason","验收",payload=json.dumps(payload,ensure_ascii=False))
             self.assertEqual(result.returncode,0,result.stderr)
         state, content, ledger=load(self.project)
         current=content["CURRENT.md"].replace("确认目标和计划。","准备交接。")
-        result=self.run_skill("state","update",self.project,"CURRENT.md","--text-input","--expected-revision",3,"--reason","主动交接",payload=current)
+        result=self.run_skill("state","update",self.project,"CURRENT.md","--text-input","--expected-revision",4,"--reason","主动交接",payload=current)
         self.assertEqual(result.returncode,0,result.stderr)
         result=self.run_skill("snapshot",self.project)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertTrue(Path(json.loads(result.stdout)["snapshot"]).exists())
-        self.assertEqual(load(self.project)[0]["current_task_revision"],3)
+        self.assertEqual(load(self.project)[0]["current_task_revision"],4)
         self.assertIn("完成率: 100%",(self.project / ".agent/PROGRESS.md").read_text(encoding="utf-8"))
 
     def test_adapter_invalid_evidence_preserves_ledger(self):
         init_project(self.project,"project")
-        task_change(self.project,0,"add",{"task_id":"T1","title":"任务","plan":"approved","acceptance_criteria":["验收"]},"添加")
-        task_change(self.project,1,"update",{"task_id":"T1","status":"doing"},"开始")
+        task_change(self.project,0,"add",{"task_id":"T1","title":"任务","acceptance_criteria":["验收"]},"添加")
+        task_change(self.project,1,"approve",{"task_id":"T1"},"批准",source="user")
+        task_change(self.project,2,"update",{"task_id":"T1","status":"doing"},"开始")
         before=(self.project / ".agent/tasks.json").read_bytes()
-        result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",2,"--reason","完成",payload='{"task_id":"T1","status":"done"}')
+        result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",3,"--reason","完成",payload='{"task_id":"T1","status":"done"}')
         self.assertEqual(result.returncode,1)
         self.assertEqual(before,(self.project / ".agent/tasks.json").read_bytes())
 

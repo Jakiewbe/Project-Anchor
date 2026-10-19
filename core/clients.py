@@ -12,15 +12,21 @@ from .config import HOOK_EVENTS, _remove_groups, windows_command
 from .memory import KIT_ROOT
 from .skill_install import inspect_skill, prepare_skill, skill_directory
 
-CLIENTS = ("agents", "claude")
+CLIENTS = ("agents", "claude", "dsh")
 RULES = "global/CLIENT_RULES.md"
+DSH_BEGIN = b"<!-- project-anchor:begin -->"
+DSH_END = b"<!-- project-anchor:end -->"
 
 
 def client_home(client, value=None):
     if client not in CLIENTS:
         raise KitError(f"不支持的客户端: {client}")
-    variable, default = (("PROJECT_ANCHOR_HOME", ".project-anchor") if client == "agents"
-                         else ("CLAUDE_CONFIG_DIR", ".claude"))
+    if client == "agents":
+        variable, default = "PROJECT_ANCHOR_HOME", ".project-anchor"
+    elif client == "claude":
+        variable, default = "CLAUDE_CONFIG_DIR", ".claude"
+    else:
+        variable, default = "DSH_HOME", ".dsh"
     selected = value or os.environ.get(variable)
     return Path(selected).expanduser().resolve() if selected else (Path.home() / default).resolve()
 
@@ -36,7 +42,14 @@ def skills_parent(client, home, skills_dir=None):
         if skills_dir is not None:
             raise KitError("Claude Code 只扫描 <配置目录>/skills；不接受 --skills-dir")
         return Path(home) / "skills"
+    if client == "dsh":
+        return Path(skills_dir).expanduser().resolve() if skills_dir is not None else Path(home) / "skills"
     return skills_dir
+
+
+def dsh_block():
+    rules = (KIT_ROOT / RULES).read_bytes().rstrip(b"\n")
+    return b"\n" + DSH_BEGIN + b"\n" + rules + b"\n" + DSH_END + b"\n"
 
 
 def claude_hook_groups(managed):
@@ -65,7 +78,7 @@ def _settings(path):
 
 def _scopes(client, home, target):
     managed, _, _ = client_locations(client, home)
-    return (Path(home).resolve() if client == "claude" else managed), {"skill": target}
+    return (Path(home).resolve() if client in ("claude", "dsh") else managed), {"skill": target}
 
 
 def _target(client, home, manifest, skills_dir):
@@ -117,6 +130,25 @@ def install_client(client, home, skills_dir=None):
             new_manifest.update(rules_hash=digest(rules_data), groups=groups,
                                 settings_existed=manifest["settings_existed"] if manifest else old_settings is not None,
                                 settings_had_hooks=had_hooks)
+        elif client == "dsh":
+            agents = safe_path(home / "AGENTS.md", home)
+            old_agents = raw(agents)
+            data = old_agents or b""
+            data.decode("utf-8-sig")
+            block = dsh_block()
+            if manifest:
+                old_block = (manifest.get("block") or "").encode("utf-8")
+                if not old_block or data.count(old_block) != 1 or data.count(DSH_BEGIN) != 1 or data.count(DSH_END) != 1:
+                    raise KitError("DSH 规则块已修改或缺失，拒绝覆盖")
+                data = data.replace(old_block, block, 1)
+            else:
+                if DSH_BEGIN in data or DSH_END in data:
+                    raise KitError("发现没有归属记录的 DSH 规则块，先人工检查")
+                data += block
+            updates[agents] = data
+            expected[agents] = old_agents
+            new_manifest.update(block=block.decode("utf-8"),
+                                agents_existed=manifest["agents_existed"] if manifest else old_agents is not None)
         updates[manifest_path] = encode_json(new_manifest)
         expected[manifest_path] = manifest_bytes
         if all(raw(p) == content for p, content in updates.items()):
@@ -163,6 +195,16 @@ def uninstall_client(client, home):
             content = None if not settings and not manifest["settings_existed"] else encode_json(settings)
             updates.update({rules: None, settings_path: content})
             expected.update({rules: current, settings_path: old_settings})
+        elif client == "dsh":
+            agents = safe_path(home / "AGENTS.md", home)
+            current = raw(agents)
+            block = (manifest.get("block") or "").encode("utf-8")
+            if current is None or not block or current.count(block) != 1 or current.count(DSH_BEGIN) != 1 or current.count(DSH_END) != 1:
+                raise KitError("DSH 规则块被修改或缺失，卸载拒绝覆盖")
+            remaining = current.replace(block, b"", 1)
+            content = remaining if manifest.get("agents_existed") or remaining.strip() else None
+            updates[agents] = content
+            expected[agents] = current
         transaction(root, journal, updates, expected, extra)
         return {"uninstalled": True, "client": client, "runtime_backups_retained": True}
 
@@ -206,6 +248,13 @@ def inspect_client(client, home):
             checks.append(("PASS" if settings.get("hooks", {}).get(event, []).count(group) == 1 else "FAIL",
                            f"{event} 已配置", "检查 settings.json 中本安装的命令及匹配器"))
         checks.append(("UNVERIFIED", "Claude 原生加载", "规则加载、Skill 发现和 Hook 执行以真实 Claude Code 会话证据为准"))
+    elif client == "dsh":
+        agents = home / "AGENTS.md"
+        block = (manifest.get("block") or "").encode("utf-8")
+        intact = agents.is_file() and bool(block) and agents.read_bytes().count(block) == 1
+        checks.append(("PASS" if intact else "FAIL", "DSH 用户规则完整性", str(agents)))
+        checks.append(("UNVERIFIED", "DSH 原生加载",
+                       "Skill 发现、AGENTS.md 注入与脚本执行以真实 DeepSeek Harness 会话证据为准"))
     else:
         checks.append(("UNVERIFIED", "生命周期 Hook", "通用安装不配置 Hook；各客户端生命周期能力见能力矩阵"))
     return checks

@@ -14,6 +14,9 @@
 | 明确任务/里程碑查询 | status PATH [--brief] [--task ID ...] [--milestone NAME] |
 | 明确授权重建进度 | status PATH --rebuild |
 | 任务创建/更新 | task add/update PATH --file JSON --expected-revision N --reason TEXT |
+| 任务批准 | task approve PATH --task-id ID --source user\|policy --expected-revision N --reason TEXT |
+| 任务范围修订 | task revise PATH --task-id ID --expected-revision N --reason TEXT |
+| 旧账本迁移 | migrate PATH --expected-revision N --reason TEXT [--dry-run] |
 | 状态更新 | state update PATH GOAL.md/CURRENT.md/DECISIONS.md/LESSONS.md --file MARKDOWN --expected-revision N --reason TEXT [--approved] |
 | 检查/保存快照 | snapshot PATH [--check SNAPSHOT_FILE] |
 | Codex 诊断 | doctor PATH --json --native-hooks --native-skills |
@@ -31,19 +34,25 @@ task/state 返回 `revision` 和 `changed`。`changed=false` 是有效请求没�
 
 `init-project` 的“初始化”指新增治理记录：创建 `.agent/`，保留并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`；默认不初始化Git，不改业务代码或依赖。审批和用户说明必须包含这四处写入范围；传入 `--git-init` 需要另有明确授权。
 
-task add 输入：
-plan 只接受 draft（草案）或 approved（已批准）；approved 只能记录用户实际批准，不能由模型自行批准。新增任务状态默认 todo；更新任务时可以单独提交 plan，不必同时改变状态。
-
+task add 输入（只能建立草案）：
 ```json
-{"task_id":"T1","title":"实现接口","description":"目标内的范围","milestone":"阶段一","plan":"draft","dependencies":[],"acceptance_criteria":["实际调用成功"]}
+{"task_id":"T1","title":"实现接口","description":"目标内的范围","milestone":"阶段一","dependencies":[],"acceptance_criteria":["实际调用成功"]}
 ```
+
+新增任务默认 `plan=draft`、`status=todo`；不能通过 `task add` 或 `task update` 直接建立 approved 状态。用户明确批准后执行 `task approve PATH --task-id T1 --source user --expected-revision N --reason TEXT`；程序记录批准范围快照（描述、验收标准、依赖）、版本和哈希。`--source` 是调用者声明，不是身份认证。
+
+已批准任务的描述、验收标准或依赖不能直接改；先 `task revise PATH --task-id T1 --expected-revision N --reason TEXT` 回到草案，修改后重新 `task approve`。旧证据保留但标记失效。
 
 task update 输入（证据必须来自实际验证）：
 ```json
 {"task_id":"T1","status":"done","evidence":[{"type":"test","criterion":1,"detail":"真实测试命令、结果及证据位置"}]}
 ```
 
-todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing；cancelled → todo。草案不能开始；doing/done 要求全部依赖 done；blocked 要求 blocker；done 证据覆盖所有标准。证据类型 test/file/review/manual/command，程序检查结构，不代替实际验收。
+`task update` 不接受 `plan`、`approved_scope`、`legacy_unverified`，也不能修改证据的 `level`、`scope_version`、`criteria_hash`、`git_head` 等内部字段。提交的 `evidence` 是新增条目，旧条目保留并由程序标记失效；不要试图用新条目覆盖或删除旧证据。程序为证据写入当前批准版本、标准文本哈希、记录时间和 `level=claimed`；`observed` 只能由受控执行路径产生（当前版本未提供）。一次 update 不能同时改验收范围并完成，也不能删除未完成依赖并同时置 doing。
+
+todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing；cancelled → todo。`task revise` 是显式的范围修订操作，可从 approved/doing/blocked/done 回到 draft/todo；它会使旧证据失效，随后必须重新 `task approve` 才能执行。草案不能开始；doing/done 要求全部依赖 done；blocked 要求 blocker；done 证据必须覆盖当前批准版本的全部标准，且标准文本哈希匹配。证据类型 test/file/review/manual/command，程序检查结构，不代替实际验收。
+
+旧 schema 1 账本只读；`status`/`doctor` 可读，`task`/`state` 写入前先执行 `migrate PATH --expected-revision N --reason TEXT`。迁移会备份、标记 `legacy_unverified`，不自动补造批准记录；旧任务重新开始或完成前需 `task approve`。旧版 v1.3 读取 schema 2 会直接拒绝。
 
 state update 接收完整文档。GOAL 必须有核心目标、项目背景、关键约束、非目标、验收标准、目标版本；CURRENT 必须有当前阶段、当前任务、已完成工作、当前阻塞、下一步动作、状态修订、Git 检查，50 行以内。普通更新禁止直接改原文件；外部既有编辑必须单独审核后 state adopt 登记，不用于绕过冲突。
 
