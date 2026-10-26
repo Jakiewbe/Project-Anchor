@@ -1,5 +1,6 @@
 import base64
 import copy
+import ctypes
 import json
 import os
 from pathlib import Path
@@ -123,6 +124,23 @@ class AtomicTests(Environment):
     def test_path_escape(self):
         with self.assertRaises(io.KitError):
             io.transaction(self.project, self.project / "journal", {self.base / "outside": b"bad"})
+
+    @unittest.skipUnless(os.name == "nt", "需要 Windows 8.3 短路径")
+    def test_transaction_accepts_short_and_long_forms_of_one_root(self):
+        # GitHub runners expose TEMP as RUNNER~1 while resolve() returns the long
+        # name; comparing an unresolved path against a resolved root raised
+        # ValueError instead of writing the file.
+        get = ctypes.windll.kernel32.GetShortPathNameW
+        size = get(str(self.base), None, 0)
+        buffer = ctypes.create_unicode_buffer(size)
+        get(str(self.base), buffer, size)
+        if Path(buffer.value) == self.base:
+            self.skipTest("卷未启用 8.3 短名")
+        target = self.base / "file"
+        journal = self.base / "journal"
+        io.transaction(self.base, journal, {Path(buffer.value) / "file": b"new"})
+        self.assertEqual(target.read_bytes(), b"new")
+        self.assertFalse(journal.exists())
 
     def test_expected_file_change_refuses_transaction(self):
         path = self.base / "file"

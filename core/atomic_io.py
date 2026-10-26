@@ -135,8 +135,10 @@ def transaction(root, journal, updates, expected=None, additional_roots=None):
     check_pending(journal)
     entries = []
     for path, new in updates.items():
-        path = Path(path)
-        scope = next((key for key, folder in roots.items() if path.resolve().is_relative_to(folder)), None)
+        # Resolve once: an 8.3 short root (RUNNER~1) and its long form are the same
+        # file, and mixing the two breaks the subpath check below.
+        path = Path(path).resolve()
+        scope = next((key for key, folder in roots.items() if path.is_relative_to(folder)), None)
         if scope is None:
             raise KitError(f"路径超出管理范围: {path}")
         path = safe_path(path, roots[scope])

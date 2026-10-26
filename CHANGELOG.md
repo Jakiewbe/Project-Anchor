@@ -2,6 +2,8 @@
 
 ## 未发布 — 1.5.0 账本与上下文优化
 
+- 修复既有缺陷（首次 GitHub Actions 运行暴露）：`atomic_io.transaction()` 用 `Path.resolve()` 后的长路径判断写入范围，却用未解析的短路径做 `relative_to()`。在 8.3 短名根（如 runner 的 `C:\\Users\\RUNNER~1\\...`）下抛 `ValueError`，导致所有写入失败。现在每个更新路径只解析一次，两种写法指同一文件。本机因临时目录没有短名别名而一直未暴露；新增 Windows 回归测试用 `GetShortPathNameW` 复现。
+
 - `state.json` 的 `history` 改为有上限：只让最近 10 条 `document-version` 保留文档全文，更早的剥离 `content` 但保留 `file`、`previous_sha256`、`timestamp`；条目总数上限 200，超出时按顺序丢弃并合并成一条 `history:prune` 记录（累计丢弃数、revision 区间、时间）。正文仍可从 Git 或快照取回。
 - 本仓库 `state.json` 实测从 477 KB 降到 101 KB（-79%），之后每次写入保持同量级；未改 `state.json` schema、不要求迁移，旧账本可直接读写。仍然只读取 `history` 是否存在，不读取其内容。
 - `status --brief` 默认折叠 `done`/`cancelled` 任务：只列仍未终结的任务，计数仍在 `summary`（新增 `folded_final`）。新增 `--all` 显式返回全量；显式 `--task`/`--milestone` 选择不受折叠影响。本仓库 `--brief` 输出实测从 12.7 KB 降到 7.3 KB。

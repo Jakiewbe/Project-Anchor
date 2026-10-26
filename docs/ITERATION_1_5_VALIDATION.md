@@ -65,9 +65,28 @@ token 数为粗估（CJK ≈ 1 token/字、ASCII ≈ 4 字符/token），仅用�
 
 未安装到任何 DSH profile，未取得真实会话证据；注入、guard、写工具、批准弹窗仍为设计（`docs/DSH_PLUGIN_DESIGN.md`）。P0 结项不等于 DSH 适配已验收。
 
-## 六、未验证事项
+## 六、GitHub Actions 实测与暴露的既有缺陷
 
-- **CI 尚未在 GitHub 上真实运行过。** 工作流文件已通过 YAML 解析，`windows-latest` 上的实际结果需要首次推送后确认。
-- **Linux 未验证。** `core/config.py`、`core/clients.py` 在非 Windows 走 `shlex.join`，本机无法执行该分支；Linux job 设为 `continue-on-error`。
+首次推送后共跑三次（`d7d2702`、`982d131`、`f3eeb9d`），结果如下：
+
+| run | sha | windows | linux |
+| --- | --- | --- | --- |
+| 40290585695 | d7d2702 | failure | success |
+| 40291352004 | 982d131 | failure | success |
+| 40291675312 | f3eeb9d | failure | success |
+
+前两次的失败在**公开可读的日志之外**：job 日志需认证（403）。`tests/ci_annotate.py` 把每个失败测试写成 check-run annotation（无需 token 即可读），方才拿到真实堆栈：
+
+```
+ValueError: 'C:\Users\RUNNER~1\AppData\Local\Temp\Anchor 审批 中文 ...\项目\.agent\tasks.json'
+is not in the subpath of 'C:\Users\runneradmin\AppData\Local\Temp\Anchor 审批 中文 ...\项目'
+```
+
+这是**既有缺陷，与本轮改动无关**：`core/atomic_io.py` 的 `transaction()` 用 `path.resolve()`（长路径）判断写入范围，却用未解析的短路径执行 `relative_to()`。GitHub runner 的 `TEMP` 走 8.3 短名 `RUNNER~1`，两者不一致就抛 `ValueError`；本机临时目录 `C:\\Users\\chs\\...` 本来就短，所以本地 220 项一直全绿。已在本地用 `GetShortPathNameW` 复现同一错误文本，修复为“每个更新路径只解析一次”，并新增 Windows 回归测试（不含 8.3 短名的卷自动跳过）。
+
+## 七、未验证事项
+
+- **修复后的 Windows CI 结果尚未确认。** 前三次均失败，修复提交需再次运行后才能声称 CI 绿。
+- **Linux 仍为信息性任务。** 三次运行均通过，但 `shlex.join` 命令路径没有人工验收；`continue-on-error` 保持开启。
 - **快照体积未处理。** 快照仍内嵌完整 `state`（现在因 history 有界而间接变小），没有单独裁剪逻辑。
 - **`tasks.json` 历史未处理**（93 条、约 31 KB），本轮未动。
