@@ -1,8 +1,9 @@
 """Run the regression and surface failures as GitHub annotations.
 
-Job logs need authentication, but check-run annotations are public. This keeps
-a red build diagnosable without anyone extracting a token: every failing test
-becomes one annotation, and the first traceback is summarised in another.
+Job logs on a public repository need authentication, but check-run annotations
+do not. Every failing test becomes one annotation, and the first traceback is
+summarised (exception line plus frame locations) so a red build stays
+diagnosable without a token.
 """
 import re
 import subprocess
@@ -11,6 +12,37 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FAILURE = re.compile(r"^(FAIL|ERROR): ")
+SEPARATOR = re.compile(r"^(={5,}|-{5,})$")
+FRAME = re.compile(r'File "([^"]+)", line (\d+), in (\S+)')
+
+
+def blocks(lines):
+    """Split unittest -v output into (header, body) pairs for failing tests."""
+    result = []
+    index = 0
+    while index < len(lines):
+        if FAILURE.match(lines[index]):
+            header = lines[index]
+            body = []
+            index += 1
+            while index < len(lines) and not FAILURE.match(lines[index]):
+                line = lines[index]
+                if re.match(r"^={5,}$", line) or line.startswith("Ran ") or line in ("OK", "FAILED"):
+                    break
+                if not SEPARATOR.match(line) and line.strip():
+                    body.append(line)
+                index += 1
+            result.append((header, body))
+        else:
+            index += 1
+    return result
+
+
+def summarise(header, body):
+    message = body[-1].strip() if body else "无异常信息"
+    frames = [f"{Path(path).name}:{number} {name}" for path, number, name in
+              (FRAME.match(line.strip()).groups() for line in body if FRAME.match(line.strip()))]
+    return re.sub(r"\s+", " ", f"{header} :: {message} :: {'; '.join(frames[:3])}")[:900]
 
 
 def main():
@@ -18,25 +50,13 @@ def main():
                              "discover", "-s", "tests", "-v"],
                             cwd=ROOT, capture_output=True, text=True,
                             encoding="utf-8", errors="replace")
-    output = (result.stdout + result.stderr).splitlines()
-    summary = [line for line in output
-               if FAILURE.match(line) or line.startswith("Ran ") or line in ("OK", "FAILED")]
-    print("\n".join(summary))
+    lines = (result.stdout + result.stderr).splitlines()
+    print("\n".join(line for line in lines
+                    if FAILURE.match(line) or line.startswith("Ran ") or line in ("OK", "FAILED")))
     if not result.returncode:
         return 0
-    failures = [line for line in output if FAILURE.match(line)]
-    for line in failures[:20]:
-        print(f"::error::{line}")
-    first = next((index for index, line in enumerate(output) if FAILURE.match(line)), None)
-    if first is not None:
-        block = []
-        for line in output[first + 1:]:
-            if FAILURE.match(line) or re.match(r"^-{10,}$", line.strip()) or line.startswith("Ran "):
-                break
-            if line.strip():
-                block.append(line.strip())
-        if block:
-            print("::error::第一个失败: " + block[-1][:900])
+    for header, body in blocks(lines)[:20]:
+        print("::error::" + summarise(header, body))
     return result.returncode
 
 
