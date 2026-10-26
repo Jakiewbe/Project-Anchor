@@ -26,6 +26,7 @@ doctor 的可选原生检查使用公开 app-server skills/list，不推断模�
 - 状态修改必须给出期望修订号；直接修改 Markdown 通过 state adopt 显式登记。tasks.json 不允许 adopt。
 - PROGRESS 是可重建视图；账本和视图一同更新。视图单独被改动可以 rebuild。
 - 初始化对 .agent/** 设置 Git -text 属性，保持状态的原始字节，避免 Windows 自动换行转换导致克隆后哈希失效；保留现有 .gitattributes 其他规则。
+- `state.json` 的 `history` 有固定上限（1.5）：最近 10 条 `document-version` 保留文档全文，更早的只保留 `file`、`previous_sha256`、`timestamp`、`user_approved`；条目总数上限 200，超出按顺序丢弃并合并成一条 `history:prune`（累计丢弃数、revision 区间）。程序只检查 `history` 是否为列表，不读取其中内容，因此裁剪不影响任何校验；完整正文以 Git 提交和快照为准。上限是模块常量，不要求迁移，也没有新增必填字段。
 
 ## 任务批准协议（1.4）
 
@@ -34,6 +35,8 @@ tasks.json 使用 schema 2。新增任务只能建立草案；`task approve` 是
 schema 1 可只读解析，但 `task`/`state` 写入前必须显式 `migrate`。迁移备份原状态，把旧批准任务标记为 `legacy_unverified`，不补造批准记录；旧任务重新开始或完成前需要重新批准。旧 v1.3 读取 schema 2 会拒绝，避免旧写入器静默降级。该协议是本地程序不变量，不是 L3 身份验证：Agent 若能调用 `task approve` 仍可自批；真正独立的批准来源需要 OS 权限边界或独立 runner。
 
 ## 信任与边界
+
+批准和修订操作将当时的 `approved_scope` 深拷贝到任务 `history`，保留范围、版本、来源、原因和时间。修订时会存档旧版仍存在的快照；不会改写原历史或虚构此前已经丢失的记录。此变更复用 schema 2 的历史数组，不要求再次迁移。
 
 SessionStart 默认只注入固定提醒，不读取未审核项目内容作为高级指令。用户执行 trust-project 后，在 CODEX_HOME 中登记真实根目录、项目 UUID 和 GOAL/CURRENT 的精确哈希；文件变化需要重新审核。摘要以 JSON 数据呈现，限制长度，并声明不是规则。此措施不能数学上阻止模型误读数据，仍需人工冒烟验收。
 

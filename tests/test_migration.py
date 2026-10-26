@@ -126,6 +126,24 @@ class MigrationTests(unittest.TestCase):
         self.assertFalse(ledger["tasks"][0]["legacy_unverified"])
         self.assertEqual(ledger["tasks"][0]["approved_scope"]["version"], 1)
 
+    def test_dry_run_validates_conversion_and_failure_creates_no_backup(self):
+        self.make_legacy_project()
+        state, _, ledger = memory.load(self.project)
+        # Schema 1 accepted extension fields that schema 2 deliberately rejects.
+        ledger["tasks"][0]["custom_note"] = "旧扩展"
+        data = io.encode_json(ledger)
+        (self.project / ".agent/tasks.json").write_bytes(data)
+        state["hashes"]["tasks.json"] = io.digest(data)
+        (self.project / ".agent/state.json").write_bytes(io.encode_json(state))
+        memory.load(self.project)
+        before = {name: (self.project / ".agent" / name).read_bytes()
+                  for name in ("state.json", "tasks.json", "PROGRESS.md")}
+        for dry_run in (True, False):
+            with self.subTest(dry_run=dry_run), self.assertRaisesRegex(io.KitError, "未知任务字段"):
+                memory.migrate(self.project, state["revision"], "检查迁移", dry_run=dry_run)
+            self.assertFalse((self.project / ".agent/runtime/migrations").exists())
+            self.assertEqual(before, {name: (self.project / ".agent" / name).read_bytes() for name in before})
+
 
 if __name__ == "__main__":
     unittest.main()

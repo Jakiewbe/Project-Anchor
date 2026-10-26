@@ -1,5 +1,30 @@
 # 更新记录
 
+## 未发布 — 1.5.0 账本与上下文优化
+
+- `state.json` 的 `history` 改为有上限：只让最近 10 条 `document-version` 保留文档全文，更早的剥离 `content` 但保留 `file`、`previous_sha256`、`timestamp`；条目总数上限 200，超出时按顺序丢弃并合并成一条 `history:prune` 记录（累计丢弃数、revision 区间、时间）。正文仍可从 Git 或快照取回。
+- 本仓库 `state.json` 实测从 477 KB 降到 101 KB（-79%），之后每次写入保持同量级；未改 `state.json` schema、不要求迁移，旧账本可直接读写。仍然只读取 `history` 是否存在，不读取其内容。
+- `status --brief` 默认折叠 `done`/`cancelled` 任务：只列仍未终结的任务，计数仍在 `summary`（新增 `folded_final`）。新增 `--all` 显式返回全量；显式 `--task`/`--milestone` 选择不受折叠影响。本仓库 `--brief` 输出实测从 12.7 KB 降到 7.3 KB。
+- 新增 `tests/test_history.py`：覆盖正文剥离窗口、条数上限、单条滚动标记、短历史不变、无新增必填字段、brief 折叠与显式选择。
+- 新增 `.github/workflows/tests.yml`：`windows-latest` 阻断（主验证环境），`ubuntu-latest` 为 `continue-on-error` 的信息性任务；Linux 走 `shlex.join` 命令路径，未在本机验证。
+- DSH P0 的五条批准标准逐条对上测试或命令证据后结项；真实 DSH 会话证据仍属 P1。
+- 本轮实测见 `docs/ITERATION_1_5_VALIDATION.md`；历史轮次的数字不改写。
+
+## 未发布 — DSH 宿主插件 P0
+
+- 新增 `packages/dsh/`：DSH 宿主插件骨架，`anchor_status` 与 `anchor_doctor` 两个只读工具 + `project-anchor:governance` 提示词 section；业务逻辑仍只在 `kit.py`。
+- 新增只读 `kit.py context PATH [--json] [--limit] [--managed-dir]`：与 Codex Hook 共用 `core/hook_runtime.context()`，未信任项目只返回读取指引、不注入内容。
+- 新增 `tests/test_dsh_plugin.py`：用桩件加载真实 Host 模块，校验清单/patch/locale/icon、schema 关键字子集、`apply()` 注册结果，并实际调用一次只读 `kit.py status`。
+- 未安装到任何 DSH profile，未取得真实会话证据；`ANCHOR` 写工具、guard、注入、命令、批准弹窗仍为设计，见 `docs/DSH_PLUGIN_DESIGN.md`。
+
+## 未发布 — 1.4.0 后续修复
+
+- 保留失效证据的原序号和哈希，修复任务缩减验收条目时被历史证据阻止的问题。
+- 批准和修订时将完整批准快照追加到历史，避免重新批准后丢失旧来源和时间；不补造此前丢失的历史。
+- 空证据数组不再制造无意义的修订，错误的证据容器类型明确拒绝。
+- 迁移预检和正式迁移共用完整转换校验；不兼容输入在创建备份前报错，不自动丢弃未知字段。
+- DSH 诊断检查重复规则标记，并区分规则块完整性和模板版本；补齐技能参考中的 DSH 命令说明。
+
 ## 1.4.0 — 2026-10-19
 
 - 任务账本升级到 `schema 2`：批准范围成为程序拥有的快照，记录描述、验收标准、依赖、版本和哈希；`task add` 只建草案，批准只能通过 `task approve`，范围变更先 `task revise` 再重新批准。

@@ -332,6 +332,19 @@ class DshInstallTests(ClientBase):
         with self.assertRaises(io.KitError):
             uninstall_client("dsh", self.home)
 
+    def test_doctor_rejects_extra_rule_markers(self):
+        self.agents.write_bytes(self.agents.read_bytes() + b"\n<!-- project-anchor:begin -->\n")
+        checks = {item["check"]: item["status"] for item in client_doctor("dsh", self.home, self.project)}
+        self.assertEqual(checks["DSH 用户规则完整性"], "FAIL")
+
+    def test_doctor_warns_for_intact_rules_from_an_older_template(self):
+        import core.clients as clients
+        original = clients.dsh_block()
+        with patch("core.clients.dsh_block", return_value=original + b"\nupdated template\n"):
+            checks = {item["check"]: item["status"] for item in client_doctor("dsh", self.home, self.project)}
+        self.assertEqual(checks["DSH 用户规则完整性"], "PASS")
+        self.assertEqual(checks["DSH 用户规则版本"], "WARN")
+
     def test_doctor_reports_install_and_unverified_native_layer(self):
         init_project(self.project, "合成项目")
         checks = {item["check"]: item["status"] for item in client_doctor("dsh", self.home, self.project)}

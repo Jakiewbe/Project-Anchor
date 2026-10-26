@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Project Anchor 项目治理",
+    "description": "通过 kit.py 读取仓库 .agent 的目标、断点与任务状态，并把治理纪律放进系统提示词。"
+  }
+}

@@ -4,6 +4,7 @@ These tests intentionally exercise the bypasses that schema 1 allowed:
 self-approval, scope weakening, dependency removal, and reusing evidence after
 the acceptance criteria changed.
 """
+import copy
 import json
 import os
 import subprocess
@@ -58,6 +59,30 @@ class ApprovalTests(unittest.TestCase):
                         {"task_id": "T1", "title": "任务", "acceptance_criteria": ["完成"],
                          "plan": "approved"}, "自批")
         self.assertEqual(load(self.project)[2]["tasks"], [])
+
+    def test_shrink_criteria_preserves_invalidated_evidence(self):
+        self.add(criteria=("a", "b"))
+        self.approve()
+        self.update(status="doing")
+        self.update(status="done", evidence=[
+            {"type": "manual", "criterion": 1, "detail": "old a"},
+            {"type": "manual", "criterion": 2, "detail": "old b"},
+        ])
+        self.revise()
+        historical = self.task()["evidence"]
+        self.update(acceptance_criteria=["new a"])
+        self.assertEqual(self.task()["evidence"], historical)
+        self.approve()
+        self.update(status="doing")
+        with self.assertRaises(io.KitError):
+            self.update(status="done")
+        self.update(status="done", evidence=[
+            {"type": "manual", "criterion": 1, "detail": "new a"},
+        ])
+        task = self.task()
+        self.assertEqual(task["evidence"][:2], historical)
+        self.assertEqual(task["approved_scope"]["version"], 2)
+        self.assertEqual(task["status"], "done")
 
     def test_update_cannot_set_plan_or_internal_fields(self):
         self.add()
@@ -162,6 +187,46 @@ class ApprovalTests(unittest.TestCase):
         self.add()
         with self.assertRaises(io.KitError):
             self.revise()
+
+    def test_reapproval_preserves_each_approval_snapshot_in_history(self):
+        self.add()
+        self.approve(source="user")
+        first = copy.deepcopy(self.task()["approved_scope"])
+        self.revise()
+        self.update(description="修订范围", acceptance_criteria=["新标准"])
+        self.approve(source="policy")
+        ledger = load(self.project)[2]
+        approvals = [item for item in ledger["history"] if item["action"] == "approve"]
+        self.assertEqual(approvals[0]["approved_scope"], first)
+        self.assertEqual(approvals[1]["approved_scope"], self.task()["approved_scope"])
+        self.assertEqual(approvals[0]["approved_scope"]["source"], "user")
+        self.assertEqual(approvals[1]["approved_scope"]["source"], "policy")
+
+    def test_revise_archives_existing_snapshot_without_rewriting_old_history(self):
+        self.add()
+        self.approve()
+        state, _, ledger = load(self.project)
+        # Model an existing 1.4.0 approval, whose history did not store the scope.
+        for item in ledger["history"]:
+            item.pop("approved_scope", None)
+        from core.tasks import mutate
+        original = copy.deepcopy(ledger["history"])
+        scope = copy.deepcopy(ledger["tasks"][0]["approved_scope"])
+        revised = mutate(ledger, "revise", {"task_id": "T1"}, "修改范围")
+        self.assertEqual(revised["history"][:-1], original)
+        self.assertEqual(revised["history"][-1]["approved_scope"], scope)
+
+    def test_empty_evidence_is_no_change_and_non_array_is_rejected(self):
+        self.add()
+        self.approve()
+        before = {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir()
+                  if p.is_file() and p.name != ".lock"}
+        self.update(evidence=[])
+        self.assertEqual(before, {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir()
+                                 if p.is_file() and p.name != ".lock"})
+        for value in ({}, "", None):
+            with self.subTest(value=value), self.assertRaises(io.KitError):
+                self.update(evidence=value)
 
 
 if __name__ == "__main__":

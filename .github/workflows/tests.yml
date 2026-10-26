@@ -1,0 +1,53 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    # Primary validated environment: Windows + PowerShell (see README).
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Show tool versions
+        run: |
+          python --version
+          git --version
+          node --version
+      - name: Run regression
+        run: python -X utf8 -m unittest discover -s tests -q
+
+  linux:
+    # Not a validated environment yet: Linux takes the shlex.join command path
+    # instead of PowerShell EncodedCommand, so results are informational only.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Run regression (informational)
+        run: python -X utf8 -m unittest discover -s tests -q

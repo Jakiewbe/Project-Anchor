@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Project Anchor">
+  <rect width="64" height="64" rx="14" fill="#1b2430"/>
+  <circle cx="32" cy="17" r="5" fill="none" stroke="#5ad2a4" stroke-width="3.5"/>
+  <path d="M32 22v26" stroke="#5ad2a4" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M20 30h24" stroke="#5ad2a4" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M16 40c0 8 7 13 16 13s16-5 16-13" fill="none" stroke="#e8eef5" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M12 40h8M44 40h8" stroke="#e8eef5" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

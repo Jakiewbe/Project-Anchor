@@ -1,0 +1,9 @@
+# Project Anchor governance rows for the current DSH profile.
+# Installed by Plugin Manager `install_bundle`; do not hand-edit the profile.
+- insert:
+    - id: project-anchor-dsh
+      name: '@local/project-anchor-dsh'
+      config:
+        pythonPath: ''
+        kitPath: ''
+        toolTimeoutMs: 20000

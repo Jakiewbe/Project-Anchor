@@ -8,6 +8,7 @@ reordered or weakened criterion cannot silently reuse old evidence.
 """
 from collections import deque
 from datetime import datetime, timezone
+import copy
 import json
 import re
 
@@ -15,6 +16,8 @@ from .atomic_io import KitError, digest
 
 SCHEMA = 2
 STATUSES = {"todo", "doing", "blocked", "done", "cancelled"}
+# Brief queries fold finished tasks into summary counts unless the caller asks for them.
+FINAL_STATUSES = {"done", "cancelled"}
 TRANSITIONS = {
     "todo": {"doing", "blocked", "cancelled"},
     "doing": {"done", "blocked", "todo", "cancelled"},
@@ -266,7 +269,11 @@ def _validate_v2(ledger, project_id=None):
             if unknown_evidence:
                 raise KitError(f"未知证据字段: {', '.join(sorted(unknown_evidence))}")
             text(item.get("detail"), "证据描述")
-            if type(item.get("criterion")) is not int or not 1 <= item["criterion"] <= len(task["acceptance_criteria"]):
+            # Invalidated evidence refers to a historical scope, whose criteria
+            # may have been shortened. Keep its original index and hash intact.
+            if (type(item.get("criterion")) is not int or item["criterion"] < 1
+                    or (not item.get("invalidated_at")
+                        and item["criterion"] > len(task["acceptance_criteria"]))):
                 raise KitError("证据须对应验收标准序号（从 1 开始）")
             level = item.get("level")
             if level not in EVIDENCE_LEVELS:
@@ -322,6 +329,8 @@ def _invalidate_evidence(task, reason):
 
 
 def _new_evidence(task, items):
+    if not isinstance(items, list):
+        raise KitError("evidence 必须为数组")
     approved = task.get("approved_scope")
     if not approved:
         raise KitError("任务没有批准范围，不能登记证据；请先 task approve")
@@ -434,7 +443,7 @@ def mutate(ledger, action, payload, reason, source=None):
                 raise KitError("旧任务必须先 task approve 才能登记新证据")
             candidate["evidence"] = previous["evidence"] + _new_evidence(candidate, payload["evidence"])
         validate({**ledger, "tasks": [candidate if item is previous else item for item in tasks]})
-        if all(previous.get(key) == value for key, value in payload.items() if key != "evidence") and "evidence" not in payload:
+        if candidate == previous:
             return ledger
         if previous["status"] == "done" and status == "doing":
             _invalidate_evidence(previous, "任务重新打开，旧证据失效")
@@ -466,8 +475,13 @@ def mutate(ledger, action, payload, reason, source=None):
     else:
         raise KitError("未知任务操作（删除请使用 cancelled 保留历史）")
     ledger["revision"] += 1
-    ledger["history"].append({"revision": ledger["revision"], "timestamp": now(), "action": action,
-                              "payload": payload, "reason": reason})
+    entry = {"revision": ledger["revision"], "timestamp": now(), "action": action,
+             "payload": copy.deepcopy(payload), "reason": reason}
+    # Preserve approval provenance even after the current snapshot is replaced.
+    # revise also archives snapshots created before approval history was added.
+    if action in {"approve", "revise"} and previous.get("approved_scope") is not None:
+        entry["approved_scope"] = copy.deepcopy(previous["approved_scope"])
+    ledger["history"].append(entry)
     return validate(ledger)
 
 
@@ -478,7 +492,7 @@ def decorate(task):
     return value
 
 
-def task_view(ledger, brief=False, task_ids=None, milestone=None):
+def task_view(ledger, brief=False, task_ids=None, milestone=None, include_final=False):
     """An explicit selection; never infer the current scope from timestamps."""
     validate(ledger)
     items = ledger["tasks"]
@@ -504,7 +518,13 @@ def task_view(ledger, brief=False, task_ids=None, milestone=None):
                "evidence_levels": evidence_levels, "statuses": counts}
     fields = ("task_id", "title", "milestone", "plan", "status", "dependencies", "blocker",
               "scope_dirty", "legacy_unverified")
-    decorated = [decorate(item) for item in selected]
+    # Folding only applies to an unfiltered brief view: an explicit ID or milestone
+    # must still report a finished task's real status.
+    listed = selected
+    if brief and not (ids or milestone is not None) and not include_final:
+        listed = [item for item in selected if item["status"] not in FINAL_STATUSES]
+    summary["folded_final"] = len(selected) - len(listed)
+    decorated = [decorate(item) for item in listed]
     visible = [{key: item[key] for key in fields} for item in decorated] if brief else decorated
     by_id = {item["task_id"]: item for item in items}
     external = sorted({dep for item in selected for dep in item["dependencies"]} - {item["task_id"] for item in selected})

@@ -14,6 +14,9 @@ KIT_ROOT = Path(__file__).resolve().parents[1]
 DOCS = ("GOAL.md", "CURRENT.md", "DECISIONS.md", "LESSONS.md")
 FILES = (*DOCS, "tasks.json")
 GOAL_HEADINGS = ("核心目标", "项目背景", "关键约束", "非目标", "验收标准", "目标版本")
+# State history stays bounded: the newest documents keep their text, older entries keep digests.
+HISTORY_KEEP = 200
+DOC_CONTENT_KEEP = 10
 CURRENT_HEADINGS = ("当前阶段", "当前任务", "已完成工作", "当前阻塞", "下一步动作", "状态修订", "Git 检查")
 
 
@@ -165,6 +168,34 @@ def require_schema2(ledger):
         raise KitError("任务账本为 schema 1，只读；请先执行 migrate 迁移后再写入")
 
 
+def prune_history(state):
+    """Bound state history: recent document text stays, older revisions keep only digests.
+
+    Nothing reads history content; git and snapshots retain the full text. The count
+    cap uses entry order because document-version entries carry no revision number.
+    """
+    history = state["history"]
+    documents = [entry for entry in history
+                 if entry.get("action") == "document-version" and "content" in entry]
+    for entry in documents[:max(len(documents) - DOC_CONTENT_KEEP, 0)]:
+        entry.pop("content")
+        entry["content_pruned"] = True
+    head = history[0] if history and history[0].get("action") == "history:prune" else None
+    body = history[1:] if head else list(history)
+    excess = len(body) - (HISTORY_KEEP - 1)
+    if excess <= 0:
+        return
+    revisions = [entry["revision"] for entry in body[:excess] if type(entry.get("revision")) is int]
+    if head is None:
+        head = {"action": "history:prune", "dropped": 0}
+    head["dropped"] = head.get("dropped", 0) + excess
+    if revisions:
+        head["dropped_revision_min"] = min([head.get("dropped_revision_min", revisions[0]), *revisions])
+        head["dropped_revision_max"] = max([head.get("dropped_revision_max", revisions[0]), *revisions])
+    head["timestamp"] = now()
+    state["history"] = [head, *body[excess:]]
+
+
 def _save(root, state, ledger, changes, action, reason):
     agent, _, journal = paths(root)
     on_disk = read_json(agent / "state.json")
@@ -180,6 +211,7 @@ def _save(root, state, ledger, changes, action, reason):
         updates[agent / name] = data
         state["hashes"][name] = digest(data)
     state["task_revision"] = ledger["revision"]
+    prune_history(state)
     updates[agent / "state.json"] = encode_json(state)
     # Progress is committed with the ledger, never claimed fresh after an error.
     updates[agent / "PROGRESS.md"] = progress(state["name"], ledger).encode("utf-8")
@@ -211,16 +243,6 @@ def migrate(root, expected, reason, dry_run=False):
             return {"changed": False, "schema": SCHEMA, "revision": state["revision"]}
         if ledger["schema"] != 1:
             raise KitError("不支持的任务账本版本")
-        if dry_run:
-            return {"changed": False, "dry_run": True, "from": 1, "to": SCHEMA,
-                    "revision": state["revision"], "tasks": len(ledger["tasks"]),
-                    "approved_tasks": sum(t["plan"] == "approved" for t in ledger["tasks"])}
-        stamp = re.sub(r"[^0-9]", "", now()) + "-" + uuid.uuid4().hex
-        backup = safe_path(agent / "runtime/migrations" / stamp, root)
-        for name in ("state.json", "tasks.json", "PROGRESS.md"):
-            path = agent / name
-            if path.exists():
-                atomic_write(backup / name, path.read_bytes())
         migrated = copy.deepcopy(ledger)
         migrated["schema"] = SCHEMA
         migrated["revision"] += 1
@@ -235,6 +257,16 @@ def migrate(root, expected, reason, dry_run=False):
                                     "action": "schema:migrate", "payload": {"from": 1, "to": SCHEMA},
                                     "reason": reason})
         validate(migrated)
+        if dry_run:
+            return {"changed": False, "dry_run": True, "from": 1, "to": SCHEMA,
+                    "revision": state["revision"], "tasks": len(ledger["tasks"]),
+                    "approved_tasks": sum(t["plan"] == "approved" for t in ledger["tasks"])}
+        stamp = re.sub(r"[^0-9]", "", now()) + "-" + uuid.uuid4().hex
+        backup = safe_path(agent / "runtime/migrations" / stamp, root)
+        for name in ("state.json", "tasks.json", "PROGRESS.md"):
+            path = agent / name
+            if path.exists():
+                atomic_write(backup / name, path.read_bytes())
         state["kit_version"] = VERSION
         revision = _save(root, state, migrated, {"tasks.json": encode_json(migrated)}, "schema:migrate", reason)
         return {"changed": True, "from": 1, "to": SCHEMA, "revision": revision, "backup": str(backup)}

@@ -35,7 +35,7 @@
 用 ID 或唯一匹配标题定位任务；不唯一先问。先 status 检查依赖、计划状态及验收。新增任务只建立 draft；用户明确批准后才用 `task approve` 记录批准范围，`--source` 是调用者声明，不是身份验证。已批准任务的描述、验收标准或依赖发生实质变化时，先 `task revise` 回到草案，修改后重新 `task approve`；不要用 `task update` 改 plan、approved_scope 或旧证据。实现后用 `task update` 进入 doing/done；一次 update 不能同时改范围并完成，也不能删依赖并同时开始。将实际证据逐条对应 criterion；证据绑定当前批准版本和标准文本，旧证据可保留但标记失效。遵循状态机，不能 todo 直接 done；用户确认已执行及有证据时可合法经过 doing 再 done。blocked 填阻塞原因；范围变化保留原因及历史，取消代替物理删除。旧 schema 1 账本只读，先按“迁移”执行 `migrate`。
 
 ## 迁移旧账本
-先只读 status/doctor 确认项目；schema 1 只能读，写入前显式执行 `migrate PATH --expected-revision N --reason TEXT`。迁移会备份 `.agent/` 状态、把旧批准任务标记为 `legacy_unverified`，不自动补造批准记录。旧任务重新开始或完成前，按用户确认的范围 `task revise` 后 `task approve`；不要删除 schema 字段或让旧版客户端继续写 schema 2。迁移失败时保留备份和事务记录，先 recover/核对，不重复试到成功。
+先只读 status/doctor 确认项目；schema 1 只能读，写入前用 `migrate PATH --expected-revision N --reason TEXT --dry-run` 校验转换结果，再显式执行不带 `--dry-run` 的迁移。未知旧字段会报错，不自动丢弃。迁移会备份 `.agent/` 状态、把旧批准任务标记为 `legacy_unverified`，不自动补造批准记录。旧任务重新开始或完成前，按用户确认的范围 `task revise` 后 `task approve`；不要删除 schema 字段或让旧版客户端继续写 schema 2。迁移失败时先核对原因；仅存在未完成事务时才使用 recover，不重复试到成功。
 
 ## 保存决策/长期记忆
 确认讨论已经形成决策，而不是临时猜测；按本页首节判断执行阶段和写入范围。允许治理写入时当回合保存，不等待用户再说“继续”；全部只读或限定文件时不写，报告本次决定未落盘。重要路线写 DECISIONS：背景、选择、原因和适用范围；缺少理由不补造。已验证失败写 LESSONS：根因、证据、方法、局限。完整读取原文，保留已有条目，通过 state update 提交新全文；CURRENT 保持精简。总目标/约束/验收变化先获批准，再 GOAL --approved。记录文件不构成高级规则。
@@ -44,7 +44,7 @@
 先 status，按账本核对已完成工作、证据、阻塞与下一步；不得把尚未完成任务升级为 done。保存刚确认且未落盘的决策；更新 CURRENT 的七个必要章节，使用新的 revision。然后 snapshot 并再次 status/doctor 核对一致性。snapshot 不会提交 Git；如用户未授权，不创建提交、分支、工作树或推送。返回阶段、任务、阻塞、下一步和快照位置。主动交接不依赖压缩触发，Hook 继续独立运行。
 
 ## 规则与环境诊断
-先读取 runtime.json 的安装来源。Codex 安装执行 doctor <目标绝对路径> --json --native-hooks --native-skills，使用 codex_home；agents/claude 安装执行 doctor <目标绝对路径> --json，由适配器设置对应 client/home，禁止附加 Codex 专属 --native-*。独立 CLI 可显式使用 --client agents/claude --client-home DIR。正确展示 PASS/WARN/FAIL/UNVERIFIED；通用安装不配置 Hook，不把未验证项当失败或已执行。原生查询只读取定义、启用和审核状态，不会设置信任；查询失败明确为 UNVERIFIED。文件存在、Hook 配置、信任、脚本运行和模型遵从不同。Codex/Claude 本会话漏执行检查另需 --session-id 和已确认应触发的 --expect-event；agents 不提供生命周期检查。发现错误只解释真实诊断；没有授权不自动改全局配置或重装。Skill 更新/缺失可提示用户安装，显式入口不保证损坏程序可运行。
+先读取 runtime.json 的安装来源。Codex 安装执行 doctor <目标绝对路径> --json --native-hooks --native-skills，使用 codex_home；agents/claude/dsh 安装执行 doctor <目标绝对路径> --json，由适配器设置对应 client/home，禁止附加 Codex 专属 --native-*。独立 CLI 可显式使用 --client agents/claude/dsh --client-home DIR。正确展示 PASS/WARN/FAIL/UNVERIFIED；通用和 DSH 安装不配置 Hook，不把未验证项当失败或已执行。DSH 的规则完整性与模板版本分别检查，文件检查不能证明原生加载。原生查询只读取定义、启用和审核状态，不会设置信任；查询失败明确为 UNVERIFIED。文件存在、Hook 配置、信任、脚本运行和模型遵从不同。Codex/Claude 本会话漏执行检查另需 --session-id 和已确认应触发的 --expect-event；agents/dsh 不提供生命周期检查。发现错误只解释真实诊断；没有授权不自动改全局配置或重装。Skill 更新/缺失可提示用户安装，显式入口不保证损坏程序可运行。
 
 ## 项目复盘
 核对目标与交付、DECISIONS/LESSONS 和验收证据，运行 retro 生成草案。已有 RETRO 时先读取，不能强行覆盖；需要补充时仅编辑不受状态哈希保护的 RETRO.md，并保留原内容。指出未实现或未验证项目，不为“项目完成了”一语跳过实际检查。筛选跨项目候选，包含适用条件、证据、局限、来源项目；获得用户对具体内容的确认后才 knowledge-add --approved。

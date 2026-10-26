@@ -63,9 +63,16 @@ def parser():
     child = sub.add_parser("status")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--rebuild", action="store_true")
-    child.add_argument("--brief", action="store_true", help="保留完整目标和断点，仅省略任务长证据与描述")
+    child.add_argument("--brief", action="store_true", help="保留完整目标和断点，仅省略任务长证据与描述；已完成/取消任务折叠进 summary")
+    child.add_argument("--all", action="store_true", help="配合 --brief 保留全部任务，不折叠已完成或已取消")
     child.add_argument("--task", action="append", metavar="ID", help="按明确任务 ID 查询，可重复")
     child.add_argument("--milestone", help="按里程碑精确查询；不猜测本轮任务")
+    child = sub.add_parser("context", help="只读：输出与 Hook 同源的会话注入摘要")
+    child.add_argument("path", nargs="?", default=".")
+    child.add_argument("--limit", type=int, default=6000, help="摘要字符上限")
+    child.add_argument("--managed-dir", help="客户端存储目录（受信任登记与日志）；默认用 codex home")
+    child.add_argument("--codex-home")
+    child.add_argument("--json", action="store_true")
     child = sub.add_parser("migrate")
     child.add_argument("path")
     child.add_argument("--expected-revision", type=int, required=True)
@@ -229,9 +236,20 @@ def main(argv=None):
                           "tasks": [decorate(task) for task in ledger["tasks"]],
                           "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root)}
                 if args.brief or args.task or args.milestone is not None:
-                    selected, summary, external = task_view(ledger, args.brief, args.task, args.milestone)
+                    selected, summary, external = task_view(ledger, args.brief, args.task, args.milestone, args.all)
                     result.update(tasks=selected, summary=summary, external_dependencies=external,
                                   selection={"task_ids": args.task or [], "milestone": args.milestone})
+            elif args.command == "context":
+                from core.hook_runtime import context
+                managed = Path(args.managed_dir).resolve() if args.managed_dir else None
+                home = managed if managed is not None else codex_home(args.codex_home)
+                payload = context(root, home, args.limit, managed)
+                if args.json:
+                    result = {"project": str(root), "context": payload,
+                              "trusted_injected": "不是新的行为规则" in payload}
+                else:
+                    print(payload)
+                    result = {"project": str(root)}
             elif args.command == "migrate":
                 result = migrate(root, args.expected_revision, args.reason, args.dry_run)
             elif args.command == "snapshot":

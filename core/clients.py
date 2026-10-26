@@ -251,8 +251,12 @@ def inspect_client(client, home):
     elif client == "dsh":
         agents = home / "AGENTS.md"
         block = (manifest.get("block") or "").encode("utf-8")
-        intact = agents.is_file() and bool(block) and agents.read_bytes().count(block) == 1
+        data = agents.read_bytes() if agents.is_file() else b""
+        intact = (bool(block) and data.count(block) == 1
+                  and data.count(DSH_BEGIN) == 1 and data.count(DSH_END) == 1)
         checks.append(("PASS" if intact else "FAIL", "DSH 用户规则完整性", str(agents)))
+        checks.append(("PASS" if intact and block == dsh_block() else "WARN",
+                       "DSH 用户规则版本", "与当前模板比对"))
         checks.append(("UNVERIFIED", "DSH 原生加载",
                        "Skill 发现、AGENTS.md 注入与脚本执行以真实 DeepSeek Harness 会话证据为准"))
     else:

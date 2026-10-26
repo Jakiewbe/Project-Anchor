@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Project Anchor",
+    "description": "Reads the repository's .agent governance state through kit.py and keeps goal, breakpoint and task discipline in the prompt."
+  }
+}
