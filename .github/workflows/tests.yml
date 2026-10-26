@@ -31,7 +31,7 @@ jobs:
           git --version
           node --version
       - name: Run regression
-        run: python -X utf8 -m unittest discover -s tests -q
+        run: python -X utf8 tests/ci_annotate.py
 
   linux:
     # Not a validated environment yet: Linux takes the shlex.join command path
@@ -50,4 +50,4 @@ jobs:
         with:
           node-version: "24"
       - name: Run regression (informational)
-        run: python -X utf8 -m unittest discover -s tests -q
+        run: python -X utf8 tests/ci_annotate.py
