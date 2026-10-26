@@ -8,7 +8,7 @@
  * @module project-anchor-dsh/kit
  */
 
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { isAbsolute, join, resolve } from 'node:path'
@@ -38,7 +38,8 @@ export class KitRunError extends Error {
  */
 function dshHome(env) {
   const value = env.DSH_HOME
-  return value && isAbsolute(value) ? value : join(homedir(), '.dsh')
+  if (value && !isAbsolute(value)) throw new KitRunError('DSH_HOME 必须是绝对路径')
+  return value || join(homedir(), '.dsh')
 }
 
 /**
@@ -47,23 +48,23 @@ function dshHome(env) {
  * @returns {{ kit: string, python: string, home?: string } | undefined} locator, when present.
  */
 function readLocator(home) {
-  const candidates = [join(home, 'skills', 'project-anchor', 'runtime.json')]
-  try {
-    const manifest = JSON.parse(readFileSync(join(home, 'project-anchor', 'install.json'), 'utf8'))
-    const target = manifest?.skill?.path
-    if (typeof target === 'string' && isAbsolute(target)) candidates.push(join(target, 'runtime.json'))
-  } catch {
-    // No manifest: the default skill location is the only candidate.
-  }
-  for (const path of candidates) {
-    try {
-      const value = JSON.parse(readFileSync(path, 'utf8'))
-      if (typeof value?.kit === 'string' && isAbsolute(value.kit)) return value
-    } catch {
-      // Unreadable or malformed locator: try the next candidate.
+  const manifestPath = join(home, 'project-anchor', 'install.json')
+  let path = join(home, 'skills', 'project-anchor', 'runtime.json')
+  if (existsSync(manifestPath)) {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8').replace(/^\uFEFF/, ''))
+    if (manifest.client !== 'dsh' || !isAbsolute(manifest?.skill?.path ?? '')) {
+      throw new KitRunError('DSH 安装清单来源或路径无效')
     }
+    path = join(manifest.skill.path, 'runtime.json')
+    const recorded = JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, ''))
+    if (recorded.version !== manifest.version) throw new KitRunError('DSH 清单与定位版本不一致')
+  } else if (!existsSync(path)) return undefined
+  const value = JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, ''))
+  if (value.schema !== 1 || value.client !== 'dsh' || resolve(value.home ?? '') !== resolve(home)
+      || !isAbsolute(value.kit ?? '') || !isAbsolute(value.python ?? '') || typeof value.version !== 'string') {
+    throw new KitRunError('DSH 定位文件来源、版本或路径无效')
   }
-  return undefined
+  return value
 }
 
 /**
@@ -73,10 +74,15 @@ function readLocator(home) {
  */
 function kitFromConfig(value) {
   if (!value) return undefined
-  const path = isAbsolute(value) ? value : resolve(value)
-  if (path.endsWith('.py')) return existsSync(path) ? path : undefined
+  if (!isAbsolute(value)) throw new KitRunError('kitPath 必须是绝对路径')
+  const path = value
+  if (path.endsWith('.py')) {
+    if (!existsSync(path)) throw new KitRunError('指定的 kit.py 不存在')
+    return path
+  }
   const file = join(path, 'kit.py')
-  return existsSync(file) ? file : undefined
+  if (!existsSync(file)) throw new KitRunError('指定目录中没有 kit.py')
+  return file
 }
 
 /**
@@ -86,10 +92,9 @@ function kitFromConfig(value) {
  * @returns {{ command: string, prefix: string[] }} executable and leading args.
  */
 function interpreter(configured, recorded) {
-  if (configured) return { command: configured, prefix: [] }
-  if (recorded && existsSync(recorded)) return { command: recorded, prefix: [] }
-  if (process.platform === 'win32') return { command: 'py', prefix: ['-3'] }
-  return { command: 'python3', prefix: [] }
+  const command = configured || recorded
+  if (!command || !isAbsolute(command) || !existsSync(command)) throw new KitRunError('Python 绝对路径无效，请配置或重新安装')
+  return { command, prefix: [] }
 }
 
 /**
@@ -108,8 +113,8 @@ export function createKit(config = {}, env = process.env) {
   const locate = () => {
     if (located) return located
     const home = dshHome(env)
-    const locator = readLocator(home)
-    const kit = kitFromConfig(config.kitPath ?? '') ?? locator?.kit
+    const locator = config.kitPath && config.pythonPath ? undefined : readLocator(home)
+    const kit = config.kitPath ? kitFromConfig(config.kitPath) : locator?.kit
     if (!kit) {
       throw new KitRunError(
         '找不到 kit.py：请在插件配置里设置 kitPath，或先执行 `install-client dsh` 生成 Skill 定位文件。',
@@ -117,11 +122,19 @@ export function createKit(config = {}, env = process.env) {
       )
     }
     const chosen = interpreter(config.pythonPath ?? '', locator?.python ?? '')
-    located = { kit, command: chosen.command, prefix: chosen.prefix }
+    const version = spawnSync(chosen.command, ['-X', 'utf8', kit, '--version'], {
+      encoding: 'utf8', windowsHide: true, timeout: 10000,
+    })
+    if (version.error || version.status !== 0 || version.stdout.trim() !== '1.5.0'
+        || (locator && locator.version !== version.stdout.trim())) {
+      throw new KitRunError('工具箱版本或安装版本不匹配，请检查安装')
+    }
+    located = { kit, command: chosen.command, prefix: chosen.prefix, home }
     return located
   }
 
   const run = (args, options = {}) => {
+    if (options.signal?.aborted) return Promise.reject(new KitRunError('kit.py 调用已取消。', { kind: 'cancelled' }))
     const target = locate()
     const timeoutMs = options.timeoutMs ?? config.toolTimeoutMs ?? 20_000
     return new Promise((resolvePromise, rejectPromise) => {
@@ -137,7 +150,8 @@ export function createKit(config = {}, env = process.env) {
       }
       const child = spawn(target.command, [...target.prefix, target.kit, ...args], {
         cwd: options.cwd ?? process.cwd(),
-        env: { ...env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' },
+        env: { ...env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1',
+          PROJECT_ANCHOR_CLIENT: 'dsh', PROJECT_ANCHOR_CLIENT_HOME: target.home },
         windowsHide: true,
         stdio: ['pipe', 'pipe', 'pipe'],
       })

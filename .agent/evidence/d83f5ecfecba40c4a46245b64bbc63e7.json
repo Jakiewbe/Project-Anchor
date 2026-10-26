@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "run_id": "d83f5ecfecba40c4a46245b64bbc63e7",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP150",
+  "criterion": 2,
+  "kind": "review",
+  "scope_version": 2,
+  "scope_hash": "6439b801bfac55c1dd994e44b3831f39cd31edd91ce3aeb49e8afa2fe130130b",
+  "criteria_hash": "98b0d3946dea10d24624382fbd8aa27524e2f25125a875ec22fb8a8e9330de39",
+  "expected_revision": 238,
+  "input_hash": "f54b2cb392bc59bca8960dabb448a6a68c609d1ac598bbf28f46c192464a1889",
+  "inputs": [
+    "README.md",
+    "docs/USAGE.md",
+    "docs/ARCHITECTURE.md",
+    "docs/ITERATION_1_5_VALIDATION.md",
+    "skills/project-anchor",
+    "packages/dsh",
+    "global",
+    "project-template/AGENTS.md"
+  ],
+  "started_at": "2026-10-26T09:51:09.506797+00:00",
+  "reason": "README重写后重新核对原完成任务的文档材料",
+  "result": "pass",
+  "review": {
+    "criterion": 2,
+    "findings": "重写README后旧文档材料指纹过期，按原批准的review标准重新自查；源代码与253项回归凭据材料未改变。",
+    "resolution": "核对README能力、安装入口、Git前置、schema3升级、客户端边界与真实源码；本地链接、只读命令和证据一致性3组通过0失败。保留1.5.0候选定位，不把Hook、DSH宿主或远程CI宣称为已验收。",
+    "simpler": "保留现有图片和六个主要导航入口，合并重复说明，把详细命令和验证数字移到专门文档；不改业务逻辑或增加依赖。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "核对README能力、安装入口、Git前置、schema3升级、客户端边界与真实源码；本地链接、只读命令和证据一致性3组通过0失败。保留1.5.0候选定位，不把Hook、DSH宿主或远程CI宣称为已验收。",
+  "finished_at": "2026-10-26T09:51:09.516802+00:00"
+}

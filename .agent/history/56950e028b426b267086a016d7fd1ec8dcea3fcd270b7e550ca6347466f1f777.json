@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 230,
+  "entries": [
+    {
+      "revision": 98,
+      "action": "state:update",
+      "reason": "保存自然决定当回合漏记与落盘后恢复的真实验收边界",
+      "timestamp": "2026-10-09T06:48:00.435926+00:00"
+    }
+  ]
+}

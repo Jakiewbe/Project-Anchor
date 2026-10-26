@@ -1,11 +1,23 @@
 # 更新记录
 
-## 未发布 — 1.5.0 账本与上下文优化
+## 未发布 — 1.5.0 接续、验收与历史归档
+
+- schema3：批准范围新增checks；schema1/2预检、备份迁移、原批准与证据保留，旧结果显示legacy；受保护回退拒绝覆盖后续修改。
+- focus显式记录本轮任务，保留已完成结果与范围外依赖；没有指针不猜历史任务。
+- verify run执行已批准argv，记录内容指纹、退出码、日志摘要和observed凭据；超时、超限、取消、输入改变、修订冲突均不算通过，不自动重跑。
+- task review记录Agent自查材料与结论，固定claimed/self。完成按标准类型匹配当前成果；改变成果派生stale，历史done不自动重写。
+- 裁剪前事务性归档到.agent/history，内容哈希标识、失败不裁剪，history list/show按需查询。此前已丢且无备份的内容不承诺恢复。
+- Skill与DSH共用核心完整查询；DSH完整/本轮/all映射一致，错误路径、损坏清单、版本不符明确失败，不尝试其他安装。
+- 保留Python标准库与唯一核心，不增加默认模型调用、服务或独立审核；同权限本地执行者可绕过的边界继续公开。
+- Windows本地回归与隔离原生接续证据见docs/ITERATION_1_5_VALIDATION.md；本轮尚未触发远程CI，不等于已发布。
+
+### pi已有优化及历史验证
+
 
 - 修复既有缺陷（首次 GitHub Actions 运行暴露）：`atomic_io.transaction()` 用 `Path.resolve()` 后的长路径判断写入范围，却用未解析的短路径做 `relative_to()`。在 8.3 短名根（如 runner 的 `C:\\Users\\RUNNER~1\\...`）下抛 `ValueError`，导致所有写入失败。现在每个更新路径只解析一次，两种写法指同一文件。本机因临时目录没有短名别名而一直未暴露；新增 Windows 回归测试用 `GetShortPathNameW` 复现。
 
-- `state.json` 的 `history` 改为有上限：只让最近 10 条 `document-version` 保留文档全文，更早的剥离 `content` 但保留 `file`、`previous_sha256`、`timestamp`；条目总数上限 200，超出时按顺序丢弃并合并成一条 `history:prune` 记录（累计丢弃数、revision 区间、时间）。正文仍可从 Git 或快照取回。
-- 本仓库 `state.json` 实测从 477 KB 降到 101 KB（-79%），之后每次写入保持同量级；未改 `state.json` schema、不要求迁移，旧账本可直接读写。仍然只读取 `history` 是否存在，不读取其内容。
+- `state.json` 的 `history` 改为有上限：只让最近 10 条 `document-version` 保留文档全文，更早的剥离 `content` 但保留 `file`、`previous_sha256`、`timestamp`；条目总数上限 200，超出时按顺序丢弃并合并成一条 `history:prune` 记录（累计丢弃数、revision 区间、时间）。本条记录pi阶段行为；本轮已改为先持久归档，Git和快照辅助追溯。
+- 本仓库 `state.json` 实测从 477 KB 降到 101 KB（-79%），之后每次写入保持同量级；此数字为pi阶段的原实测；state.json schema保持不变，本轮任务账本独立升级schema3，旧账本只读。
 - `status --brief` 默认折叠 `done`/`cancelled` 任务：只列仍未终结的任务，计数仍在 `summary`（新增 `folded_final`）。新增 `--all` 显式返回全量；显式 `--task`/`--milestone` 选择不受折叠影响。本仓库 `--brief` 输出实测从 12.7 KB 降到 7.3 KB。
 - 新增 `tests/test_history.py`：覆盖正文剥离窗口、条数上限、单条滚动标记、短历史不变、无新增必填字段、brief 折叠与显式选择。
 - 新增 `.github/workflows/tests.yml`：`windows-latest` 阻断（主验证环境），`ubuntu-latest` 为 `continue-on-error` 的信息性任务；Linux 走 `shlex.join` 命令路径，未在本机验证。

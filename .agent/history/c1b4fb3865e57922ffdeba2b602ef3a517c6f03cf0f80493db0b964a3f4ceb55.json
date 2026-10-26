@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 232,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "c20158fa0e85d3337e386b42c48894ddffecc9e298fb83d3b3f7563ea786ec2c",
+      "content": "# 项目教训\n\n- Windows 文本读写会转换 CRLF。外部编辑登记必须比较文字并保留原字节；BOM/CRLF 快照及克隆测试通过。证据：tests/test_kit.py；适用：UTF-8 治理文档。\n- Git 自动换行会改变被哈希的状态字节。使用 .agent/** -text 保持原字节；实际本地克隆并启用 autocrlf 测试通过。\n- 当前沙箱阻止 Git for Windows 创建 signal pipe；这是执行环境阻塞。放宽权限后相同本地克隆测试通过，不能用模拟结果掩盖实际失败。\n- 配置识别、未信任跳过和直接运行 Windows 命令均已有实际证据；它们不能证明模型接收了恢复内容或已信任生命周期成功。\n\n- Windows 的原生用户 Skill 发现不受模拟 USERPROFILE/HOME 控制；extraRoots 发现与默认用户目录发现必须分开验证。实际默认目录已临时安装、原生发现并按清单卸载；证据见 docs/SKILL_VALIDATION.md。\n- GSD 1.37.3 的 --local --no-sdk 仍写真实 ~/.gsd/defaults.json。应审查安装末尾与辅助目录，不能仅凭 local 参数判定隔离；本次新建文件已核对、保存证据并撤销。原生 hooks/list 为 0，安装日志成功不等于 Hook 被当前客户端识别；证据见 docs/ALTERNATIVES_EVALUATION.md。\n- 原生触发测试需要真实文件结果和实际工具记录；首次策略阻断记为 FAIL，允许官方审批后再测，不能用模型自述冒充通过。\n\n- 官方信任记录hooks.state是元数据，不是内联Hook事件组；只识别实际列表事件组，非法表在写入前拒绝。120完整回归通过，正式doctor无双来源误报。\n- 当前Codex原生压缩完成以item/completed的contextCompaction及成功回合核对，不能等待弃用thread/compacted；两次测试器超时保留，修正后真实手动/自动通过。证据：.agent/runtime/deployment/lifecycle。\n- 新断点替代旧断点时，验收应要求新标记、固定目标/决策、真实任务状态和文件未覆盖，不要求模型再返回过期标记。手动原始断言误报保留并按此条件复核；自动新断点用例独立通过。\n- PreCompact只快照已经落盘的资料；重要讨论仍须及时用Skill保存。已信任Hook在真实压缩后提示读取当前磁盘资料，旧快照存在且CURRENT更新后，手动与自动接续均读回新状态；不证明永不漂移。\n\n- 旧指令“不要重新初始化项目”需核对原文是在保护业务工程还是禁止治理文件；不能仅用历史记忆摘要推断。1.1.4真实CLI验证保留业务仍接入、明确禁止治理则不写记录；审批说明必须覆盖.agent/AGENTS/.gitignore/.gitattributes四处。不能据此保证所有审批通过，也不能绕过已拒绝操作。\n\n- 2026-10-09：合成聊天决定未保存、仅回复收到后，真实Desktop手动压缩一次；压缩后不提示答案的问答正确保留JSON及原因，追问准确承认没有项目文件记录。临时项目7个治理文件哈希未变且磁盘仍为Markdown旧方案。验证的是此样本上下文保留，不是自动落盘、跨会话恢复或长期不漂移；会话Hook作用于工具箱cwd而非临时项目。证据.agent/runtime/release-audit/drift-result.json。\n\n- 2026-10-09 N/O主动落盘实测：五个独立合成项目的真实Desktop cwd、项目UUID与十次SessionStart均匹配。四种措辞在当前回合通过正式入口记录DECISIONS；A“改JSON，先看看模板”首回合按只读处理，七个状态哈希及修订8未变，下一句普通“继续刚才的工作”后才补记。O五个无背景新会话均正确读盘恢复并不补造缺失理由，七个治理文件未变；O-A发生在补记后，不证明漏记决定能新会话恢复。此结果不等于每次决定立即落盘或多轮压缩可靠；P未做。C一次展示自检误报及其他读文件探测错误、父审计source/originator字段误报均保留。证据.agent/runtime/release-audit/decision-NO/N-O-summary.json及N-O-result.md。\n\n- 2026-10-09：长期Desktop会话自然触发auto压缩，原生客户端、PreCompact与compact接续匹配，快照99旧于磁盘102且不自动恢复；证明一个真实自然样本，不代替多轮隔离或长期保证。\n\n- 2026-10-09：Project Anchor改名迁移需按旧清单保留用户文件；跨目录事务在清单写入前后崩溃与旧版本原范围恢复均通过。正式升级后两项Hook因定义变化需官方重新审核，不能把旧信任冒充新定义信任。\n\n\n- 2026-10-09独立复核：Codex原生CLI即使关闭Hook并用ephemeral，仍自动向用户config.toml添加合成项目的信任表。不能把未执行install-global等同配置从未变化。本轮11文件首次比较发现该项，删除唯一新增表的候选字节与初始完整SHA-256一致后精确撤销，最终11哈希相同；保留首次失败，测试器新增配置哈希变化即失败的守卫，不自行覆盖未知修改。证据：本机独立复核config-restore-plan/result和comparison-before-restore，最终156回归通过。\n\n\n- 2026-10-15：相同值比较不能代替输入校验；Python中True/1.0可与整数1相等，证据序号仍须严格为整数。重复更新先验证候选任务再判无变化，174回归包含该边界；筛选与重建组合在写入前拒绝。真实客户端需同时核对文件和成功回合：本轮仅草案已保存但最终额度限制turn.failed，保留失败，不因文件正确而计完整通过。证据docs/ITERATION_1_3_VALIDATION.md与tests/test_iteration.py。\n\n\n## 2026-10-19：历史证据不能按当前验收条目数量重新约束\n真实回归复现：两项证据的任务修订后缩减为一项，被旧证据序号2阻止。修复仅对失效历史证据放开当前范围上界，保留正整数要求、原序号和标准哈希；当前有效证据校验不放宽。新增回归证明旧证据不能用于新版完成。修复后的完整回归194通过0失败。原Git克隆失败在受限环境复现，相同测试在获准环境中隔离通过；不通过修改断言或删除测试掩盖执行环境差异。\n\n收尾辅助脚本曾用Windows文本模式发送已含CRLF的旧记录，造成重复换行转换；已改用UTF-8字节输入，并从本轮备份保留原章节字节。修正后再次通过程序读回和原文前缀比对。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-19T10:18:08.194528+00:00"
+    },
+    {
+      "revision": 99,
+      "action": "state:update",
+      "reason": "完成N/O验收后保存实际结果、原始失败和待决策阶段",
+      "timestamp": "2026-10-09T06:48:01.545772+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "03b5116bb544a00886910fa9c6d848cc758e9ce94cafe8812ad595f6737a7d00",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:32:20.816255+00:00",
+      "content_pruned": true
+    }
+  ]
+}

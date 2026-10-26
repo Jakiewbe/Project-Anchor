@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 224,
+  "entries": [
+    {
+      "revision": 94,
+      "action": "state:update",
+      "reason": "漂移测试完成后保存最新断点，保留待确认修复边界",
+      "timestamp": "2026-10-09T06:10:51.271083+00:00"
+    }
+  ]
+}

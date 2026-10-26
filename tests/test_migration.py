@@ -1,4 +1,4 @@
-"""Schema 1 -> 2 migration and old-writer refusal tests."""
+"""Schema 1/2 -> 3 migration and old-writer refusal tests."""
 import json
 import os
 from pathlib import Path
@@ -11,17 +11,21 @@ import zipfile
 from core import atomic_io as io
 from core import memory
 from core.tasks import criterion_hash
+from tests.helpers150 import checks_for
 
 ROOT = Path(__file__).resolve().parents[1]
 OLD_COMMIT = "bc72aca100f5f4e5de7638b75de57085c9a1c7d0"
 
 
-def old_archive(destination):
-    exists = subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", OLD_COMMIT],
+def old_archive(destination, commit=OLD_COMMIT):
+    destination.mkdir(parents=True, exist_ok=True)
+    exists = subprocess.run(["git", "-C", str(ROOT), "cat-file", "-e", commit],
                             capture_output=True)
     if exists.returncode:
+        if os.environ.get("CI"):
+            raise AssertionError("CI 缺少旧版兼容提交；必须检出完整历史")
         raise unittest.SkipTest("old commit not available in this clone")
-    data = subprocess.run(["git", "-C", str(ROOT), "archive", "--format=zip", OLD_COMMIT],
+    data = subprocess.run(["git", "-C", str(ROOT), "archive", "--format=zip", commit],
                           capture_output=True, check=True).stdout
     archive = destination / "old.zip"
     archive.write_bytes(data)
@@ -33,7 +37,7 @@ def old_archive(destination):
 class MigrationTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="Anchor 迁移 中文 ")
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         self.old = old_archive(self.root)
         self.project = self.root / "项目"
         self.project.mkdir()
@@ -88,7 +92,7 @@ class MigrationTests(unittest.TestCase):
         self.assertTrue(json.loads(result.stdout)["changed"])
         state, _, ledger = memory.load(self.project)
         task = ledger["tasks"][0]
-        self.assertEqual(ledger["schema"], 2)
+        self.assertEqual(ledger["schema"], 3)
         self.assertTrue(task["legacy_unverified"])
         self.assertNotIn("approved_scope", task)
         self.assertEqual(task["evidence"][0]["scope_version"], 0)
@@ -120,6 +124,8 @@ class MigrationTests(unittest.TestCase):
                                "旧任务直接开始")
         memory.task_change(self.project, state["revision"], "revise", {"task_id": "T1"}, "修订")
         state, _, _ = memory.load(self.project)
+        memory.task_change(self.project, state["revision"], "update", {"task_id": "T1", "checks": checks_for(self.project, ["旧验收"])}, "补齐验收")
+        state, _, _ = memory.load(self.project)
         memory.task_change(self.project, state["revision"], "approve", {"task_id": "T1"},
                            "重新批准", source="user")
         state, _, ledger = memory.load(self.project)
@@ -143,6 +149,61 @@ class MigrationTests(unittest.TestCase):
                 memory.migrate(self.project, state["revision"], "检查迁移", dry_run=dry_run)
             self.assertFalse((self.project / ".agent/runtime/migrations").exists())
             self.assertEqual(before, {name: (self.project / ".agent" / name).read_bytes() for name in before})
+
+    def test_schema2_preserves_scope_and_rolls_back_exact_bytes(self):
+        self.old = old_archive(self.root / "schema2", "a85bdd997c6be29250941c89f75ae9ce520cebbf")
+        self.assertEqual(self.old_kit("init-project", self.project, "--name", "v2").returncode, 0)
+        payload = self.root / "v2-task.json"
+        payload.write_bytes(io.encode_json({"task_id": "T1", "title": "old", "acceptance_criteria": ["old criterion"]}))
+        self.assertEqual(self.old_kit("task", "add", self.project, "--file", payload,
+                                      "--expected-revision", 0, "--reason", "old add").returncode, 0)
+        self.assertEqual(self.old_kit("task", "approve", self.project, "--task-id", "T1", "--source", "user",
+                                      "--expected-revision", 1, "--reason", "old approved").returncode, 0)
+        state, _, ledger = memory.load(self.project)
+        original_scope = ledger["tasks"][0]["approved_scope"]
+        original_history = ledger["history"]
+        original_bytes = {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir()
+                          if p.is_file() and p.name != ".lock"}
+        memory.migrate(self.project, state["revision"], "dry", dry_run=True)
+        self.assertEqual(original_bytes, {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir()
+                                         if p.is_file() and p.name != ".lock"})
+        result = memory.migrate(self.project, state["revision"], "migrate")
+        current, _, updated = memory.load(self.project)
+        self.assertEqual(updated["tasks"][0]["approved_scope"], original_scope)
+        self.assertEqual(updated["history"][:-1], original_history)
+        self.assertTrue(updated["tasks"][0]["verification_legacy"])
+        self.assertNotEqual(self.old_kit("status", self.project).returncode, 0)
+        memory.migration_rollback(self.project, current["revision"], "rollback", result["backup"])
+        self.assertEqual(original_bytes, {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir()
+                                         if p.is_file() and p.name != ".lock"})
+        self.assertEqual(self.old_kit("status", self.project).returncode, 0)
+
+    def test_rollback_refuses_changes_after_migration(self):
+        self.make_legacy_project()
+        state, _, _ = memory.load(self.project)
+        result = memory.migrate(self.project, state["revision"], "migrate")
+        state, content, _ = memory.load(self.project)
+        memory.doc_change(self.project, state["revision"], "DECISIONS.md", content["DECISIONS.md"] + "\nnew decision", "new")
+        state, _, _ = memory.load(self.project)
+        before = (self.project / ".agent/state.json").read_bytes()
+        with self.assertRaises(io.KitError):
+            memory.migration_rollback(self.project, state["revision"], "rollback", result["backup"])
+        self.assertEqual((self.project / ".agent/state.json").read_bytes(), before)
+
+
+    def test_migrated_draft_can_configure_checks_and_be_approved(self):
+        self.assertEqual(self.old_kit("init-project", self.project, "--name", "旧草案").returncode, 0)
+        payload = self.root / "draft.json"
+        payload.write_bytes(io.encode_json({"task_id": "D", "title": "draft", "acceptance_criteria": ["criterion"]}))
+        self.assertEqual(self.old_kit("task", "add", self.project, "--file", payload,
+                                      "--expected-revision", 0, "--reason", "draft").returncode, 0)
+        memory.migrate(self.project, 1, "migrate")
+        def change(action, value):
+            return memory.task_change(self.project, memory.load(self.project)[0]["revision"], action, value, "configure", source="policy")
+        change("revise", {"task_id": "D"})
+        change("update", {"task_id": "D", "checks": checks_for(self.project, ["criterion"])})
+        change("approve", {"task_id": "D"})
+        self.assertFalse(memory.load(self.project)[2]["tasks"][0]["verification_legacy"])
 
 
 if __name__ == "__main__":

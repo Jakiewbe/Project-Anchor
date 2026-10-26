@@ -16,6 +16,7 @@ from pathlib import Path
 from core import atomic_io as io
 from core.memory import init_project, load, task_change
 from core.tasks import criterion_hash
+from tests.helpers150 import checks_for, review_all
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -32,6 +33,7 @@ class ApprovalTests(unittest.TestCase):
 
     def add(self, criteria=("完成",), **fields):
         state, _, _ = load(self.project)
+        fields.setdefault("checks", checks_for(self.project, criteria))
         return task_change(self.project, state["revision"], "add",
                            {"task_id": "T1", "title": "任务", "description": "原始范围",
                             "acceptance_criteria": list(criteria), **fields}, "创建草案")
@@ -42,6 +44,8 @@ class ApprovalTests(unittest.TestCase):
                            "用户批准", source=source)
 
     def update(self, tid="T1", **fields):
+        if "acceptance_criteria" in fields:
+            fields["checks"] = checks_for(self.project, fields["acceptance_criteria"])
         state, _, _ = load(self.project)
         return task_change(self.project, state["revision"], "update", {"task_id": tid, **fields}, "更新")
 
@@ -64,10 +68,8 @@ class ApprovalTests(unittest.TestCase):
         self.add(criteria=("a", "b"))
         self.approve()
         self.update(status="doing")
-        self.update(status="done", evidence=[
-            {"type": "manual", "criterion": 1, "detail": "old a"},
-            {"type": "manual", "criterion": 2, "detail": "old b"},
-        ])
+        review_all(self.project, "T1")
+        self.update(status="done")
         self.revise()
         historical = self.task()["evidence"]
         self.update(acceptance_criteria=["new a"])
@@ -76,9 +78,8 @@ class ApprovalTests(unittest.TestCase):
         self.update(status="doing")
         with self.assertRaises(io.KitError):
             self.update(status="done")
-        self.update(status="done", evidence=[
-            {"type": "manual", "criterion": 1, "detail": "new a"},
-        ])
+        review_all(self.project, "T1")
+        self.update(status="done")
         task = self.task()
         self.assertEqual(task["evidence"][:2], historical)
         self.assertEqual(task["approved_scope"]["version"], 2)
@@ -123,7 +124,7 @@ class ApprovalTests(unittest.TestCase):
         state, _, _ = load(self.project)
         task_change(self.project, state["revision"], "add",
                     {"task_id": "T2", "title": "依赖任务", "acceptance_criteria": ["完成"],
-                     "dependencies": ["T1"]}, "创建依赖")
+                     "dependencies": ["T1"], "checks": checks_for(self.project, ["完成"])}, "创建依赖")
         state, _, _ = load(self.project)
         task_change(self.project, state["revision"], "approve", {"task_id": "T2"},
                     "批准", source="user")
@@ -135,7 +136,8 @@ class ApprovalTests(unittest.TestCase):
         self.add(criteria=("a",))
         self.approve()
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "第一次通过"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         first = self.task()["evidence"][0]
         self.assertEqual(first["scope_version"], 1)
         self.assertEqual(first["criteria_hash"], criterion_hash("a"))
@@ -152,7 +154,8 @@ class ApprovalTests(unittest.TestCase):
         self.update(status="doing")
         with self.assertRaises(io.KitError):
             self.update(status="done")
-        self.update(status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "第二次通过"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         task = self.task()
         self.assertEqual(task["status"], "done")
         self.assertEqual(len(task["evidence"]), 2)

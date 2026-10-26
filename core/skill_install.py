@@ -2,7 +2,7 @@
 from pathlib import Path
 import sys
 from . import VERSION, NAME, LEGACY_NAME
-from .atomic_io import KitError, digest, encode_json, raw, read_json, safe_path
+from .atomic_io import KitError, digest, encode_json, raw, read_json, safe_path, same_path
 from .memory import KIT_ROOT
 
 
@@ -40,7 +40,7 @@ def prepare_skill(home, old_manifest, parent=None, uninstall=False, client="code
     migrating = bool(old and previous_target.name == LEGACY_NAME and not uninstall)
     target = (skill_directory(previous_target.parent) if migrating else previous_target) if old else skill_directory(parent)
     safe_path(target, target.parent)
-    if old and parent is not None and skill_directory(parent) != target:
+    if old and parent is not None and not same_path(skill_directory(parent), target):
         raise KitError("不能在更新时改变 Skill 目录；先安全卸载，再安装到新位置")
     files = {} if uninstall else skill_payload(home, client)
     previous = old["hashes"] if old and not migrating else {}
@@ -78,8 +78,9 @@ def skill_scopes(manifest, target, legacy=False):
     old = (manifest or {}).get("skill")
     if old:
         previous = Path(old["path"])
-        if previous != target:
-            if previous.parent != target.parent or previous.name != LEGACY_NAME or target.name != NAME:
+        if not same_path(previous, target):
+            if (not same_path(previous.parent, target.parent) or previous.name != LEGACY_NAME
+                    or target.name != NAME):
                 raise KitError("只允许在相同父目录从 codex-rules 迁移到 project-anchor")
             roots["legacy_skill"] = previous
     if legacy:

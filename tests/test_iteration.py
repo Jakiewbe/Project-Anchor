@@ -15,6 +15,7 @@ from core.hook_runtime import context
 from core.memory import init_project, load, doc_change, task_change
 from core.skill_install import inspect_skill, skill_payload
 from core.tasks import task_view
+from tests.helpers150 import checks_for, review_all
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -36,6 +37,7 @@ class IterationTests(unittest.TestCase):
     def add(self, tid="T1", **fields):
         s, _, _ = load(self.project)
         plan = fields.pop("plan", "draft")
+        fields.setdefault("checks", checks_for(self.project, fields.get("acceptance_criteria", ["输出5"])))
         revision = task_change(self.project, s["revision"], "add",
                                {"task_id": tid, "title": tid, "acceptance_criteria": ["输出5"], **fields}, "授权测试范围")
         if plan == "approved":
@@ -68,7 +70,8 @@ class IterationTests(unittest.TestCase):
                     self.update(status, status="blocked", blocker="缺少实机")
                 elif status == "done":
                     self.update(status, status="doing")
-                    self.update(status, status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "用户确认输出5"}])
+                    review_all(self.project, status)
+                    self.update(status, status="done")
                 s, _, ledger = load(self.project)
                 task = next(t for t in ledger["tasks"] if t["task_id"] == status)
                 before = self.fingerprint()
@@ -82,7 +85,8 @@ class IterationTests(unittest.TestCase):
     def test_actual_done_title_edit_keeps_completion_time(self):
         self.add(plan="approved")
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "确认"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         completed = load(self.project)[2]["tasks"][0]["completed_at"]
         old_revision = load(self.project)[0]["revision"]
         self.update(title="明确的修订标题")
@@ -118,7 +122,8 @@ class IterationTests(unittest.TestCase):
     def test_equivalent_but_invalid_evidence_cannot_use_noop(self):
         self.add(plan="approved")
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "确认"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         before = self.fingerprint()
         for invalid in (True, 1.0):
             with self.subTest(criterion=invalid):
@@ -174,8 +179,8 @@ class IterationTests(unittest.TestCase):
         legacy = self.cli("status", self.project)
         self.assertEqual(legacy.returncode, 0, legacy.stderr)
         old = json.loads(legacy.stdout)
-        self.assertEqual(set(old), {"project", "name", "revision", "goal_version", "goal_approved", "current_stale",
-                                    "task_revision", "task_schema", "tasks", "goal", "current", "git"})
+        self.assertTrue({"project", "name", "revision", "goal_version", "goal_approved", "current_stale",
+                                    "task_revision", "task_schema", "tasks", "goal", "current", "git"}.issubset(old))
         result = self.cli("status", self.project, "--brief", "--milestone", "本轮", "--task", "T1")
         self.assertEqual(result.returncode, 0, result.stderr)
         view = json.loads(result.stdout)
@@ -202,7 +207,8 @@ class IterationTests(unittest.TestCase):
         self.update("CANCELLED", status="cancelled")
         self.add("DONE", plan="approved")
         self.update("DONE", status="doing")
-        self.update("DONE", status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "确认"}])
+        review_all(self.project, 'DONE')
+        self.update('DONE', status="done")
         _, summary, _ = task_view(load(self.project)[2], True)
         self.assertEqual((summary["draft"], summary["approved_active"], summary["approved_done"]), (1, 1, 1))
 

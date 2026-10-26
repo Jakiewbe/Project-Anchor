@@ -28,6 +28,11 @@ def read_json(path):
         raise KitError(f"文件损坏或不是 UTF-8 JSON: {path}") from exc
 
 
+def same_path(left, right):
+    """Compare two paths that may name the same file in different forms (8.3, case)."""
+    return Path(left).resolve() == Path(right).resolve()
+
+
 def safe_path(path, root):
     path, root = Path(path), Path(root).resolve()
     for candidate in (path, *path.parents):
@@ -135,10 +140,11 @@ def transaction(root, journal, updates, expected=None, additional_roots=None):
     check_pending(journal)
     entries = []
     for path, new in updates.items():
-        # Resolve once: an 8.3 short root (RUNNER~1) and its long form are the same
-        # file, and mixing the two breaks the subpath check below.
-        path = Path(path).resolve()
-        scope = next((key for key, folder in roots.items() if path.is_relative_to(folder)), None)
+        path = Path(path)
+        # Scope and the journaled relative path are decided on the canonical form:
+        # an 8.3 short root (RUNNER~1) and its long form are the same directory.
+        resolved = path.resolve()
+        scope = next((key for key, folder in roots.items() if resolved.is_relative_to(folder)), None)
         if scope is None:
             raise KitError(f"路径超出管理范围: {path}")
         path = safe_path(path, roots[scope])
@@ -146,7 +152,7 @@ def transaction(root, journal, updates, expected=None, additional_roots=None):
         if expected is not None and path in expected and old != expected[path]:
             raise KitError(f"文件在准备写入期间发生修改: {path}")
         if old != new:
-            entries.append({"path": path.relative_to(roots[scope]).as_posix(), "scope": scope,
+            entries.append({"path": resolved.relative_to(roots[scope]).as_posix(), "scope": scope,
                             "old": _pack(old), "new": _pack(new)})
     if not entries:
         return

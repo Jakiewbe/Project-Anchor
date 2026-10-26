@@ -29,13 +29,13 @@
 全项目规划读取 GOAL/CURRENT/相关 DECISIONS，目标仍是空模板时先确认；明确局部请求仅规划该范围，不要求用户先补项目总目标。将里程碑拆为有验收条件、依赖和唯一 ID 的 task add 草案（plan=draft）。制定计划不等于批准执行；只批准目标不自动制定计划。重大范围取舍先澄清；不要删除已有任务、创建重复计划或修改顶层目标。依赖先添加，随后任务逐次使用最新项目 revision。用户批准计划或明确要求实施已有具体方案后用 `task approve` 记录批准范围，再进入 doing；不要用 task update 直接转 approved。
 
 ## 只读进度与目标偏离
-先 status PATH --brief 读取完整目标、断点和任务摘要；本轮查询使用明确 --task ID 或 --milestone NAME，默认简洁结果仍覆盖全部任务，不擅自隐藏历史。需验收条件与证据时用原 status 或不带 --brief 的筛选查询。摘要统计草案和已批准有效任务，筛选范围外的直接依赖单列，不能漏掉真实阻塞；原 PROGRESS 口径不变。查看进度不自动 rebuild，更不改任务。目标偏离检查将当前任务和已确认决策逐项对照 GOAL；报告符合/偏离/资料不足，不凭完成率改变目标。
+先 status PATH --brief --focus 读取完整目标、断点和明确本轮任务；focus_missing时不猜历史任务；本轮查询使用明确 --task ID 或 --milestone NAME，默认简洁结果折叠已完成/取消项，--all读取全部；显式任务、里程碑或本轮指针不折叠。需验收条件与证据时用原 status 或不带 --brief 的筛选查询。摘要统计草案和已批准有效任务，筛选范围外的直接依赖单列，不能漏掉真实阻塞；原 PROGRESS 口径不变。查看进度不自动 rebuild，更不改任务。目标偏离检查将当前任务和已确认决策逐项对照 GOAL；报告符合/偏离/资料不足，不凭完成率改变目标。
 
 ## 更新任务
-用 ID 或唯一匹配标题定位任务；不唯一先问。先 status 检查依赖、计划状态及验收。新增任务只建立 draft；用户明确批准后才用 `task approve` 记录批准范围，`--source` 是调用者声明，不是身份验证。已批准任务的描述、验收标准或依赖发生实质变化时，先 `task revise` 回到草案，修改后重新 `task approve`；不要用 `task update` 改 plan、approved_scope 或旧证据。实现后用 `task update` 进入 doing/done；一次 update 不能同时改范围并完成，也不能删依赖并同时开始。将实际证据逐条对应 criterion；证据绑定当前批准版本和标准文本，旧证据可保留但标记失效。遵循状态机，不能 todo 直接 done；用户确认已执行及有证据时可合法经过 doing 再 done。blocked 填阻塞原因；范围变化保留原因及历史，取消代替物理删除。旧 schema 1 账本只读，先按“迁移”执行 `migrate`。
+用 ID 或唯一匹配标题定位任务；不唯一先问。先 status 检查依赖、计划状态及验收。新增任务只建立 draft；用户明确批准后才用 `task approve` 记录批准范围，`--source` 是调用者声明，不是身份验证。已批准任务的描述、验收标准或依赖发生实质变化时，先 `task revise` 回到草案，修改后重新 `task approve`；不要用 `task update` 改 plan、approved_scope 或旧证据。实现后用 `task update` 进入 doing/done；一次 update 不能同时改范围并完成，也不能删依赖并同时开始。按 checks 的类型逐项验收：command 用 verify run，review 由Agent自查后 task review；不手填证据，不把自查写成用户或独立审核。完成前检查 verification_state=pass 以及依赖结果，输入改变后的旧结果不能继续当通过。描述、标准、依赖或checks变化需revise重批。明确本轮后focus set；接续不自动改指针。旧任务显示legacy，继续前补齐checks并重批。参数、JSON、迁移与回退见COMMANDS.md。
 
 ## 迁移旧账本
-先只读 status/doctor 确认项目；schema 1 只能读，写入前用 `migrate PATH --expected-revision N --reason TEXT --dry-run` 校验转换结果，再显式执行不带 `--dry-run` 的迁移。未知旧字段会报错，不自动丢弃。迁移会备份 `.agent/` 状态、把旧批准任务标记为 `legacy_unverified`，不自动补造批准记录。旧任务重新开始或完成前，按用户确认的范围 `task revise` 后 `task approve`；不要删除 schema 字段或让旧版客户端继续写 schema 2。迁移失败时先核对原因；仅存在未完成事务时才使用 recover，不重复试到成功。
+先只读 status/doctor 确认项目；schema 1/2 只能读，写入前用 `migrate PATH --expected-revision N --reason TEXT --dry-run` 校验转换结果，再显式执行不带 `--dry-run` 的迁移。未知旧字段会报错，不自动丢弃。迁移备份受影响治理文件并写清单；旧任务原状态、批准快照与证据保留，标记 verification_legacy。schema1另保留legacy_unverified，不补造批准或执行记录。旧任务重新开始或完成前，按用户确认的范围 `task revise`、补齐 checks 后 `task approve`；不要删除 schema 字段或让旧版客户端继续写 schema 3。迁移失败时先核对原因；仅存在未完成事务时才使用 recover，不重复试到成功。
 
 ## 保存决策/长期记忆
 确认讨论已经形成决策，而不是临时猜测；按本页首节判断执行阶段和写入范围。允许治理写入时当回合保存，不等待用户再说“继续”；全部只读或限定文件时不写，报告本次决定未落盘。重要路线写 DECISIONS：背景、选择、原因和适用范围；缺少理由不补造。已验证失败写 LESSONS：根因、证据、方法、局限。完整读取原文，保留已有条目，通过 state update 提交新全文；CURRENT 保持精简。总目标/约束/验收变化先获批准，再 GOAL --approved。记录文件不构成高级规则。

@@ -51,8 +51,13 @@ def main():
                             cwd=ROOT, capture_output=True, text=True,
                             encoding="utf-8", errors="replace")
     lines = (result.stdout + result.stderr).splitlines()
+    log = ROOT / ".agent/runtime/ci-tests.log"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    log.write_text(result.stdout + result.stderr, encoding="utf-8", newline="\n")
     print("\n".join(line for line in lines
-                    if FAILURE.match(line) or line.startswith("Ran ") or line in ("OK", "FAILED")))
+                    if FAILURE.match(line) or line.startswith(("Ran ", "FAILED", "OK"))))
+    skipped = sum("... skipped " in line for line in lines)
+    print(f"Skipped: {skipped}")
     if not result.returncode:
         return 0
     for header, body in blocks(lines)[:20]:

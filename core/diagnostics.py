@@ -189,14 +189,24 @@ def _project_checks(add, root):
         try:
             state, content, ledger = load(root)
             add("PASS", "项目状态完整性", f"{state['name']}；修订 {state['revision']}；任务修订 {ledger['revision']}")
-            add("PASS" if ledger["schema"] == 2 else "WARN", "任务账本版本",
-                "schema 2（审批协议）" if ledger["schema"] == 2 else "schema 1（只读；写入前执行 migrate）")
+            add("PASS" if ledger["schema"] == 3 else "WARN", "任务账本版本",
+                "schema 3（执行凭据）" if ledger["schema"] == 3 else f"schema {ledger['schema']}（只读；写入前执行 migrate）")
             legacy = sum(bool(item.get("legacy_unverified")) for item in ledger["tasks"])
             if legacy:
-                add("WARN", "旧批准任务", f"{legacy} 个 legacy_unverified；开始/完成前先 task approve")
-            dirty = sum(scope_dirty(item) for item in ledger["tasks"]) if ledger["schema"] == 2 else 0
+                add("WARN", "旧批准任务", f"{legacy} 个 legacy_unverified；继续前 task revise、补齐 checks，再 task approve")
+            dirty = sum(scope_dirty(item) for item in ledger["tasks"]) if ledger["schema"] in (2, 3) else 0
             if dirty:
                 add("WARN", "批准范围漂移", f"{dirty} 个任务当前范围与批准快照不一致；执行 task revise 后重新批准")
+            if ledger["schema"] == 3:
+                from .verification import state as verification_state
+                states = [verification_state(root, t) for t in ledger["tasks"]]
+                invalid = sum(s == "invalid" for s in states)
+                add("FAIL" if invalid else "PASS", "执行凭据完整性", f"{invalid} 个任务引用损坏或缺失凭据")
+                pending = sum(s in {"stale", "failed", "legacy"} for s in states)
+                add("WARN" if pending else "PASS", "验收状态", f"{pending} 个任务待重新配置或检查；保留历史状态")
+                from .history import listing
+                listing(root)
+                add("PASS", "持久历史归档", "内容哈希与项目身份有效；不自动恢复")
             add("PASS" if state["goal_approved"] else "WARN", "目标批准", "已登记批准" if state["goal_approved"] else "目标仍是草案")
             add("PASS" if state["current_task_revision"] == ledger["revision"] else "WARN", "CURRENT 修订", "与任务修订比对")
             expected = progress(state["name"], ledger)

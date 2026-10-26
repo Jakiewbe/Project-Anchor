@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 221,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "3437fc26560095ef13d9d602796caabc5bb39b7f86648952b089180a08941a77",
+      "user_approved": false,
+      "timestamp": "2026-10-09T06:10:50.243827+00:00",
+      "content_pruned": true
+    }
+  ]
+}

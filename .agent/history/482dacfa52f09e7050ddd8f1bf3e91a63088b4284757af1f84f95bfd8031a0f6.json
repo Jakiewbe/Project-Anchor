@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 227,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "94889e84fd2949d4dfd14aea3ecf36785447d685616d4855d94336347eb9f06e",
+      "user_approved": false,
+      "timestamp": "2026-10-09T06:22:15.191401+00:00",
+      "content_pruned": true
+    }
+  ]
+}

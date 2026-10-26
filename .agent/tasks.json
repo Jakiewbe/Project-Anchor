@@ -1,7 +1,7 @@
 {
-  "schema": 2,
+  "schema": 3,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 106,
+  "revision": 123,
   "tasks": [
     {
       "task_id": "A",
@@ -28,7 +28,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.041154+00:00",
       "completed_at": "2026-10-08T08:04:31.041154+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "B",
@@ -57,7 +58,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.260730+00:00",
       "completed_at": "2026-10-08T08:04:31.260730+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "C",
@@ -86,7 +88,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.544734+00:00",
       "completed_at": "2026-10-08T08:04:31.544734+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "D",
@@ -115,7 +118,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.782957+00:00",
       "completed_at": "2026-10-08T08:04:31.782957+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "E",
@@ -144,7 +148,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.987365+00:00",
       "completed_at": "2026-10-08T08:04:31.987365+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "F",
@@ -173,7 +178,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:32.173508+00:00",
       "completed_at": "2026-10-08T08:04:32.173508+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "G",
@@ -202,7 +208,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:04:32.361972+00:00",
       "completed_at": "2026-10-08T08:04:32.361972+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "S1",
@@ -229,7 +236,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:50:06.089309+00:00",
       "completed_at": "2026-10-08T08:50:06.089309+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "S2",
@@ -256,7 +264,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T08:50:06.236617+00:00",
       "completed_at": "2026-10-08T08:50:06.236617+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "S3",
@@ -283,7 +292,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T09:13:43.651744+00:00",
       "completed_at": "2026-10-08T09:13:43.651744+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "S4",
@@ -310,7 +320,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T09:13:44.175238+00:00",
       "completed_at": "2026-10-08T09:13:44.175238+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "E1",
@@ -337,7 +348,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T09:13:43.930109+00:00",
       "completed_at": "2026-10-08T09:13:43.930109+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL1",
@@ -364,7 +376,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T16:41:41.624333+00:00",
       "completed_at": "2026-10-08T16:41:41.624333+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL2",
@@ -391,7 +404,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T16:59:30.246523+00:00",
       "completed_at": "2026-10-08T16:59:30.246523+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL3",
@@ -418,7 +432,8 @@
       "blocker": "",
       "updated_at": "2026-10-09T01:45:53.102475+00:00",
       "completed_at": "2026-10-09T01:45:53.102475+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL4",
@@ -445,7 +460,8 @@
       "blocker": "",
       "updated_at": "2026-10-08T17:25:55.162770+00:00",
       "completed_at": "2026-10-08T17:25:55.162770+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL5",
@@ -472,7 +488,8 @@
       "blocker": "",
       "updated_at": "2026-10-09T03:25:59.846855+00:00",
       "completed_at": "2026-10-09T03:25:59.846855+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "DPL6",
@@ -489,7 +506,8 @@
       "evidence": [],
       "blocker": "",
       "updated_at": "2026-10-10T06:17:29.565259+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "BRAND1",
@@ -507,7 +525,8 @@
       "evidence": [],
       "blocker": "Codex当前Hook已信任且CLI启动/手动压缩/接续有真实证据；保留历史自然自动压缩、锁及其他未验证边界，任务收尾登记待用户复核。Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证，不作发布阻塞。",
       "updated_at": "2026-10-10T06:17:28.511844+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "UNI1",
@@ -564,7 +583,8 @@
       "blocker": "",
       "updated_at": "2026-10-10T06:31:00.532636+00:00",
       "completed_at": "2026-10-10T06:31:00.532636+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "ITER1",
@@ -621,7 +641,8 @@
       "blocker": "",
       "updated_at": "2026-10-15T06:07:17.616968+00:00",
       "completed_at": "2026-10-15T06:07:17.616968+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "REL130",
@@ -658,7 +679,8 @@
       "blocker": "",
       "updated_at": "2026-10-15T06:19:07.905074+00:00",
       "completed_at": "2026-10-15T06:19:07.905074+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "MAIN130",
@@ -705,7 +727,8 @@
       "blocker": "",
       "updated_at": "2026-10-15T06:31:48.753011+00:00",
       "completed_at": "2026-10-15T06:31:48.753011+00:00",
-      "legacy_unverified": true
+      "legacy_unverified": true,
+      "verification_legacy": true
     },
     {
       "task_id": "AUD140",
@@ -790,7 +813,8 @@
         "source": "user",
         "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
       },
-      "completed_at": "2026-10-19T10:16:44.260033+00:00"
+      "completed_at": "2026-10-19T10:16:44.260033+00:00",
+      "verification_legacy": true
     },
     {
       "task_id": "OPT140",
@@ -864,7 +888,8 @@
         "source": "user",
         "reason": "用户要求继续检查和优化1.4.0，限复现问题的针对性修复"
       },
-      "completed_at": "2026-10-19T10:55:19.439788+00:00"
+      "completed_at": "2026-10-19T10:55:19.439788+00:00",
+      "verification_legacy": true
     },
     {
       "task_id": "DSHP0",
@@ -949,7 +974,8 @@
         "source": "user",
         "reason": "用户在同一轮明确回复可以，授权落地 DSH 插件 P0 骨架"
       },
-      "completed_at": "2026-10-26T05:58:07.554285+00:00"
+      "completed_at": "2026-10-26T05:58:07.554285+00:00",
+      "verification_legacy": true
     },
     {
       "task_id": "LEDG1",
@@ -1023,7 +1049,8 @@
         "source": "user",
         "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
       },
-      "completed_at": "2026-10-26T05:58:08.586610+00:00"
+      "completed_at": "2026-10-26T05:58:08.586610+00:00",
+      "verification_legacy": true
     },
     {
       "task_id": "VIEW1",
@@ -1086,7 +1113,8 @@
         "source": "user",
         "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
       },
-      "completed_at": "2026-10-26T05:58:09.703620+00:00"
+      "completed_at": "2026-10-26T05:58:09.703620+00:00",
+      "verification_legacy": true
     },
     {
       "task_id": "CICD1",
@@ -1166,7 +1194,294 @@
         "source": "user",
         "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
       },
-      "completed_at": "2026-10-26T05:58:10.729500+00:00"
+      "completed_at": "2026-10-26T05:58:10.729500+00:00",
+      "verification_legacy": true
+    },
+    {
+      "task_id": "IMP150",
+      "title": "实施1.5.0接续与证据闭环",
+      "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+      "milestone": "1.5.0 候选版本",
+      "acceptance_criteria": [
+        "新协议、迁移和回归检查通过",
+        "实现经Review并完成文档和交接，未验证边界如实记录"
+      ],
+      "dependencies": [],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "完整Windows回归生成真实程序执行凭据",
+          "level": "observed",
+          "run_id": "ffdb1d1dff9d4d979f1a05ef4cf37d7e",
+          "receipt_sha256": "d2f4b27a6cafb4ad6e0089cef24421e5895b7b05ed2a2d9032f7df71d129976c",
+          "input_hash": "cd06b5751ce211f6b30528e8c6bee62177e0823539a102efeb9c8b8029149ac1",
+          "result": "pass",
+          "scope_version": 2,
+          "criteria_hash": "dead34175a0db2ca922954c722a1b90b3d4a037d316ed98b30b01052b34a716b",
+          "recorded_at": "2026-10-26T09:22:50.492451+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "复查修复传递依赖过期绕过后重新执行完整回归",
+          "level": "observed",
+          "run_id": "5243a3f6925149dca346893838f99fcb",
+          "receipt_sha256": "7c6411e7aa53dbfdf9d72d9d7ee2c6f838ab466502ca3e34b74a4790d1dc165a",
+          "input_hash": "84cecf23cee5ed3307787c081d85f8b523d25c9d4fe8d04f27be340791620813",
+          "result": "pass",
+          "scope_version": 2,
+          "criteria_hash": "dead34175a0db2ca922954c722a1b90b3d4a037d316ed98b30b01052b34a716b",
+          "recorded_at": "2026-10-26T09:27:33.412443+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "最终复查统一迁移指引后核验当前代码与完整回归",
+          "level": "observed",
+          "run_id": "85f53b9b855e4165a45674669842405e",
+          "receipt_sha256": "60636800ee006f917320d33684ef155ceb23f4c59287197c3c8b12c93cd895fa",
+          "input_hash": "0c2b984f0c6e7012037d6bf3253ceef65d320f345dba7976318d27822062e67f",
+          "result": "pass",
+          "scope_version": 2,
+          "criteria_hash": "dead34175a0db2ca922954c722a1b90b3d4a037d316ed98b30b01052b34a716b",
+          "recorded_at": "2026-10-26T09:31:19.659217+00:00"
+        },
+        {
+          "type": "review",
+          "criterion": 2,
+          "detail": "当前源码253通过0失败0跳过，程序凭据85f53b9b855e4165a45674669842405e；真实Codex新会话与原生压缩2通过0失败，核对命令和磁盘；安装114个其他技能文件与6个其他项目及配置保留。README/升级/历史/故障/CLI/Skill/DSH说明已同步，验证文档保留pi原记录并明确CI、Hook与DSH宿主未验证边界。",
+          "level": "claimed",
+          "run_id": "8907f27166624f499a9f3936c996ccda",
+          "receipt_sha256": "e230952579e2cdbfc406c9d712b940e8e4db52f3fcb2ac8ecbc1133023c985e6",
+          "input_hash": "a0d65b67a455fe83160f64ed6371cfd39a50b236ca5dd9f13db1620deba4ce92",
+          "result": "pass",
+          "scope_version": 2,
+          "criteria_hash": "98b0d3946dea10d24624382fbd8aa27524e2f25125a875ec22fb8a8e9330de39",
+          "recorded_at": "2026-10-26T09:33:35.364339+00:00",
+          "reviewer_kind": "self"
+        },
+        {
+          "type": "review",
+          "criterion": 2,
+          "detail": "核对README能力、安装入口、Git前置、schema3升级、客户端边界与真实源码；本地链接、只读命令和证据一致性3组通过0失败。保留1.5.0候选定位，不把Hook、DSH宿主或远程CI宣称为已验收。",
+          "level": "claimed",
+          "run_id": "d83f5ecfecba40c4a46245b64bbc63e7",
+          "receipt_sha256": "1caaeca50a10902f984d26c04d3b3f3f11f3a177aa1c39185bc0e407fb787e28",
+          "input_hash": "f54b2cb392bc59bca8960dabb448a6a68c609d1ac598bbf28f46c192464a1889",
+          "result": "pass",
+          "scope_version": 2,
+          "criteria_hash": "98b0d3946dea10d24624382fbd8aa27524e2f25125a875ec22fb8a8e9330de39",
+          "recorded_at": "2026-10-26T09:51:09.603717+00:00",
+          "reviewer_kind": "self"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T09:51:09.603717+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "IMP150",
+        "version": 2,
+        "hash": "6439b801bfac55c1dd994e44b3831f39cd31edd91ce3aeb49e8afa2fe130130b",
+        "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+        "acceptance_criteria": [
+          "新协议、迁移和回归检查通过",
+          "实现经Review并完成文档和交接，未验证边界如实记录"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T09:16:39.704583+00:00",
+        "source": "user",
+        "reason": "用户明确要求实施完整计划，按原授权登记新版范围",
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "command",
+            "inputs": [
+              "core/__init__.py",
+              "core/atomic_io.py",
+              "core/clients.py",
+              "core/config.py",
+              "core/diagnostics.py",
+              "core/history.py",
+              "core/hook_runtime.py",
+              "core/memory.py",
+              "core/native.py",
+              "core/skill_install.py",
+              "core/tasks.py",
+              "core/verification.py",
+              "kit.py",
+              "pyproject.toml",
+              "tests/ci_annotate.py",
+              "tests/client_live.py",
+              "tests/deployment_live.py",
+              "tests/helpers150.py",
+              "tests/hook_lifecycle_live.py",
+              "tests/native_probe.py",
+              "tests/onboarding_live.py",
+              "tests/skill_native_probe.py",
+              "tests/test_approval.py",
+              "tests/test_client_live.py",
+              "tests/test_clients.py",
+              "tests/test_deployment.py",
+              "tests/test_dsh_plugin.py",
+              "tests/test_history.py",
+              "tests/test_iteration.py",
+              "tests/test_kit.py",
+              "tests/test_migration.py",
+              "tests/test_protocol150.py",
+              "tests/test_rename.py",
+              "tests/test_skill.py"
+            ],
+            "argv": [
+              "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-q"
+            ]
+          },
+          {
+            "criterion": 2,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "docs/USAGE.md",
+              "docs/ARCHITECTURE.md",
+              "docs/ITERATION_1_5_VALIDATION.md",
+              "skills/project-anchor",
+              "packages/dsh",
+              "global",
+              "project-template/AGENTS.md"
+            ]
+          }
+        ]
+      },
+      "verification_legacy": false,
+      "checks": [
+        {
+          "criterion": 1,
+          "kind": "command",
+          "inputs": [
+            "core/__init__.py",
+            "core/atomic_io.py",
+            "core/clients.py",
+            "core/config.py",
+            "core/diagnostics.py",
+            "core/history.py",
+            "core/hook_runtime.py",
+            "core/memory.py",
+            "core/native.py",
+            "core/skill_install.py",
+            "core/tasks.py",
+            "core/verification.py",
+            "kit.py",
+            "pyproject.toml",
+            "tests/ci_annotate.py",
+            "tests/client_live.py",
+            "tests/deployment_live.py",
+            "tests/helpers150.py",
+            "tests/hook_lifecycle_live.py",
+            "tests/native_probe.py",
+            "tests/onboarding_live.py",
+            "tests/skill_native_probe.py",
+            "tests/test_approval.py",
+            "tests/test_client_live.py",
+            "tests/test_clients.py",
+            "tests/test_deployment.py",
+            "tests/test_dsh_plugin.py",
+            "tests/test_history.py",
+            "tests/test_iteration.py",
+            "tests/test_kit.py",
+            "tests/test_migration.py",
+            "tests/test_protocol150.py",
+            "tests/test_rename.py",
+            "tests/test_skill.py"
+          ],
+          "argv": [
+            "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-q"
+          ]
+        },
+        {
+          "criterion": 2,
+          "kind": "review",
+          "inputs": [
+            "README.md",
+            "docs/USAGE.md",
+            "docs/ARCHITECTURE.md",
+            "docs/ITERATION_1_5_VALIDATION.md",
+            "skills/project-anchor",
+            "packages/dsh",
+            "global",
+            "project-template/AGENTS.md"
+          ]
+        }
+      ],
+      "completed_at": "2026-10-26T09:33:36.042766+00:00"
+    },
+    {
+      "task_id": "README150",
+      "title": "重写README并推送1.5.0候选实现",
+      "description": "按用户授权重写产品首页，连同上一轮已验证的1.5.0实现提交并快进推送main；不创建分支/worktree，不创建Release，不批量升级其他项目。",
+      "milestone": "1.5.0 文档与推送",
+      "acceptance_criteria": [
+        "README与实现及验证边界一致，安装和升级可核对；提交内容不含运行日志或凭据秘密，main推送结果可核对"
+      ],
+      "checks": [
+        {
+          "criterion": 1,
+          "kind": "review",
+          "inputs": [
+            "README.md",
+            "CHANGELOG.md",
+            "docs/ITERATION_1_5_VALIDATION.md"
+          ]
+        }
+      ],
+      "dependencies": [],
+      "blocker": "",
+      "status": "doing",
+      "plan": "approved",
+      "evidence": [],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T09:48:13.908586+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "README150",
+        "version": 1,
+        "hash": "30b10318e5c514907bdde10a7b6d907597ec3437f1eca0bffbe1671c1f91dd21",
+        "description": "按用户授权重写产品首页，连同上一轮已验证的1.5.0实现提交并快进推送main；不创建分支/worktree，不创建Release，不批量升级其他项目。",
+        "acceptance_criteria": [
+          "README与实现及验证边界一致，安装和升级可核对；提交内容不含运行日志或凭据秘密，main推送结果可核对"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T09:48:13.690450+00:00",
+        "source": "user",
+        "reason": "用户明确要求重写README并连同已验证1.5.0实现推送main",
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "CHANGELOG.md",
+              "docs/ITERATION_1_5_VALIDATION.md"
+            ]
+          }
+        ]
+      }
     }
   ],
   "history": [
@@ -2882,6 +3197,380 @@
         ]
       },
       "reason": "B 已收口"
+    },
+    {
+      "revision": 107,
+      "timestamp": "2026-10-26T08:37:49.339838+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "IMP150",
+        "title": "实施1.5.0接续与证据闭环",
+        "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+        "milestone": "1.5.0 候选版本",
+        "acceptance_criteria": [
+          "新协议、迁移和回归检查通过",
+          "实现经Review并完成文档和交接，未验证边界如实记录"
+        ]
+      },
+      "reason": "用户明确要求实施1.5.0详细优化计划"
+    },
+    {
+      "revision": 108,
+      "timestamp": "2026-10-26T08:37:49.583459+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "IMP150"
+      },
+      "reason": "用户明确要求实施完整计划",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "IMP150",
+        "version": 1,
+        "hash": "dcb0b119a3d2802c47592315531db3b7a72e901daf2e8ab2d0d1300b1c84544a",
+        "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+        "acceptance_criteria": [
+          "新协议、迁移和回归检查通过",
+          "实现经Review并完成文档和交接，未验证边界如实记录"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T08:37:49.583459+00:00",
+        "source": "user",
+        "reason": "用户明确要求实施完整计划"
+      }
+    },
+    {
+      "revision": 109,
+      "timestamp": "2026-10-26T08:37:49.813663+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "IMP150",
+        "status": "doing"
+      },
+      "reason": "用户明确要求实施1.5.0详细优化计划"
+    },
+    {
+      "revision": 110,
+      "timestamp": "2026-10-26T09:16:38.846636+00:00",
+      "action": "schema:migrate",
+      "payload": {
+        "from": 2,
+        "to": 3
+      },
+      "reason": "隔离迁移验证通过，升级工具箱自身"
+    },
+    {
+      "revision": 111,
+      "timestamp": "2026-10-26T09:16:39.180022+00:00",
+      "action": "revise",
+      "payload": {
+        "task_id": "IMP150"
+      },
+      "reason": "按原实施授权补齐schema3验收配置",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "IMP150",
+        "version": 1,
+        "hash": "dcb0b119a3d2802c47592315531db3b7a72e901daf2e8ab2d0d1300b1c84544a",
+        "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+        "acceptance_criteria": [
+          "新协议、迁移和回归检查通过",
+          "实现经Review并完成文档和交接，未验证边界如实记录"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T08:37:49.583459+00:00",
+        "source": "user",
+        "reason": "用户明确要求实施完整计划"
+      }
+    },
+    {
+      "revision": 112,
+      "timestamp": "2026-10-26T09:16:39.431312+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "IMP150",
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "command",
+            "inputs": [
+              "core/__init__.py",
+              "core/atomic_io.py",
+              "core/clients.py",
+              "core/config.py",
+              "core/diagnostics.py",
+              "core/history.py",
+              "core/hook_runtime.py",
+              "core/memory.py",
+              "core/native.py",
+              "core/skill_install.py",
+              "core/tasks.py",
+              "core/verification.py",
+              "kit.py",
+              "pyproject.toml",
+              "tests/ci_annotate.py",
+              "tests/client_live.py",
+              "tests/deployment_live.py",
+              "tests/helpers150.py",
+              "tests/hook_lifecycle_live.py",
+              "tests/native_probe.py",
+              "tests/onboarding_live.py",
+              "tests/skill_native_probe.py",
+              "tests/test_approval.py",
+              "tests/test_client_live.py",
+              "tests/test_clients.py",
+              "tests/test_deployment.py",
+              "tests/test_dsh_plugin.py",
+              "tests/test_history.py",
+              "tests/test_iteration.py",
+              "tests/test_kit.py",
+              "tests/test_migration.py",
+              "tests/test_protocol150.py",
+              "tests/test_rename.py",
+              "tests/test_skill.py"
+            ],
+            "argv": [
+              "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-q"
+            ]
+          },
+          {
+            "criterion": 2,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "docs/USAGE.md",
+              "docs/ARCHITECTURE.md",
+              "docs/ITERATION_1_5_VALIDATION.md",
+              "skills/project-anchor",
+              "packages/dsh",
+              "global",
+              "project-template/AGENTS.md"
+            ]
+          }
+        ]
+      },
+      "reason": "为原批准范围配置程序回归与Agent自查"
+    },
+    {
+      "revision": 113,
+      "timestamp": "2026-10-26T09:16:39.704583+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "IMP150"
+      },
+      "reason": "用户明确要求实施完整计划，按原授权登记新版范围",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "IMP150",
+        "version": 2,
+        "hash": "6439b801bfac55c1dd994e44b3831f39cd31edd91ce3aeb49e8afa2fe130130b",
+        "description": "按用户批准计划实施schema3、focus、verify、自查、归档、客户端一致性和迁移验收。不提交推送，不批量迁移其他项目。",
+        "acceptance_criteria": [
+          "新协议、迁移和回归检查通过",
+          "实现经Review并完成文档和交接，未验证边界如实记录"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T09:16:39.704583+00:00",
+        "source": "user",
+        "reason": "用户明确要求实施完整计划，按原授权登记新版范围",
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "command",
+            "inputs": [
+              "core/__init__.py",
+              "core/atomic_io.py",
+              "core/clients.py",
+              "core/config.py",
+              "core/diagnostics.py",
+              "core/history.py",
+              "core/hook_runtime.py",
+              "core/memory.py",
+              "core/native.py",
+              "core/skill_install.py",
+              "core/tasks.py",
+              "core/verification.py",
+              "kit.py",
+              "pyproject.toml",
+              "tests/ci_annotate.py",
+              "tests/client_live.py",
+              "tests/deployment_live.py",
+              "tests/helpers150.py",
+              "tests/hook_lifecycle_live.py",
+              "tests/native_probe.py",
+              "tests/onboarding_live.py",
+              "tests/skill_native_probe.py",
+              "tests/test_approval.py",
+              "tests/test_client_live.py",
+              "tests/test_clients.py",
+              "tests/test_deployment.py",
+              "tests/test_dsh_plugin.py",
+              "tests/test_history.py",
+              "tests/test_iteration.py",
+              "tests/test_kit.py",
+              "tests/test_migration.py",
+              "tests/test_protocol150.py",
+              "tests/test_rename.py",
+              "tests/test_skill.py"
+            ],
+            "argv": [
+              "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-q"
+            ]
+          },
+          {
+            "criterion": 2,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "docs/USAGE.md",
+              "docs/ARCHITECTURE.md",
+              "docs/ITERATION_1_5_VALIDATION.md",
+              "skills/project-anchor",
+              "packages/dsh",
+              "global",
+              "project-template/AGENTS.md"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "revision": 114,
+      "timestamp": "2026-10-26T09:16:40.046198+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "IMP150",
+        "status": "doing"
+      },
+      "reason": "进入新版协议实施验收"
+    },
+    {
+      "action": "verify:command",
+      "revision": 115,
+      "timestamp": "2026-10-26T09:22:50.492451+00:00",
+      "run_id": "ffdb1d1dff9d4d979f1a05ef4cf37d7e",
+      "reason": "完整Windows回归生成真实程序执行凭据"
+    },
+    {
+      "action": "verify:command",
+      "revision": 116,
+      "timestamp": "2026-10-26T09:27:33.412443+00:00",
+      "run_id": "5243a3f6925149dca346893838f99fcb",
+      "reason": "复查修复传递依赖过期绕过后重新执行完整回归"
+    },
+    {
+      "action": "verify:command",
+      "revision": 117,
+      "timestamp": "2026-10-26T09:31:19.659217+00:00",
+      "run_id": "85f53b9b855e4165a45674669842405e",
+      "reason": "最终复查统一迁移指引后核验当前代码与完整回归"
+    },
+    {
+      "action": "verify:review",
+      "revision": 118,
+      "timestamp": "2026-10-26T09:33:35.364339+00:00",
+      "run_id": "8907f27166624f499a9f3936c996ccda",
+      "reason": "Agent自查：Review查Bug后检查是否有更简单稳健的实现"
+    },
+    {
+      "revision": 119,
+      "timestamp": "2026-10-26T09:33:36.042766+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "IMP150",
+        "status": "done"
+      },
+      "reason": "当前材料的程序检查与自查均通过，完成本轮实施范围"
+    },
+    {
+      "revision": 120,
+      "timestamp": "2026-10-26T09:48:13.468593+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "README150",
+        "title": "重写README并推送1.5.0候选实现",
+        "description": "按用户授权重写产品首页，连同上一轮已验证的1.5.0实现提交并快进推送main；不创建分支/worktree，不创建Release，不批量升级其他项目。",
+        "milestone": "1.5.0 文档与推送",
+        "acceptance_criteria": [
+          "README与实现及验证边界一致，安装和升级可核对；提交内容不含运行日志或凭据秘密，main推送结果可核对"
+        ],
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "CHANGELOG.md",
+              "docs/ITERATION_1_5_VALIDATION.md"
+            ]
+          }
+        ]
+      },
+      "reason": "用户明确要求重写README并连同已验证1.5.0实现推送main"
+    },
+    {
+      "revision": 121,
+      "timestamp": "2026-10-26T09:48:13.690450+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "README150"
+      },
+      "reason": "用户明确要求重写README并连同已验证1.5.0实现推送main",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "README150",
+        "version": 1,
+        "hash": "30b10318e5c514907bdde10a7b6d907597ec3437f1eca0bffbe1671c1f91dd21",
+        "description": "按用户授权重写产品首页，连同上一轮已验证的1.5.0实现提交并快进推送main；不创建分支/worktree，不创建Release，不批量升级其他项目。",
+        "acceptance_criteria": [
+          "README与实现及验证边界一致，安装和升级可核对；提交内容不含运行日志或凭据秘密，main推送结果可核对"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T09:48:13.690450+00:00",
+        "source": "user",
+        "reason": "用户明确要求重写README并连同已验证1.5.0实现推送main",
+        "checks": [
+          {
+            "criterion": 1,
+            "kind": "review",
+            "inputs": [
+              "README.md",
+              "CHANGELOG.md",
+              "docs/ITERATION_1_5_VALIDATION.md"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "revision": 122,
+      "timestamp": "2026-10-26T09:48:13.908586+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "README150",
+        "status": "doing"
+      },
+      "reason": "用户明确要求重写README并连同已验证1.5.0实现推送main"
+    },
+    {
+      "action": "verify:review",
+      "revision": 123,
+      "timestamp": "2026-10-26T09:51:09.603717+00:00",
+      "run_id": "d83f5ecfecba40c4a46245b64bbc63e7",
+      "reason": "README重写后重新核对原完成任务的文档材料"
     }
   ]
 }

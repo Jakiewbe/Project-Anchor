@@ -26,17 +26,15 @@ plugin_manager  action: install_bundle  target: <这个目录的绝对路径>
 
 | 键 | 默认 | 说明 |
 | :--- | :--- | :--- |
-| `pythonPath` | `''` | 解释器绝对路径；留空用安装记录或 `py -3` / `python3` |
+| `pythonPath` | `''` | 解释器绝对路径；留空用安装记录，缺失时明确失败 |
 | `kitPath` | `''` | `kit.py` 文件或包含它的目录；留空读 `install-client dsh` 生成的 `runtime.json` |
 | `toolTimeoutMs` | `20000` | 单次调用超时 |
 
 ## 定位顺序
 
-1. `config.kitPath`
-2. `$DSH_HOME/project-anchor/install.json` 记录的 Skill 目录 → `runtime.json`
-3. `$DSH_HOME/skills/project-anchor/runtime.json`
+明确指定 kitPath/pythonPath 时使用指定的绝对路径；错误即停止，不改用其他安装。未指定时先读 `$DSH_HOME/project-anchor/install.json` 的Skill路径；只有清单不存在才读标准Skill目录。清单/定位损坏、来源不符或版本不匹配均明确失败。
 
-都找不到时工具返回明确错误，插件本身不崩。
+anchor_status保留核心全部查询字段；brief=false保留验收、配置、证据与凭据引用，brief=true保留依赖/阻塞/验证状态/折叠统计；all和focus映射同名CLI参数。本轮未设置时不猜历史任务。原生宿主对动态完整JSON输出的接受情况仍需真实DSH验收，桩测试不代替它。
 
 ## 本地验证（无需安装 DSH）
 

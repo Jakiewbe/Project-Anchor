@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 233,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "2e335a06f26e54145f3edb9dbb22ae8620ec8b96a494114f010ff38836893272",
+      "content": "# 当前断点\n\n## 当前阶段\n1.4.0发布审核和本机可访问已接入项目升级验收通过；本地修复尚未发布。\n\n## 当前任务\nAUD140 done；历史任务均保留legacy_unverified，不补造批准或重做旧验收。\n\n## 已完成工作\nGitHub main与annotated tag v1.4.0均为a85bdd9，Release已读回核对。\n修复schema2失效历史证据阻止验收条目缩减；完整回归194通过0失败。\n本机发现7个真实项目，备份、迁移schema2、项目治理规则同步和读回7通过0失败。\n原42个任务、业务文件、未提交改动、分支与提交保留，未自动批准历史任务。\n现有Codex全局规则与共享Skill升级1.4.0，其他114技能文件及配置/认证/Hook组/信任保持。\n已记录审核报告、迁移证据、备份与复盘；未向知识库写入。\n\n## 当前阻塞\nF:/FGS-1-6当前不存在，无法检查；不声称其他机器或所有云项目已升级。\n真实DSH原生行为、模型遵从和当前Hook原生信任仍未验收。\n\n## 下一步动作\n本轮本机可执行工作完成；不自动推送本地修复、不改动v1.4.0标签或发布。\n\n## 状态修订\n以state.json/tasks.json为准，详细证据和备份在.agent/runtime/audit-140/REPORT.md。\nCURRENT同步任务修订；业务项目原目标、断点和文档字节均保留。\n\n## Git 检查\n保留feat/universal-agent-skills；本轮未提交、推送、创建分支/worktree或改写历史。\n本地变更包含校验修复、回归测试、项目治理规则和本仓库治理记录；实际清单以Git为准。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-19T10:18:08.459737+00:00"
+    },
+    {
+      "revision": 100,
+      "action": "state:update",
+      "reason": "记录用户授权的Project Anchor命名和仓库发布范围",
+      "timestamp": "2026-10-09T07:32:20.826783+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "5222e3052c98ea6b32b8af77797fef69f6dc2fbd0a36ce8675d855d0ef879cda",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:32:21.726422+00:00",
+      "content_pruned": true
+    }
+  ]
+}

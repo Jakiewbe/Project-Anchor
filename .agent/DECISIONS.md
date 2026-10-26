@@ -94,3 +94,10 @@ PR#2已按用户授权合并，merge8b669d5；README优化提交87aa54b已推送
 用户批准优化账本体积与上下文开销。实测确认 `state.json` 475 KB 中 history 占 97%，其中 `document-version` 重复保存整篇文档；程序只校验 history 是列表，不读取其内容。选择：最近 10 条 `document-version` 保留全文，更早的只留 `file`/`previous_sha256`/`timestamp`/`user_approved`；条目总数上限 200，超出按顺序丢弃并合并成一条 `history:prune`（累计丢弃数、revision 区间）。不改 schema、不加必填字段、不要求迁移，也不动 `tasks.json` 历史与快照内嵌 state。
 `status --brief` 默认折叠 `done`/`cancelled`，条数放进新增的 `summary.folded_final`；新增 `--all`；显式 `--task`/`--milestone` 不折叠，已完成任务仍返回真实状态。
 已知取舍：未接入 Git 的项目旧正文只能从快照取回；最近 10 条若都改最大文档，history 正文上限约 150 KB，是有界值而非持续增长。实测 `state.json` 477→101 KB、`--brief` 12.7→7.3 KB，全量回归 220 通过。
+
+## 2026-10-26：按用户明确批准的1.5.0计划实施
+保留Python标准库、文件和唯一核心；schema3用于批准检查配置与凭据引用，state原schema增量存focus。程序检查为基础，Agent自查固定claimed/self；不增加第二审核Agent、MCP、服务或默认付费调用。历史先事务性归档再裁剪；安装定位错误明确失败。
+本轮仅开发与本机验收，不创建分支/worktree、提交、推送、发布或批量迁移其他真实项目。工具箱自身已预检备份迁移；原安装器更新已有本机安装，其他配置与项目不变。远程CI、Hook自动注入、DSH真实宿主不冒充通过。
+
+## 2026-10-26：README重写并连同1.5.0实现推送
+用户明确确认：重写README，连同上一轮已验证1.5.0实现一起提交推送。目标main当前与本地基线7395325一致，采用正常快进推送，不强推、不创建分支/worktree；保留候选版本，不创建Release。原先不提交推送的阶段限制由本轮明确授权更新；其他项目不批量迁移。

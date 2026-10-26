@@ -12,6 +12,9 @@ import unittest
 
 import kit
 from core.memory import init_project, load
+from core.memory import task_change, focus_change
+from core.clients import install_client
+from tests.helpers150 import checks_for
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = ROOT / "packages/dsh"
@@ -118,7 +121,7 @@ class HostModuleTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="DSH bundle 中文 ")
         self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         shutil.copytree(BUNDLE, self.root / "bundle")
         shutil.copy(ROOT / "tests/dsh_probe.mjs", self.root / "probe.mjs")
         for name, source in (("dsh-tools", STUB_TOOLS), ("schemastery", STUB_SCHEMASTERY)):
@@ -184,6 +187,55 @@ class HostModuleTests(unittest.TestCase):
         self.assertNotEqual(done.returncode, 0)
         self.assertIn("未初始化", done.stderr)
 
+    def test_full_status_and_focus_preserve_every_core_fact(self):
+        task_change(self.project, 0, "add", {"task_id": "T1", "title": "task", "acceptance_criteria": ["criterion"],
+                                             "checks": checks_for(self.project, ["criterion"])}, "test")
+        focus_change(self.project, 1, ["T1"], "明确本轮")
+        config = {"kitPath": str(ROOT), "pythonPath": sys.executable}
+        done = self.probe({"config": config, "run": {"tool": "anchor_status",
+                          "args": {"path": str(self.project), "brief": False, "focus": True}, "cwd": str(self.project)}})
+        self.assertEqual(done.returncode, 0, done.stderr)
+        value = json.loads(done.stdout)["executed"]["value"]
+        direct = subprocess.run([sys.executable, str(ROOT / "kit.py"), "status", str(self.project), "--focus"],
+                                capture_output=True, encoding="utf8", check=True)
+        self.assertEqual(value, json.loads(direct.stdout))
+        self.assertIn("checks", value["tasks"][0])
+        self.assertIn("evidence", value["tasks"][0])
+        self.assertIn("verification_state", value["tasks"][0])
+
+    def locate(self, config, home):
+        script = "const {createKit}=await import(process.argv[1]);console.log(JSON.stringify(createKit(JSON.parse(process.argv[2]),{DSH_HOME:process.argv[3]}).locate()))"
+        return subprocess.run(["node", "--input-type=module", "-e", script, (BUNDLE / "kit.js").as_uri(),
+                               json.dumps(config), str(home)], capture_output=True, encoding="utf8")
+
+    def test_bad_explicit_paths_never_use_valid_installation(self):
+        home = self.root / "dsh"
+        install_client("dsh", home)
+        for config in ({"kitPath": str(self.root / "missing.py"), "pythonPath": sys.executable},
+                       {"kitPath": str(ROOT), "pythonPath": str(self.root / "missing-python.exe")}):
+            self.assertNotEqual(self.locate(config, home).returncode, 0)
+
+    def test_manifest_wins_and_malformed_manifest_is_not_ignored(self):
+        home = self.root / "dsh"
+        install_client("dsh", home, self.root / "installed-skills")
+        default = home / "skills/project-anchor"
+        default.mkdir(parents=True)
+        (default / "runtime.json").write_text("broken", encoding="utf8")
+        result = self.locate({}, home)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["kit"], str(ROOT / "kit.py"))
+        (home / "project-anchor/install.json").write_text("broken", encoding="utf8")
+        self.assertNotEqual(self.locate({}, home).returncode, 0)
+
+    def test_wrong_locator_version_rejected(self):
+        home = self.root / "dsh"
+        install_client("dsh", home)
+        locator = home / "skills/project-anchor/runtime.json"
+        data = json.loads(locator.read_text(encoding="utf8"))
+        data["version"] = "0.0.0"
+        locator.write_text(json.dumps(data), encoding="utf8")
+        self.assertNotEqual(self.locate({}, home).returncode, 0)
+
 
 class ContextCommandTests(unittest.TestCase):
     """The read-only injection source shared with the Codex hooks."""
@@ -191,7 +243,7 @@ class ContextCommandTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="Context 中文 ")
         self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         self.project = self.root / "项目"
         self.project.mkdir()
         init_project(self.project, "上下文项目")

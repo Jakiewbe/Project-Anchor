@@ -14,7 +14,7 @@ import re
 
 from .atomic_io import KitError, digest
 
-SCHEMA = 2
+SCHEMA = 3
 STATUSES = {"todo", "doing", "blocked", "done", "cancelled"}
 # Brief queries fold finished tasks into summary counts unless the caller asks for them.
 FINAL_STATUSES = {"done", "cancelled"}
@@ -27,19 +27,21 @@ TRANSITIONS = {
 }
 EVIDENCE_TYPES = {"test", "file", "review", "manual", "command"}
 EVIDENCE_LEVELS = {"claimed", "observed", "reviewed"}
-SCOPE_FIELDS = ("description", "acceptance_criteria", "dependencies")
+SCOPE_FIELDS = ("description", "acceptance_criteria", "dependencies", "checks")
 TASK_FIELDS = {
     "task_id", "title", "description", "milestone", "status", "plan",
     "dependencies", "acceptance_criteria", "evidence", "blocker",
     "approved_scope", "legacy_unverified", "updated_at", "completed_at",
+    "checks", "verification_legacy",
 }
 EVIDENCE_FIELDS = {
     "type", "criterion", "detail", "level", "scope_version", "criteria_hash",
-    "recorded_at", "invalidated_at", "invalidated_reason",
+    "recorded_at", "invalidated_at", "invalidated_reason", "run_id", "receipt_sha256",
+    "input_hash", "result", "reviewer_kind",
 }
 APPROVED_SCOPE_FIELDS = {
     "project_id", "task_id", "version", "hash", "description",
-    "acceptance_criteria", "dependencies", "approved_at", "source", "reason",
+    "acceptance_criteria", "dependencies", "approved_at", "source", "reason", "checks",
 }
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
@@ -67,18 +69,21 @@ def scope_values(description, criteria, dependencies):
 
 
 def scope_hash(task):
-    return digest(_canonical(scope_values(task["description"], task["acceptance_criteria"], task["dependencies"])))
+    return approved_scope_hash(task)
 
 
 def approved_scope_hash(scope):
-    return digest(_canonical(scope_values(scope["description"], scope["acceptance_criteria"], scope["dependencies"])))
+    value = scope_values(scope["description"], scope["acceptance_criteria"], scope["dependencies"])
+    if "checks" in scope:
+        value["checks"] = scope["checks"]
+    return digest(_canonical(value))
 
 
 def scope_dirty(task):
     """True when the working scope no longer matches the last approved snapshot."""
     if task["plan"] != "approved":
         return False
-    if task.get("legacy_unverified"):
+    if task.get("legacy_unverified") or task.get("verification_legacy"):
         return False
     approved = task.get("approved_scope")
     if not approved:
@@ -96,6 +101,14 @@ def evidence_valid(task, item):
         return False
     if item.get("scope_version") != approved["version"]:
         return False
+    if task.get("checks") and not task.get("verification_legacy"):
+        check = next((c for c in task["checks"] if c["criterion"] == item["criterion"]), None)
+        if not check or not item.get("run_id") or item.get("result") != "pass":
+            return False
+        if check["kind"] == "command" and item.get("level") != "observed":
+            return False
+        if check["kind"] == "review" and (item.get("level") != "claimed" or item.get("reviewer_kind") != "self"):
+            return False
     index = item["criterion"]
     criteria = task["acceptance_criteria"]
     return item.get("criteria_hash") == criterion_hash(criteria[index - 1])
@@ -114,7 +127,7 @@ def validate(ledger, project_id=None):
     schema = ledger.get("schema") if isinstance(ledger, dict) else None
     if schema == 1:
         return _validate_v1(ledger, project_id)
-    if schema == 2:
+    if schema in (2, 3):
         return _validate_v2(ledger, project_id)
     raise KitError("不支持的任务账本版本")
 
@@ -188,8 +201,43 @@ def _validate_v1(ledger, project_id=None):
     return ledger
 
 
+def validate_checks(checks, criteria, complete=False):
+    if not isinstance(checks, list):
+        raise KitError("checks 必须为数组")
+    seen = set()
+    for check in checks:
+        if not isinstance(check, dict) or set(check) - {"criterion", "kind", "inputs", "argv", "timeout_seconds"}:
+            raise KitError("未知验收检查字段")
+        index = check.get("criterion")
+        if type(index) is not int or not 1 <= index <= len(criteria) or index in seen:
+            raise KitError("检查序号无效或重复")
+        seen.add(index)
+        if check.get("kind") not in {"command", "review"}:
+            raise KitError("检查类型必须为 command 或 review")
+        inputs = check.get("inputs")
+        if not isinstance(inputs, list) or not inputs or len(set(map(str, inputs))) != len(inputs):
+            raise KitError("检查 inputs 必须是非空且不重复的项目相对路径数组")
+        from pathlib import PurePosixPath, PureWindowsPath
+        for item in inputs:
+            if (not isinstance(item, str) or not item.strip() or "\\" in item
+                    or PurePosixPath(item).is_absolute() or PureWindowsPath(item).drive
+                    or ".." in PurePosixPath(item).parts or any(c in item for c in "*?[]")):
+                raise KitError("检查 inputs 只接受明确的项目相对文件或目录，不接受通配符或越界路径")
+        if check["kind"] == "command":
+            argv = check.get("argv")
+            if not isinstance(argv, list) or not argv or any(not isinstance(a, str) or not a or "\0" in a for a in argv):
+                raise KitError("command 检查需要非空 argv 参数数组")
+            timeout = check.get("timeout_seconds", 600)
+            if type(timeout) is not int or not 1 <= timeout <= 86400:
+                raise KitError("检查超时必须是1到86400秒的整数")
+        elif set(check) & {"argv", "timeout_seconds"}:
+            raise KitError("review 检查不接受命令或超时")
+    if complete and seen != set(range(1, len(criteria) + 1)):
+        raise KitError("批准前须为全部验收标准配置 checks")
+
+
 def _validate_v2(ledger, project_id=None):
-    if not isinstance(ledger, dict) or ledger.get("schema") != 2:
+    if not isinstance(ledger, dict) or ledger.get("schema") not in (2, 3):
         raise KitError("不支持的任务账本版本")
     if project_id and ledger.get("project_id") != project_id:
         raise KitError("任务账本属于其他项目")
@@ -205,6 +253,8 @@ def _validate_v2(ledger, project_id=None):
         unknown = set(task) - TASK_FIELDS
         if unknown:
             raise KitError(f"未知任务字段: {', '.join(sorted(unknown))}")
+        if ledger["schema"] == 2 and set(task) & {"checks", "verification_legacy"}:
+            raise KitError("schema 2 不接受新版验收配置")
         for key in ("task_id", "title", "description", "milestone", "status", "plan"):
             text(task.get(key), key)
         tid = task["task_id"]
@@ -219,6 +269,11 @@ def _validate_v2(ledger, project_id=None):
             raise KitError("任务必须有验收标准")
         for criterion in task["acceptance_criteria"]:
             text(criterion, "验收标准")
+        if type(task.get("verification_legacy", False)) is not bool:
+            raise KitError("verification_legacy 必须是布尔值")
+        if ledger["schema"] == 3:
+            validate_checks(task.get("checks", []), task["acceptance_criteria"],
+                            complete=task["plan"] == "approved" and not task.get("verification_legacy"))
         if any(not isinstance(dep, str) for dep in task["dependencies"]) or len(set(task["dependencies"])) != len(task["dependencies"]):
             raise KitError("依赖格式错误或重复")
         if not isinstance(task.get("blocker"), str):
@@ -257,6 +312,8 @@ def _validate_v2(ledger, project_id=None):
             text(approved.get("reason"), "批准原因")
             if approved["hash"] != approved_scope_hash(approved):
                 raise KitError("批准范围内容与哈希不一致")
+            if "checks" in approved:
+                validate_checks(approved["checks"], approved["acceptance_criteria"], complete=True)
         if legacy and approved is not None:
             raise KitError("legacy 任务不能同时带有批准范围")
         if task["plan"] == "approved" and not legacy and approved is None:
@@ -287,6 +344,14 @@ def _validate_v2(ledger, project_id=None):
                 text(item["invalidated_at"], "证据失效时间")
             if "invalidated_reason" in item:
                 text(item["invalidated_reason"], "证据失效原因")
+            if "run_id" in item:
+                if not isinstance(item["run_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", item["run_id"]):
+                    raise KitError("执行凭据 ID 无效")
+                for key in ("receipt_sha256", "input_hash"):
+                    if not isinstance(item.get(key), str) or not HEX64.fullmatch(item[key]):
+                        raise KitError("执行凭据哈希无效")
+                if item.get("result") not in {"pass", "fail"}:
+                    raise KitError("执行凭据结果无效")
         if task["status"] in {"doing", "done"} and task["plan"] != "approved":
             raise KitError("草案任务不能开始或完成")
         if task["status"] == "done" and not coverage_ok(task):
@@ -354,8 +419,13 @@ def _new_evidence(task, items):
 
 def _approve(task, ledger, reason, source):
     text(source, "批准来源")
+    if source not in {"user", "policy"}:
+        raise KitError("批准来源必须为 user 或 policy（仅声明）")
     if task["status"] in {"done", "cancelled"}:
         raise KitError("已完成或取消的任务不能直接批准；请先 task revise")
+    if task.get("verification_legacy"):
+        raise KitError("旧任务需要先 task revise、补齐 checks，再重新批准")
+    validate_checks(task.get("checks", []), task["acceptance_criteria"], complete=True)
     if task["plan"] == "approved" and not task.get("legacy_unverified") and not scope_dirty(task):
         return task, False
     previous = task.get("approved_scope")
@@ -367,6 +437,7 @@ def _approve(task, ledger, reason, source):
         "acceptance_criteria": list(task["acceptance_criteria"]),
         "dependencies": list(task["dependencies"]),
         "approved_at": now(), "source": source, "reason": reason,
+        "checks": copy.deepcopy(task["checks"]),
     }
     task["plan"] = "approved"
     task["legacy_unverified"] = False
@@ -377,13 +448,14 @@ def _approve(task, ledger, reason, source):
 
 
 def _revise(task):
-    if task["plan"] != "approved" and not task.get("legacy_unverified"):
+    if task["plan"] != "approved" and not task.get("legacy_unverified") and not task.get("verification_legacy"):
         raise KitError("只有已批准任务需要修订；草案可直接修改")
     if task["status"] == "cancelled":
         raise KitError("已取消任务不能修订；请先恢复为 todo")
     task["plan"] = "draft"
     task["status"] = "todo"
     task["legacy_unverified"] = False
+    task["verification_legacy"] = False
     task.pop("completed_at", None)
     _invalidate_evidence(task, "任务范围修订，旧证据失效")
     task["updated_at"] = now()
@@ -391,8 +463,8 @@ def _revise(task):
 
 def mutate(ledger, action, payload, reason, source=None):
     text(reason, "变更原因")
-    if ledger.get("schema") != 2:
-        raise KitError("任务账本为 schema 1，只读；请先执行 migrate")
+    if ledger.get("schema") != SCHEMA:
+        raise KitError("旧任务账本只读；请先执行 migrate")
     validate(ledger)
     if not isinstance(payload, dict):
         raise KitError("任务输入必须为对象")
@@ -404,9 +476,9 @@ def mutate(ledger, action, payload, reason, source=None):
             raise KitError("任务 ID 已存在")
         if payload.get("plan", "draft") != "draft":
             raise KitError("新增任务只能建立草案；批准请使用 task approve")
-        if "evidence" in payload or "approved_scope" in payload or "legacy_unverified" in payload:
+        if set(payload) & {"evidence", "approved_scope", "legacy_unverified", "verification_legacy"}:
             raise KitError("新增任务不能携带证据或批准范围")
-        allowed = {"task_id", "title", "description", "milestone", "plan", "dependencies", "acceptance_criteria", "blocker"}
+        allowed = {"task_id", "title", "description", "milestone", "plan", "dependencies", "acceptance_criteria", "blocker", "checks"}
         if set(payload) - allowed:
             raise KitError("未知任务字段")
         item = dict(payload)
@@ -415,33 +487,36 @@ def mutate(ledger, action, payload, reason, source=None):
             item.setdefault(key, default)
         item.update({"status": "todo", "plan": "draft", "evidence": [], "legacy_unverified": False})
         item["updated_at"] = now()
+        item.setdefault("checks", [])
         tasks.append(item)
     elif action == "update":
         if previous is None:
             raise KitError("任务不存在")
-        internal = {"plan", "approved_scope", "legacy_unverified"}
+        internal = {"plan", "approved_scope", "legacy_unverified", "verification_legacy"}
         if set(payload) & internal:
             raise KitError("plan、approved_scope、legacy_unverified 不能由 task update 修改；请使用 task approve/revise")
-        allowed = {"task_id", "title", "description", "milestone", "status", "dependencies", "acceptance_criteria", "evidence", "blocker"}
+        allowed = {"task_id", "title", "description", "milestone", "status", "dependencies", "acceptance_criteria", "evidence", "blocker", "checks"}
         if set(payload) - allowed:
             raise KitError("未知任务字段")
         status = payload.get("status", previous["status"])
         if status != previous["status"] and status not in TRANSITIONS[previous["status"]]:
             raise KitError(f"不允许从 {previous['status']} 转为 {status}")
-        scope_change = any(key in payload and payload[key] != previous[key] for key in SCOPE_FIELDS)
+        scope_change = any(key in payload and payload[key] != previous.get(key) for key in SCOPE_FIELDS)
         if previous["plan"] == "approved" and scope_change:
             raise KitError("已批准任务的验收标准、依赖或描述发生变化；请先 task revise，再重新批准")
         candidate = {**previous, **{key: value for key, value in payload.items() if key != "evidence"}}
-        if "status" in payload and status in {"doing", "done"} and candidate.get("legacy_unverified"):
-            raise KitError("旧任务批准来源未验证，请先 task approve 再开始或完成")
+        if "status" in payload and status in {"doing", "done"} and (candidate.get("legacy_unverified") or candidate.get("verification_legacy")):
+            raise KitError("旧任务未配置新版验收；请先 task revise、补齐 checks，再 task approve")
         if "evidence" in payload:
+            if payload["evidence"] != [] or not isinstance(payload["evidence"], list):
+                raise KitError("schema 3 证据只能由 verify run 或 task review 生成")
             if status == "done" and previous["status"] == "done":
                 raise KitError("先重新打开任务再更改证据")
             if candidate.get("plan") != "approved":
                 raise KitError("只有已批准任务可以登记证据")
             if candidate.get("legacy_unverified"):
-                raise KitError("旧任务必须先 task approve 才能登记新证据")
-            candidate["evidence"] = previous["evidence"] + _new_evidence(candidate, payload["evidence"])
+                raise KitError("旧任务须 task revise、补齐 checks、task approve 后才能登记新证据")
+            candidate["evidence"] = previous["evidence"]
         validate({**ledger, "tasks": [candidate if item is previous else item for item in tasks]})
         if candidate == previous:
             return ledger

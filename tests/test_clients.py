@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from core import atomic_io as io
+from tests.helpers150 import checks_for
 from core.clients import claude_hook_groups, client_home, install_client, recover_client, uninstall_client
 from core.config import install
 from core.diagnostics import client_doctor
@@ -48,7 +49,7 @@ class SpecTests(unittest.TestCase):
 class ClientBase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="Client 中文 空格 ")
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         self.user = self.root / "用户 目录"
         self.project = self.root / "合成 项目"
         self.project.mkdir(parents=True)
@@ -154,7 +155,7 @@ class AgentsInstallTests(ClientBase):
         for args in steps:
             result = self.run_skill(self.skill, *args)
             self.assertEqual(result.returncode, 0, result.stderr)
-        task = {"task_id": "T1", "title": "核对", "acceptance_criteria": ["通过"]}
+        task = {"task_id": "T1", "title": "核对", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
         result = self.run_skill(self.skill, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "规划", payload=json.dumps(task, ensure_ascii=False))
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -372,7 +373,7 @@ class CrossClientTests(ClientBase):
         install_client("claude", claude_home)
         first, second = Path(agents["skill"]), claude_home / "skills/project-anchor"
         init_project(self.project, "共享项目")
-        task = {"task_id": "T1", "title": "共享", "acceptance_criteria": ["通过"]}
+        task = {"task_id": "T1", "title": "共享", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
         result = self.run_skill(first, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "客户端一", payload=json.dumps(task, ensure_ascii=False))
         self.assertEqual(result.returncode, 0, result.stderr)

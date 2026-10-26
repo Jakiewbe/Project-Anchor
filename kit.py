@@ -65,6 +65,7 @@ def parser():
     child.add_argument("--rebuild", action="store_true")
     child.add_argument("--brief", action="store_true", help="保留完整目标和断点，仅省略任务长证据与描述；已完成/取消任务折叠进 summary")
     child.add_argument("--all", action="store_true", help="配合 --brief 保留全部任务，不折叠已完成或已取消")
+    child.add_argument("--focus", action="store_true", help="只读取显式设置的本轮任务，不猜测")
     child.add_argument("--task", action="append", metavar="ID", help="按明确任务 ID 查询，可重复")
     child.add_argument("--milestone", help="按里程碑精确查询；不猜测本轮任务")
     child = sub.add_parser("context", help="只读：输出与 Hook 同源的会话注入摘要")
@@ -78,6 +79,26 @@ def parser():
     child.add_argument("--expected-revision", type=int, required=True)
     child.add_argument("--reason", required=True)
     child.add_argument("--dry-run", action="store_true", help="只报告迁移范围，不写文件")
+    child.add_argument("--rollback", metavar="BACKUP", help="仅在迁移结果未改变时回退到指定备份")
+    child = sub.add_parser("focus")
+    child.add_argument("action", choices=["set", "clear"])
+    child.add_argument("path")
+    child.add_argument("--task", action="append")
+    child.add_argument("--expected-revision", type=int, required=True)
+    child.add_argument("--reason", required=True)
+    child = sub.add_parser("verify")
+    child.add_argument("action", choices=["run", "show"])
+    child.add_argument("path")
+    child.add_argument("--task")
+    child.add_argument("--criterion", type=int)
+    child.add_argument("--run-id")
+    child.add_argument("--expected-revision", type=int)
+    child.add_argument("--reason")
+    child = sub.add_parser("history")
+    child.add_argument("action", choices=["list", "show"])
+    child.add_argument("path")
+    child.add_argument("--file")
+    child.add_argument("--archive")
     child = sub.add_parser("snapshot")
     child.add_argument("path", nargs="?", default=".")
     child.add_argument("--session-id", default="manual")
@@ -85,7 +106,7 @@ def parser():
     child = sub.add_parser("retro")
     child.add_argument("path", nargs="?", default=".")
     child = sub.add_parser("task")
-    child.add_argument("action", choices=["add", "update", "approve", "revise"])
+    child.add_argument("action", choices=["add", "update", "approve", "revise", "review"])
     child.add_argument("path")
     inputs = child.add_mutually_exclusive_group()
     inputs.add_argument("--file", help="包含任务或修改字段的 UTF-8 JSON")
@@ -222,23 +243,64 @@ def main(argv=None):
         else:
             root = project_root(args.path)
             if args.command == "status":
-                if args.rebuild and (args.task or args.milestone is not None):
+                if args.focus and (args.task or args.milestone is not None):
+                    raise KitError("--focus 与 --task/--milestone 不能组合")
+                if args.rebuild and (args.focus or args.task or args.milestone is not None):
                     raise KitError("筛选查询不能重建全项目进度；请单独执行 status PATH --rebuild")
                 if args.rebuild:
                     rebuild(root)
                 _, lock, _ = paths(root)
                 with locked(lock):
                     state, content, ledger = load(root)
+                    from core.verification import state as verification_state
+                    views = {task["task_id"]: verification_state(root, task) if ledger["schema"] == 3 else "legacy"
+                             for task in ledger["tasks"]}
                 result = {"project": str(root), "name": state["name"], "revision": state["revision"],
                           "goal_version": state["goal_version"], "goal_approved": state["goal_approved"],
                           "current_stale": state["current_task_revision"] != ledger["revision"],
                           "task_revision": ledger["revision"], "task_schema": ledger["schema"],
                           "tasks": [decorate(task) for task in ledger["tasks"]],
                           "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root)}
-                if args.brief or args.task or args.milestone is not None:
-                    selected, summary, external = task_view(ledger, args.brief, args.task, args.milestone, args.all)
-                    result.update(tasks=selected, summary=summary, external_dependencies=external,
-                                  selection={"task_ids": args.task or [], "milestone": args.milestone})
+                focus = state.get("focus")
+                selected_ids = focus["task_ids"] if args.focus and focus else args.task
+                selected, summary, external = task_view(ledger, args.brief, selected_ids, args.milestone,
+                                                        args.all or args.focus)
+                if args.focus and not focus:
+                    selected, external = [], []
+                    summary = {**summary, "selected_total": 0}
+                for task in [*selected, *external]:
+                    task["verification_state"] = views[task["task_id"]]
+                result.update(tasks=selected, summary=summary, external_dependencies=external, focus=focus,
+                              focus_missing=bool(args.focus and not focus),
+                              selection={"task_ids": selected_ids or [], "milestone": args.milestone, "focus": args.focus})
+            elif args.command == "focus":
+                from core.memory import focus_change
+                if args.action == "set" and not args.task or args.action == "clear" and args.task:
+                    raise KitError("focus set 需要 --task；focus clear 不接受 --task")
+                revision = focus_change(root, args.expected_revision, args.task, args.reason)
+                result = {"revision": revision, "changed": revision != args.expected_revision}
+            elif args.command == "verify":
+                from core.verification import run, show
+                if args.action == "show":
+                    if not args.run_id or args.task or args.criterion is not None or args.expected_revision is not None or args.reason:
+                        raise KitError("verify show 只接受 --run-id")
+                    result = show(root, args.run_id)
+                else:
+                    if not args.task or args.criterion is None or args.expected_revision is None or not args.reason or args.run_id:
+                        raise KitError("verify run 需要 --task/--criterion/--expected-revision/--reason")
+                    result = run(root, args.expected_revision, args.task, args.criterion, args.reason)
+                    print(json.dumps(result, ensure_ascii=False, indent=2))
+                    return 0 if result["result"] == "pass" else 1
+            elif args.command == "history":
+                from core.history import listing, show
+                if args.action == "list":
+                    if args.archive:
+                        raise KitError("history list 不接受 --archive")
+                    result = listing(root, args.file)
+                else:
+                    if not args.archive or args.file:
+                        raise KitError("history show 需要 --archive，不接受 --file")
+                    result = show(root, args.archive)
             elif args.command == "context":
                 from core.hook_runtime import context
                 managed = Path(args.managed_dir).resolve() if args.managed_dir else None
@@ -251,12 +313,26 @@ def main(argv=None):
                     print(payload)
                     result = {"project": str(root)}
             elif args.command == "migrate":
-                result = migrate(root, args.expected_revision, args.reason, args.dry_run)
+                if args.rollback:
+                    if args.dry_run:
+                        raise KitError("--rollback 与 --dry-run 互斥")
+                    from core.memory import migration_rollback
+                    result = migration_rollback(root, args.expected_revision, args.reason, args.rollback)
+                else:
+                    result = migrate(root, args.expected_revision, args.reason, args.dry_run)
             elif args.command == "snapshot":
                 result = snapshot_check(root, args.check) if args.check else {"snapshot": str(snapshot(root, args.session_id))}
             elif args.command == "retro":
                 result = {"retro": str(retro(root))}
             elif args.command == "task":
+                if args.action == "review":
+                    if not args.task_id or not (args.file or args.json_input) or args.source:
+                        raise KitError("task review 需要 --task-id 与 --file/--json-input，不接受 --source")
+                    payload = json.loads(sys.stdin.buffer.read().decode("utf-8-sig")) if args.json_input else read_json(args.file)
+                    from core.verification import review
+                    result = review(root, args.expected_revision, args.task_id, payload, args.reason)
+                    print(json.dumps(result, ensure_ascii=False, indent=2))
+                    return 0 if result["result"] == "pass" else 1
                 if args.action in ("add", "update"):
                     if args.task_id:
                         raise KitError("add/update 的任务 ID 放在 JSON 中，不接受 --task-id")

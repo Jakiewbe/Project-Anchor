@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 234,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "ecf16511d9cc80f3f1ba9562123c9a5ab08620878ce01308c406fedbabd87c65",
+      "content": "# 当前断点\n\n## 当前阶段\n1.4.0后续质量优化，四类问题已复现并针对性修复，完整回归与安装收尾中。\n\n## 当前任务\nOPT140 doing；保留前轮AUD140的修复、迁移和私人证据。\n\n## 已完成工作\n审批快照写入历史；修订存档旧版仍存在的快照，不重建已丢失记录。\n证据数组类型校验；空证据且无其他变化时不增加修订。\n迁移预检先完整构造并校验新版结果，正式迁移校验后才创建备份。\nDSH诊断识别额外管理标记，区分规则完整性和模板版本。\n专项复现和回归已完成；完整回归结果以本轮日志为准，未提前宣称通过。\n技能说明同步审批历史、迁移预检、UTF-8字节输入和DSH入口。\n\n## 当前阻塞\n真实客户端原生行为仍未验收；前轮不可访问目录与历史任务批准边界保持。\n\n## 下一步动作\n读取完整测试结果，更新现有安装，验证7个项目只读兼容并保存报告。\n\n## 状态修订\n任务账本schema2不变，无需再次迁移；证据.agent/runtime/opt140。\n本轮不重新批准历史任务，不改其他业务项目。\n\n## Git 检查\n保留原分支与前轮未提交改动；未创建分支/worktree，未提交、推送或改写发布。\n实际修改以git diff为准，CHANGELOG后续修复标记未发布。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-19T10:53:37.135447+00:00"
+    },
+    {
+      "revision": 101,
+      "action": "state:update",
+      "reason": "保存Project Anchor发布断点及真实测试结果",
+      "timestamp": "2026-10-09T07:32:21.736939+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "1c369ca40d962c087b49e1347e3404be47933ea156717fc93bb91e693365b7e1",
+      "user_approved": false,
+      "timestamp": "2026-10-09T07:35:04.945678+00:00",
+      "content_pruned": true
+    }
+  ]
+}

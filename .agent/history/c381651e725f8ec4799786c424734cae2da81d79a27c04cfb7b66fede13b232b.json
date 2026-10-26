@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 236,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "GOAL.md",
+      "previous_sha256": "7c5223f6fa9261ae141d44094880bc5dea4573bb6f4c0a31c487056fea7c271d",
+      "user_approved": true,
+      "timestamp": "2026-10-09T07:55:30.492153+00:00",
+      "content_pruned": true
+    }
+  ]
+}

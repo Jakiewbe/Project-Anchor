@@ -27,68 +27,33 @@ function projectPath(args, exec) {
  * @returns {Record<string, any>} compact, schema-stable projection.
  */
 function projectStatus(value) {
-  const tasks = Array.isArray(value.tasks) ? value.tasks : []
-  const warnings = []
-  if (value.goal_approved === false) warnings.push('项目总目标仍待确认；只处理用户已明确授权的局部任务。')
-  if (value.current_stale === true) warnings.push('CURRENT 落后于任务修订，读到的断点可能过期。')
-  return {
-    project: String(value.project ?? ''),
-    name: String(value.name ?? ''),
-    revision: Number(value.revision ?? 0),
-    task_revision: Number(value.task_revision ?? 0),
-    task_schema: Number(value.task_schema ?? 0),
-    goal_version: Number(value.goal_version ?? 0),
-    goal_approved: value.goal_approved === true,
-    current_stale: value.current_stale === true,
-    tasks: tasks.map((task) => ({
-      task_id: String(task?.task_id ?? ''),
-      title: String(task?.title ?? ''),
-      status: String(task?.status ?? ''),
-      plan: String(task?.plan ?? ''),
-      milestone: String(task?.milestone ?? ''),
-    })),
-    goal: String(value.goal ?? ''),
-    current: String(value.current ?? ''),
-    warnings,
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('status 返回对象无效')
+  for (const key of ['project', 'name', 'goal', 'current']) {
+    if (typeof value[key] !== 'string') throw new Error(`status 缺少 ${key}`)
   }
+  for (const key of ['revision', 'task_revision', 'task_schema', 'goal_version']) {
+    if (!Number.isInteger(value[key])) throw new Error(`status 缺少整数 ${key}`)
+  }
+  for (const key of ['goal_approved', 'current_stale', 'focus_missing']) {
+    if (typeof value[key] !== 'boolean') throw new Error(`status 缺少布尔 ${key}`)
+  }
+  if (!Array.isArray(value.tasks) || !Array.isArray(value.external_dependencies)
+      || !value.summary || !Number.isInteger(value.summary.folded_final)) {
+    throw new Error('status 缺少任务、依赖或折叠统计')
+  }
+  for (const task of [...value.tasks, ...value.external_dependencies]) {
+    for (const key of ['task_id', 'title', 'status', 'plan', 'milestone', 'blocker', 'verification_state']) {
+      if (typeof task[key] !== 'string') throw new Error(`status 任务缺少 ${key}`)
+    }
+    if (!Array.isArray(task.dependencies) || typeof task.legacy_unverified !== 'boolean') {
+      throw new Error('status 任务依赖或旧批准状态无效')
+    }
+  }
+  // Preserve every core field, including full criteria, checks and receipts.
+  return value
 }
 
-const STATUS_OUTPUT = {
-  type: 'object',
-  additionalProperties: false,
-  properties: {
-    project: { type: 'string' },
-    name: { type: 'string' },
-    revision: { type: 'integer' },
-    task_revision: { type: 'integer' },
-    task_schema: { type: 'integer' },
-    goal_version: { type: 'integer' },
-    goal_approved: { type: 'boolean' },
-    current_stale: { type: 'boolean' },
-    tasks: {
-      type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          task_id: { type: 'string' },
-          title: { type: 'string' },
-          status: { type: 'string' },
-          plan: { type: 'string' },
-          milestone: { type: 'string' },
-        },
-        required: ['task_id', 'title', 'status', 'plan', 'milestone'],
-      },
-    },
-    goal: { type: 'string' },
-    current: { type: 'string' },
-    warnings: { type: 'array', items: { type: 'string' } },
-  },
-  required: [
-    'project', 'name', 'revision', 'task_revision', 'task_schema', 'goal_version',
-    'goal_approved', 'current_stale', 'tasks', 'goal', 'current', 'warnings',
-  ],
-}
+const STATUS_OUTPUT = { type: 'object', additionalProperties: true }
 
 const DOCTOR_OUTPUT = {
   type: 'object',
@@ -120,14 +85,14 @@ const DOCTOR_OUTPUT = {
  * @returns {Array<{ type: 'text', text: string }>} rendered blocks.
  */
 function renderStatus(value) {
-  const counts = new Map()
-  for (const task of value.tasks) counts.set(task.status, (counts.get(task.status) ?? 0) + 1)
-  const summary = [...counts].map(([status, count]) => `${status} ${count}`).join(' · ') || '无任务'
+  const summary = Object.entries(value.summary.statuses)
+    .filter(([, count]) => count > 0).map(([status, count]) => `${status} ${count}`).join(' · ') || '无任务'
   const lines = [
     `${value.name || value.project} · 项目修订 ${value.revision} · 任务修订 ${value.task_revision}（schema ${value.task_schema}）`,
     `目标版本 ${value.goal_version} · 目标${value.goal_approved ? '已批准' : '待确认'} · 任务：${summary}`,
   ]
-  for (const warning of value.warnings) lines.push(`WARN ${warning}`)
+  lines.push(`折叠 ${value.summary.folded_final} 项；本轮${value.focus_missing ? '尚未设置' : '查询见 selection'}。`)
+  if (value.current_stale) lines.push('WARN CURRENT 落后于任务修订')
   return [{ type: 'text', text: lines.join('\n') }]
 }
 
@@ -153,6 +118,8 @@ export function createTools(kit, options) {
         type: 'boolean',
         description: '只保留目标与断点，省略任务长证据与描述。',
       },
+      all: { type: 'boolean', description: '配合 brief 返回所有任务，包括已完成项。' },
+      focus: { type: 'boolean', description: '仅查询显式本轮任务，不与 task_id 或 milestone 同用。' },
       task_id: {
         type: 'string',
         description: '按明确任务 ID 查询，不接受猜测。',
@@ -169,6 +136,8 @@ export function createTools(kit, options) {
     async execute(args, exec) {
       const argv = ['status', projectPath(args, exec)]
       if (args.brief === true) argv.push('--brief')
+      if (args.all === true) argv.push('--all')
+      if (args.focus === true) argv.push('--focus')
       if (args.task_id) argv.push('--task', args.task_id)
       if (args.milestone) argv.push('--milestone', args.milestone)
       const value = await kit.runJson(argv, { signal: exec?.signal, timeoutMs: options.timeoutMs })

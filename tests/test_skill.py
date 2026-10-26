@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from tests.helpers150 import checks_for, review_all
 from core import VERSION
 from core import atomic_io as io
 from core.config import install, uninstall, locations
@@ -21,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class SkillTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="Skill 中文 空格 ")
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         self.home = self.root / "自定义 CODEX_HOME"
         self.parent = self.root / "用户/.agents/skills"
         self.project = self.root / "项目"
@@ -178,30 +179,32 @@ class SkillTests(unittest.TestCase):
 
     def test_adapter_task_and_memory_handoff(self):
         init_project(self.project,"project")
-        task={"task_id":"T1","title":"检查","acceptance_criteria":["通过"]}
+        task={"task_id":"T1","title":"检查","acceptance_criteria":["通过"],"checks":checks_for(self.project,["通过"])}
         for action, payload, rev in [("add",task,0)]:
             result=self.run_skill("task",action,self.project,"--json-input","--expected-revision",rev,"--reason","验收",payload=json.dumps(payload,ensure_ascii=False))
             self.assertEqual(result.returncode,0,result.stderr)
         result=self.run_skill("task","approve",self.project,"--task-id","T1","--source","user",
                               "--expected-revision",1,"--reason","用户批准")
         self.assertEqual(result.returncode,0,result.stderr)
-        for payload, rev in [({"task_id":"T1","status":"doing"},2),
-                             ({"task_id":"T1","status":"done","evidence":[{"type":"manual","criterion":1,"detail":"实际检查通过"}]},3)]:
-            result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",rev,"--reason","验收",payload=json.dumps(payload,ensure_ascii=False))
-            self.assertEqual(result.returncode,0,result.stderr)
+        result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",2,"--reason","开始",payload=json.dumps({"task_id":"T1","status":"doing"}))
+        self.assertEqual(result.returncode,0,result.stderr)
+        review_all(self.project)
+        revision=load(self.project)[0]["revision"]
+        result=self.run_skill("task","update",self.project,"--json-input","--expected-revision",revision,"--reason","完成",payload=json.dumps({"task_id":"T1","status":"done"}))
+        self.assertEqual(result.returncode,0,result.stderr)
         state, content, ledger=load(self.project)
         current=content["CURRENT.md"].replace("确认目标和计划。","准备交接。")
-        result=self.run_skill("state","update",self.project,"CURRENT.md","--text-input","--expected-revision",4,"--reason","主动交接",payload=current)
+        result=self.run_skill("state","update",self.project,"CURRENT.md","--text-input","--expected-revision",state["revision"],"--reason","主动交接",payload=current)
         self.assertEqual(result.returncode,0,result.stderr)
         result=self.run_skill("snapshot",self.project)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertTrue(Path(json.loads(result.stdout)["snapshot"]).exists())
-        self.assertEqual(load(self.project)[0]["current_task_revision"],4)
+        self.assertEqual(load(self.project)[0]["current_task_revision"],ledger["revision"])
         self.assertIn("完成率: 100%",(self.project / ".agent/PROGRESS.md").read_text(encoding="utf-8"))
 
     def test_adapter_invalid_evidence_preserves_ledger(self):
         init_project(self.project,"project")
-        task_change(self.project,0,"add",{"task_id":"T1","title":"任务","acceptance_criteria":["验收"]},"添加")
+        task_change(self.project,0,"add",{"task_id":"T1","title":"任务","acceptance_criteria":["验收"],"checks":checks_for(self.project,["验收"])},"添加")
         task_change(self.project,1,"approve",{"task_id":"T1"},"批准",source="user")
         task_change(self.project,2,"update",{"task_id":"T1","status":"doing"},"开始")
         before=(self.project / ".agent/tasks.json").read_bytes()

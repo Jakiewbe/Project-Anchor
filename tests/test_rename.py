@@ -14,7 +14,7 @@ from core.memory import init_project, load, rename_project
 class RenameTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix='Project Anchor 改名 空格 ')
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         self.home = self.root/'配置'
         self.parent = self.root/'skills'
         self.target = self.parent/'project-anchor'

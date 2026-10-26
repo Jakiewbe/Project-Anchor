@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from core import atomic_io as io
 from core import config, memory, tasks
+from tests.helpers150 import checks_for, review_all
 from core.diagnostics import doctor
 from core.hook_runtime import context, log_event
 
@@ -38,6 +39,7 @@ class Environment(unittest.TestCase):
         state, _, _ = memory.load(self.project)
         plan = fields.pop("plan", "draft")
         task = {"task_id": tid, "title": tid, "acceptance_criteria": ["可验证"], **fields}
+        task.setdefault("checks", checks_for(self.project, task["acceptance_criteria"]))
         revision = memory.task_change(self.project, state["revision"], "add", task, "测试创建")
         if plan == "approved":
             state, _, _ = memory.load(self.project)
@@ -250,7 +252,8 @@ class TaskTests(Environment):
     def test_create_and_complete(self):
         self.add(plan="approved")
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "manual", "criterion": 1, "detail": "用户检查通过"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         self.assertEqual(memory.load(self.project)[2]["tasks"][0]["status"], "done")
         self.assertIn("完成率: 100%", (self.project / ".agent/PROGRESS.md").read_text(encoding="utf-8"))
 
@@ -357,7 +360,8 @@ class TaskTests(Environment):
     def test_reopen_dependency_refused(self):
         self.add(plan="approved")
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "review", "criterion": 1, "detail": "审阅通过"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         self.add("T2", plan="approved", dependencies=["T1"])
         self.update("T2", status="doing")
         with self.assertRaises(io.KitError):
@@ -372,7 +376,8 @@ class TaskTests(Environment):
     def test_reopen_invalidates_old_evidence(self):
         self.add(plan="approved")
         self.update(status="doing")
-        self.update(status="done", evidence=[{"type": "test", "criterion": 1, "detail": "上次测试"}])
+        review_all(self.project, "T1")
+        self.update(status="done")
         self.update(status="doing")
         evidence = memory.load(self.project)[2]["tasks"][0]["evidence"]
         self.assertEqual(len(evidence), 1)
@@ -750,14 +755,16 @@ class KnowledgeAndCLITests(Environment):
         result = self.cli("init-project", self.project, "--name", "研发项目", "--git-init")
         self.assertEqual(result.returncode, 0, result.stderr)
         source = self.base / "task.json"
-        source.write_bytes(io.encode_json({"task_id": "T1", "title": "检查", "acceptance_criteria": ["检查通过"]}))
+        source.write_bytes(io.encode_json({"task_id": "T1", "title": "检查", "acceptance_criteria": ["检查通过"], "checks": checks_for(self.project,["检查通过"])}))
         self.assertEqual(self.cli("task", "add", self.project, "--file", source, "--expected-revision", 0, "--reason", "创建草案").returncode, 0)
         self.assertEqual(self.cli("task", "approve", self.project, "--task-id", "T1", "--expected-revision", 1,
                                   "--reason", "用户批准", "--source", "user").returncode, 0)
         source.write_bytes(io.encode_json({"task_id": "T1", "status": "doing"}))
         self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 2, "--reason", "开始").returncode, 0)
-        source.write_bytes(io.encode_json({"task_id": "T1", "status": "done", "evidence": [{"type": "command", "criterion": 1, "detail": "用户验证通过"}]}))
-        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 3, "--reason", "完成").returncode, 0)
+        source.write_bytes(io.encode_json({"criterion":1,"findings":"无新增问题","resolution":"实际核对通过","simpler":"已足够简单","result":"pass"}))
+        self.assertEqual(self.cli("task", "review", self.project, "--task-id", "T1", "--file", source, "--expected-revision", 3, "--reason", "自查").returncode, 0)
+        source.write_bytes(io.encode_json({"task_id": "T1", "status": "done"}))
+        self.assertEqual(self.cli("task", "update", self.project, "--file", source, "--expected-revision", 4, "--reason", "完成").returncode, 0)
         for args in [("status", self.project, "--rebuild"), ("snapshot", self.project), ("retro", self.project), ("install-global",), ("doctor", self.project), ("uninstall-global",)]:
             result = self.cli(*args)
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)

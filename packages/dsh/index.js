@@ -20,7 +20,7 @@ export const inject = ['tools', 'systemPrompt']
 
 /** Row configuration; the user's patch layer survives upgrades. */
 export const Config = z.object({
-  pythonPath: z.string().default('').description('Python 解释器绝对路径；留空则用安装记录或 py -3 / python3。'),
+  pythonPath: z.string().default('').description('Python 解释器绝对路径；留空则使用安装记录；缺失时明确失败。'),
   kitPath: z.string().default('').description('kit.py 文件或包含它的目录；留空则读 DSH 安装记录。'),
   toolTimeoutMs: z.number().default(20000).description('单次 kit.py 调用超时（毫秒）。'),
 })

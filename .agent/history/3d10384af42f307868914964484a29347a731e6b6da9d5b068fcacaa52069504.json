@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 222,
+  "entries": [
+    {
+      "revision": 93,
+      "action": "state:update",
+      "reason": "保存真实未落盘决定压缩测试的结果和局限",
+      "timestamp": "2026-10-09T06:10:50.253825+00:00"
+    }
+  ]
+}

@@ -71,7 +71,8 @@ def load(root, supplied_state=None):
         raise KitError("项目状态版本无效")
     try:
         uuid.UUID(state["project_id"])
-        if not isinstance(state["name"], str) or not state["name"].strip() or not isinstance(state["history"], list):
+        if (not isinstance(state["name"], str) or not state["name"].strip() or not isinstance(state["history"], list)
+                or any(not isinstance(entry, dict) for entry in state["history"])):
             raise ValueError()
         for key in ("task_revision", "current_task_revision", "goal_version"):
             if type(state[key]) is not int or state[key] < (1 if key == "goal_version" else 0):
@@ -100,6 +101,14 @@ def load(root, supplied_state=None):
     ledger = validate(read_json(agent / "tasks.json"), state["project_id"])
     if ledger["revision"] != state["task_revision"]:
         raise KitError("任务账本修订与状态记录不一致")
+    focus = state.get("focus")
+    if focus is not None:
+        ids = focus.get("task_ids") if isinstance(focus, dict) else None
+        if (not isinstance(ids, list) or not ids or any(not isinstance(t, str) for t in ids)
+                or len(set(ids)) != len(ids) or set(ids) - {t["task_id"] for t in ledger["tasks"]}
+                or not isinstance(focus.get("reason"), str) or not focus["reason"].strip()
+                or not isinstance(focus.get("updated_at"), str)):
+            raise KitError("本轮任务指针损坏")
     return state, content, ledger
 
 
@@ -165,7 +174,7 @@ def _revision(state, expected):
 
 def require_schema2(ledger):
     if ledger.get("schema") != SCHEMA:
-        raise KitError("任务账本为 schema 1，只读；请先执行 migrate 迁移后再写入")
+        raise KitError("旧任务账本只读；请先执行 migrate 迁移后再写入")
 
 
 def prune_history(state):
@@ -175,16 +184,19 @@ def prune_history(state):
     cap uses entry order because document-version entries carry no revision number.
     """
     history = state["history"]
+    archived = []
     documents = [entry for entry in history
                  if entry.get("action") == "document-version" and "content" in entry]
     for entry in documents[:max(len(documents) - DOC_CONTENT_KEEP, 0)]:
+        archived.append(copy.deepcopy(entry))
         entry.pop("content")
         entry["content_pruned"] = True
     head = history[0] if history and history[0].get("action") == "history:prune" else None
     body = history[1:] if head else list(history)
     excess = len(body) - (HISTORY_KEEP - 1)
     if excess <= 0:
-        return
+        return archived
+    archived.extend(copy.deepcopy(body[:excess]))
     revisions = [entry["revision"] for entry in body[:excess] if type(entry.get("revision")) is int]
     if head is None:
         head = {"action": "history:prune", "dropped": 0}
@@ -194,9 +206,10 @@ def prune_history(state):
         head["dropped_revision_max"] = max([head.get("dropped_revision_max", revisions[0]), *revisions])
     head["timestamp"] = now()
     state["history"] = [head, *body[excess:]]
+    return archived
 
 
-def _save(root, state, ledger, changes, action, reason):
+def _save(root, state, ledger, changes, action, reason, artifacts=None):
     agent, _, journal = paths(root)
     on_disk = read_json(agent / "state.json")
     _revision(on_disk, state["revision"])
@@ -211,10 +224,13 @@ def _save(root, state, ledger, changes, action, reason):
         updates[agent / name] = data
         state["hashes"][name] = digest(data)
     state["task_revision"] = ledger["revision"]
-    prune_history(state)
+    from .history import prepare
+    updates.update(prepare(root, state["project_id"], state["revision"], prune_history(state)))
     updates[agent / "state.json"] = encode_json(state)
     # Progress is committed with the ledger, never claimed fresh after an error.
     updates[agent / "PROGRESS.md"] = progress(state["name"], ledger).encode("utf-8")
+    if artifacts:
+        updates.update(artifacts(updates))
     transaction(root, journal, updates)
     return state["revision"]
 
@@ -225,10 +241,76 @@ def task_change(root, expected, action, payload, reason, source=None):
         state, _, ledger = load(root)
         require_schema2(ledger)
         _revision(state, expected)
+        if not isinstance(payload, dict):
+            raise KitError("任务输入必须为对象")
+        if action == "update" and payload.get("status") in {"doing", "done"}:
+            from .verification import require_fresh
+            task = next((t for t in ledger["tasks"] if t["task_id"] == payload.get("task_id")), None)
+            if task:
+                by_id = {t["task_id"]: t for t in ledger["tasks"]}
+                pending, checked = list(task["dependencies"]), set()
+                while pending:
+                    dep = pending.pop()
+                    if dep in checked:
+                        continue
+                    require_fresh(root, by_id[dep])
+                    checked.add(dep)
+                    pending.extend(by_id[dep]["dependencies"])
+                if payload["status"] == "done":
+                    require_fresh(root, task)
         revised = mutate(copy.deepcopy(ledger), action, payload, reason, source=source)
         if revised == ledger:
             return state["revision"]
         return _save(root, state, revised, {"tasks.json": encode_json(revised)}, f"task:{action}", reason)
+
+
+def focus_change(root, expected, task_ids, reason):
+    if not isinstance(reason, str) or not reason.strip():
+        raise KitError("本轮任务变更需要原因")
+    agent, lock, _ = paths(root)
+    with locked(lock):
+        state, _, ledger = load(root)
+        require_schema2(ledger)
+        _revision(state, expected)
+        if task_ids is not None:
+            if (not task_ids or any(not isinstance(t, str) for t in task_ids)
+                    or len(set(task_ids)) != len(task_ids)
+                    or set(task_ids) - {t["task_id"] for t in ledger["tasks"]}):
+                raise KitError("本轮任务 ID 不存在、为空或重复")
+            if (state.get("focus") or {}).get("task_ids") == task_ids and state["focus"]["reason"] == reason:
+                return state["revision"]
+            state["focus"] = {"task_ids": task_ids, "reason": reason, "updated_at": now()}
+        elif "focus" not in state:
+            return state["revision"]
+        else:
+            del state["focus"]
+        return _save(root, state, ledger, {}, "focus:set" if task_ids else "focus:clear", reason)
+
+
+def migration_rollback(root, expected, reason, backup_path):
+    agent, lock, journal = paths(root)
+    backup = safe_path(Path(backup_path), agent / "runtime/migrations")
+    with locked(lock):
+        state, _, _ = load(root)
+        _revision(state, expected)
+        manifest = read_json(backup / "manifest.json")
+        if not reason.strip() or manifest["project_id"] != state["project_id"] or state["revision"] != manifest["revision"]:
+            raise KitError("迁移后已发生修改或备份身份不符，拒绝回退")
+        if set(manifest["originals"]) != {"state.json", *FILES, "PROGRESS.md"}:
+            raise KitError("迁移备份不完整")
+        updates = {}
+        for name, expected_hash in manifest["after"].items():
+            if name not in manifest["originals"] or digest(safe_path(agent / name, root).read_bytes()) != expected_hash:
+                raise KitError("迁移后文件已修改，拒绝回退")
+            original = safe_path(backup / name, backup).read_bytes()
+            if digest(original) != manifest["originals"][name]:
+                raise KitError("迁移备份损坏")
+            updates[agent / name] = original
+        if set(updates) != {agent / name for name in manifest["originals"]}:
+            raise KitError("迁移清单不完整")
+        transaction(root, journal, updates)
+        load(root)
+        return {"rolled_back": True, "backup": str(backup)}
 
 
 def migrate(root, expected, reason, dry_run=False):
@@ -241,35 +323,47 @@ def migrate(root, expected, reason, dry_run=False):
         _revision(state, expected)
         if ledger["schema"] == SCHEMA:
             return {"changed": False, "schema": SCHEMA, "revision": state["revision"]}
-        if ledger["schema"] != 1:
+        if ledger["schema"] not in (1, 2):
             raise KitError("不支持的任务账本版本")
         migrated = copy.deepcopy(ledger)
+        old_schema = ledger["schema"]
         migrated["schema"] = SCHEMA
         migrated["revision"] += 1
         for task in migrated["tasks"]:
-            task["legacy_unverified"] = task["plan"] == "approved"
+            task["verification_legacy"] = True
+            if old_schema == 1:
+                task["legacy_unverified"] = task["plan"] == "approved"
             for item in task["evidence"]:
                 item.setdefault("level", "claimed")
                 item.setdefault("scope_version", 0)
                 item.setdefault("criteria_hash", criterion_hash(task["acceptance_criteria"][item["criterion"] - 1]))
                 item.setdefault("recorded_at", task.get("updated_at") or now())
         migrated["history"].append({"revision": migrated["revision"], "timestamp": now(),
-                                    "action": "schema:migrate", "payload": {"from": 1, "to": SCHEMA},
+                                    "action": "schema:migrate", "payload": {"from": old_schema, "to": SCHEMA},
                                     "reason": reason})
         validate(migrated)
         if dry_run:
-            return {"changed": False, "dry_run": True, "from": 1, "to": SCHEMA,
+            return {"changed": False, "dry_run": True, "from": old_schema, "to": SCHEMA,
                     "revision": state["revision"], "tasks": len(ledger["tasks"]),
                     "approved_tasks": sum(t["plan"] == "approved" for t in ledger["tasks"])}
         stamp = re.sub(r"[^0-9]", "", now()) + "-" + uuid.uuid4().hex
         backup = safe_path(agent / "runtime/migrations" / stamp, root)
-        for name in ("state.json", "tasks.json", "PROGRESS.md"):
+        originals = {}
+        for name in ("state.json", *FILES, "PROGRESS.md"):
             path = agent / name
             if path.exists():
                 atomic_write(backup / name, path.read_bytes())
+                originals[name] = digest(path.read_bytes())
         state["kit_version"] = VERSION
-        revision = _save(root, state, migrated, {"tasks.json": encode_json(migrated)}, "schema:migrate", reason)
-        return {"changed": True, "from": 1, "to": SCHEMA, "revision": revision, "backup": str(backup)}
+        def manifest_updates(updates):
+            manifest = {"project_id": state["project_id"], "originals": originals,
+                        "after": {name: digest(updates.get(agent / name, (agent / name).read_bytes())) for name in originals},
+                        "revision": state["revision"]}
+            return {backup / "manifest.json": encode_json(manifest)}
+        revision = _save(root, state, migrated, {"tasks.json": encode_json(migrated)}, "schema:migrate", reason,
+                         artifacts=manifest_updates)
+        load(root)
+        return {"changed": True, "from": old_schema, "to": SCHEMA, "revision": revision, "backup": str(backup)}
 
 
 def rename_project(root, expected, name, reason):
@@ -327,7 +421,7 @@ def doc_change(root, expected, name, value, reason, approved=False, adopt=False)
             state["goal_approved"] = True
         if name == "CURRENT.md":
             state["current_task_revision"] = ledger["revision"]
-        state["history"].append({"action": "document-version", "file": name,
+        state["history"].append({"action": "document-version", "revision": state["revision"] + 1, "file": name,
                                  "previous_sha256": state["hashes"][name], "content": value,
                                  "user_approved": approved, "timestamp": now()})
         if adopt:

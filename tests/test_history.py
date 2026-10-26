@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 from core.memory import HISTORY_KEEP, DOC_CONTENT_KEEP, doc_change, init_project, load, prune_history, task_change
 from core.tasks import task_view
+from tests.helpers150 import checks_for, review_all
 
 
 class HistoryTests(unittest.TestCase):
@@ -109,13 +110,13 @@ class BriefViewTests(unittest.TestCase):
 
     def add(self, task_id, **fields):
         self.write("add", {"task_id": task_id, "title": f"任务 {task_id}", "description": "范围",
-                           "acceptance_criteria": ["完成"], **fields})
+                           "acceptance_criteria": ["完成"], "checks": checks_for(self.project, ["完成"]), **fields})
         self.write("approve", {"task_id": task_id}, source="user")
 
     def finish(self, task_id):
         self.write("update", {"task_id": task_id, "status": "doing"})
-        self.write("update", {"task_id": task_id, "status": "done",
-                              "evidence": [{"type": "test", "criterion": 1, "detail": "断言通过"}]})
+        review_all(self.project, task_id)
+        self.write("update", {"task_id": task_id, "status": "done"})
 
     def view(self, **kwargs):
         return task_view(load(self.project)[2], **kwargs)

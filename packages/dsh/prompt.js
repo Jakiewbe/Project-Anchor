@@ -28,10 +28,10 @@ export function sectionText() {
   return [
     '## Project Anchor（项目治理）',
     '',
-    '本项目的目标、断点、决策与任务账本保存在仓库内的 `.agent/`，唯一业务程序是项目自带的 `kit.py`。',
+    '目标、断点、决策与任务账本保存在项目 `.agent/`；唯一程序是安装定位指定的工具箱 `kit.py`，不要求业务仓库包含它。',
     '',
-    '- 制定计划、执行任务或交接之前，先用 `anchor_status` 读取磁盘状态；不要凭对话记忆推断目标、批准范围或任务状态。',
-    '- `anchor_status` 返回非空 `warnings` 时，先处理警告再继续（例如 CURRENT 落后于任务修订）。',
+    '- 接续先用 `anchor_status` 的 brief=true、focus=true 读取显式本轮范围；focus_missing 时不从历史未完成项猜任务。',
+    '- 根据 current_stale、verification_state 和依赖核对当前结果，过期证据不能证明当前材料通过。',
     '- `.agent/` 是事实来源：`state.json`、`tasks.json` 与 GOAL/CURRENT/DECISIONS/LESSONS 由程序维护，不直接编辑。',
     '- 写入必须带 `expected_revision` 并走 `kit.py` 的 `task`/`state` 子命令；修订冲突时重新读取，不重试覆盖、不自动合并。',
     '- 当前可用工具以工具描述为准。没有对应工具时用 `kit.py` 子命令，不要绕过程序直接改文件。',

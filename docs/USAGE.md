@@ -2,7 +2,7 @@
 
 [返回项目首页](../README.md) · [工作流参考](../skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](../skills/project-anchor/references/COMMANDS.md)
 
-适用版本：Project Anchor 1.4.0。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+适用版本：Project Anchor 1.5.0 候选。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
 
 产品提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用 `SKILL.md` 与 `scripts/run.py`，始终调用同一 `kit.py`，项目状态唯一来源为 `.agent/`。兼容扫描 `.agents/skills` 及用户级同名目录、可执行本地 Python 且获得权限的 Agent 可以发现并调用；不要求逐个客户端完成生命周期验收。当前证据和范围以 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout) 为准。
 
@@ -83,12 +83,12 @@ Linux/macOS/WSL 使用 Python 3.11+ 的 `python3 kit.py ...`。每个环境各�
 简洁与筛选查询都是只读，保留完整 GOAL/CURRENT，不靠更新时间猜测当前任务：
 
 ```powershell
-py -3 $kit status $project --brief
+py -3 $kit status $project --brief --focus
 py -3 $kit status $project --brief --milestone "v1"
 py -3 $kit status $project --task T1 --task T2
 ```
 
---brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 保留原字段并增量增加 `task_schema`、`scope_dirty`、`legacy_unverified`，原 PROGRESS 完成率口径保持不变。旧 schema 1 项目可读，但写入前需要显式 `migrate`。
+--brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 保留原字段并增量增加 `task_schema`、`scope_dirty`、`legacy_unverified`，原 PROGRESS 完成率口径保持不变。旧 schema 1/2 项目可读，但写入前需要显式 `migrate`。
 筛选查询不允许 --rebuild；重建全项目进度单独执行原命令，失败查询不会顺便修复视图。
 
 先确认真实目标。复制 .agent/GOAL.md 到一个编辑文件，填写所有章节，取得用户批准后保存：
@@ -102,61 +102,67 @@ py -3 $kit state update $project GOAL.md --file $goalFile --expected-revision 0 
 
 目标批准会登记为目标版本 2。state.json 的版本号为准；文档中的版本文字也应如实填写。`--approved` 是对已有用户批准的记录，不是授权工具或模型自行批准。
 
-创建任务草案（此例项目 revision 已为 1）：
+## schema 3：配置检查后再批准
 
-```powershell
-$taskFile = Join-Path $project "task-change.json"
-@'
-{
-  "task_id": "T1",
-  "title": "交付首个可运行版本",
-  "description": "实现已批准目标中的核心功能",
-  "milestone": "v1",
-  "plan": "draft",
-  "acceptance_criteria": ["用户按说明操作成功"],
-  "dependencies": []
-}
-'@ | Set-Content -LiteralPath $taskFile -Encoding UTF8
-py -3 $kit task add $project --file $taskFile --expected-revision 1 --reason "根据目标提出任务草案"
+每次写入前查询当前 revision。以下是任务 JSON 示例，路径和命令必须替换为真实材料；详细参数见 [命令参考](../skills/project-anchor/references/COMMANDS.md)。
+
+```json
+{"task_id":"T1","title":"交付本轮功能","description":"用户已授权的局部范围","acceptance_criteria":["测试通过","实现经自查"],"checks":[{"criterion":1,"kind":"command","inputs":["src","tests"],"argv":["C:/Python311/python.exe","-B","-m","unittest","discover","-s","tests"]},{"criterion":2,"kind":"review","inputs":["src"]}]}
 ```
 
-用户批准任务后，先登记批准范围，再开始：
+用 task add 建草案；用户已明确要求实施时，task approve 记录已有批准，再 task update 转 doing。检查配置属于批准范围，不能用更新绕过 revise。Agent 的自查不等同于用户亲自确认，也不是独立审核。
 
 ```powershell
-py -3 $kit task approve $project --task-id T1 --source user --expected-revision 2 --reason "用户批准计划"
-@'
-{"task_id":"T1","status":"doing"}
-'@ | Set-Content -LiteralPath $taskFile -Encoding UTF8
-py -3 $kit task update $project --file $taskFile --expected-revision 3 --reason "开始实施"
+py -3 $kit focus set $project --task T1 --expected-revision <N> --reason "本轮明确范围"
+py -3 $kit status $project --brief --focus
+py -3 $kit verify run $project --task T1 --criterion 1 --expected-revision <N> --reason "实际运行配置测试"
 ```
 
-取得真实验收证据后完成：
+inputs 必须是明确的项目相对文件或目录，使用 `/`，不接受通配符、链接、越界、空目录、项目根、.agent 或 .git。目录的新增、删除、重命名与内容变化均被比较。验收只覆盖这些输入，应选择与标准相符的完整材料；不要把生成文件放入输入目录。默认超时600秒，可配置1到86400秒；总输出超过8MiB则失败。
+
+命令执行前后核对修订和输入，期间不长期持锁；冲突时保留执行记录，拒绝附加证据，不自动重跑。凭据元数据在 `.agent/evidence/`，stdout/stderr 留在不提交的 `.agent/runtime/checks/`。不要在检查命令参数中包含密钥。`verify show $project --run-id ID` 报告原始日志是否仍可用；running/incomplete 不能当作通过。
+
+Agent 完成 Review 查 Bug 和第一性原理简化检查后，用 task review 提交：
+
+```json
+{"criterion":2,"findings":"实际检查发现的问题或无新增问题的依据","resolution":"修复和复查依据","simpler":"为何当前实现已足够简单","result":"pass"}
+```
 
 ```powershell
-@'
-{
-  "task_id":"T1",
-  "status":"done",
-  "evidence":[{"type":"manual","criterion":1,"detail":"用户已按 README 操作并确认成功；填写真实日期及结果"}]
-}
-'@ | Set-Content -LiteralPath $taskFile -Encoding UTF8
-py -3 $kit task update $project --file $taskFile --expected-revision 4 --reason "实际验收通过"
-py -3 $kit status $project
+py -3 $kit task review $project --task-id T1 --file <自查JSON文件> --expected-revision <N> --reason "Agent自查"
 ```
 
-`--source` 记录的是调用者声明（user/policy），不是身份认证。已批准任务的描述、验收标准或依赖变化时，先执行 `task revise` 回到草案，修改后重新 `task approve`；不要在 `task update` 中改 plan 或批准范围。一次 update 不能同时改范围并完成。
+自查只能生成 claimed/self 记录。command 标准必须有程序采集的 observed 结果；两类不能互换。全部当前结果通过后，以 `{"task_id":"T1","status":"done"}` 调用 task update。此接口不再接受手填证据。
 
-以上证据文字是格式示例，必须替换为实际结果。证据类型可为 test、file、review、manual、command；每条必须有 detail 和对应验收标准的 criterion（从 1 开始）。程序为证据写入批准版本和标准文本哈希；旧证据保留但标记失效。**程序校验证据结构、范围和绑定，不会代替用户执行或判断实际验收。** 禁止用虚构记录标记 done。
+成果随后变化，status 派生 verification_state=stale；历史 done 不被自动改回待办，但旧结果不能用于通过新完成检查或依赖验收。失败、取消、超时或未附加的结果都不当成功。
 
-状态转移：todo → doing/blocked/cancelled；doing → done/blocked/todo/cancelled；blocked → doing/todo/cancelled；done → doing（旧证据保留但标记失效）；cancelled → todo。草案不能 doing/done，依赖全部 done 才可开始/完成；blocked 需要 blocker。所有变更保存原因和历史，取消代替物理删除。
+## 迁移与回退
 
-旧 schema 1 账本只读。先确认 `status` 可读，再执行：
+旧 schema 1/2 账本只读。先取得真实 revision，再预检：
 
 ```powershell
-py -3 $kit migrate $project --expected-revision 4 --reason "升级到审批协议 schema 2"
+py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema3" --dry-run
+py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema3"
 ```
 
-迁移会备份 `.agent/` 状态、把旧批准任务标记为 `legacy_unverified`，不会自动补造批准记录。旧任务重新开始或完成前需要先 `task revise` 或 `task approve`。迁移后旧版 v1.3 会拒绝读取 schema 2；多台机器应统一升级。
+预检与正式转换共用校验。正式迁移备份全部受影响治理文件并生成清单；保留旧目标、任务状态、批准快照/哈希、证据和历史，不补造observed记录。旧任务显示legacy，继续执行前先revise、补齐checks、重新批准。重复迁移无变化，旧版写入器拒绝schema3。
+
+```powershell
+py -3 $kit migrate $project --rollback <返回的备份绝对路径> --expected-revision <迁移后的revision> --reason "撤回尚无后续修改的迁移"
+```
+
+只允许当前修订和全部相关文件仍等于迁移结果时回退；发现新改动或备份损坏即拒绝。有未完成事务时先核对 recover，不反复迁移到成功。各机器先统一工具版本，再迁移共享项目。
+
+## 本轮范围和历史归档
+
+focus只保存明确任务ID、原因和时间，不复制或批准任务；没有设置时 --focus 返回focus_missing和空任务列表。显式本轮范围不折叠完成项，不自动转到其他未完成任务。`focus clear` 需要当前revision和reason，不传task。
+
+```powershell
+py -3 $kit history list $project --file CURRENT.md
+py -3 $kit history show $project --archive <归档ID>
+```
+
+先归档原内容再裁剪：热历史最多200项，最近10条文档版本保留全文；原记录写入可随Git保存的 `.agent/history/`，与状态更新同事务，失败不裁剪。归档以内容哈希寻址，不自动删除或恢复旧状态；此前已丢失内容无法补造。CURRENT保持50行以内，不重复长期任务表和完整验证日志。
 
 task/state 输出额外的 changed 字段。相同内容且元数据已同步时为 `changed=false`，不写文件、不增加修订、不改变完成时间。旧修订和未授权 GOAL 请求仍拒绝；CURRENT 内容相同但需要同步任务修订、GOAL 首次批准以及外部编辑登记仍可能写入。BOM/CRLF 相同文本保留原字节，不为了统一编码制造更新。
 
@@ -257,3 +263,5 @@ py -3 kit.py knowledge-add --file "审核过的教训.json" --approved
 ## 许可证
 
 [MIT License](../LICENSE)。
+
+Python检查建议用-B避免产生字节码缓存；输入目录中的生成文件也属于真实变化，不会被自动忽略。检查命令应在前台运行，不启动常驻进程；此执行器不是进程隔离环境。

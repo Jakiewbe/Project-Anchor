@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 220,
+  "entries": [
+    {
+      "revision": 92,
+      "action": "state:update",
+      "reason": "完成Desktop手动压缩验收后保存下一步与未验证范围",
+      "timestamp": "2026-10-09T05:53:28.761879+00:00"
+    }
+  ]
+}

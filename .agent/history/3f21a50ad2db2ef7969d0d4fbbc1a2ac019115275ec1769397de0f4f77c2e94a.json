@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 228,
+  "entries": [
+    {
+      "revision": 97,
+      "action": "state:update",
+      "reason": "补充主动落盘测试准备后保存人工界面步骤与下一步",
+      "timestamp": "2026-10-09T06:22:15.203438+00:00"
+    }
+  ]
+}

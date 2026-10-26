@@ -15,7 +15,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from core.config import codex_home
-from core.memory import init_project, load, doc_change, task_change, snapshot, validate_snapshot
+from core.memory import init_project, load, doc_change, task_change, snapshot, validate_snapshot, focus_change
 from core.native import CodexClient
 from core.atomic_io import read_json
 
@@ -62,6 +62,7 @@ def is_compaction(value):
 
 def fixture(project):
     init_project(project, "原生Hook隔离验收")
+    (project / "demo.py").write_text("print(5)\n", encoding="utf-8")
     s, content, _ = load(project)
     goal = content["GOAL.md"].replace("待用户确认：填写一句话目标。", "交付输出5的标准库演示；稳定目标标记 GOAL-5371。")
     goal = goal.replace("待确认：填写可验证的交付条件。", "演示实际输出5；只读接续不得改变治理文件。")
@@ -70,9 +71,12 @@ def fixture(project):
     doc_change(project, s["revision"], "DECISIONS.md", content["DECISIONS.md"] + "\n测试已确认：使用JSON文件，不使用数据库；决策标记 DECISION-4826。\n", "合成测试已确认决策")
     s, _, _ = load(project)
     task_change(project, s["revision"], "add", {"task_id": "T1", "title": "验证输出5",
-                "acceptance_criteria": ["演示实际输出5"]}, "合成验收任务")
+                "acceptance_criteria": ["演示实际输出5"],
+                "checks": [{"criterion": 1, "kind": "command", "inputs": ["demo.py"],
+                            "argv": [sys.executable, "demo.py"]}]}, "合成验收任务")
     s, _, _ = load(project)
     task_change(project, s["revision"], "approve", {"task_id": "T1"}, "合成验收任务批准", source="user")
+    focus_change(project, load(project)[0]["revision"], ["T1"], "合成验收明确本轮")
     snapshot(project, "synthetic-old-checkpoint")
     s, content, _ = load(project)
     current = content["CURRENT.md"] + "\n最新工作断点 CURRENT-9462：任务T1尚未完成。\n"

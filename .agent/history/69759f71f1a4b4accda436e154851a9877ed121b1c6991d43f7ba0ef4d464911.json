@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 237,
+  "entries": [
+    {
+      "revision": 103,
+      "action": "state:update",
+      "reason": "用户明确要求名称统一及逐步通用化，保留原始六项目的和实现约束",
+      "timestamp": "2026-10-09T07:55:30.503149+00:00"
+    }
+  ]
+}
