@@ -1,7 +1,7 @@
 {
-  "schema": 1,
+  "schema": 2,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 81,
+  "revision": 106,
   "tasks": [
     {
       "task_id": "A",
@@ -18,12 +18,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "docs/ARCHITECTURE.md；官方文档核对，环境和限制已记录"
+          "detail": "docs/ARCHITECTURE.md；官方文档核对，环境和限制已记录",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "e8809f469c8f6f1176d2690275989b97d87211be408732c031c36caaa98177ec",
+          "recorded_at": "2026-10-08T08:04:31.041154+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.041154+00:00",
-      "completed_at": "2026-10-08T08:04:31.041154+00:00"
+      "completed_at": "2026-10-08T08:04:31.041154+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "B",
@@ -42,12 +47,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "core/memory.py；初始化、哈希、修订、任务与进度集成测试通过"
+          "detail": "core/memory.py；初始化、哈希、修订、任务与进度集成测试通过",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "e1f7615e7e45f8430221b05f5a5ae84c59fd2017746bc50d1226099e58a6c609",
+          "recorded_at": "2026-10-08T08:04:31.260730+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.260730+00:00",
-      "completed_at": "2026-10-08T08:04:31.260730+00:00"
+      "completed_at": "2026-10-08T08:04:31.260730+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "C",
@@ -66,12 +76,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "core/hook_runtime.py；四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过"
+          "detail": "core/hook_runtime.py；四种来源模拟及快照测试通过；真实接口识别、未信任跳过、Windows 命令通过",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "e51f687905b9e7afd62fe2b3b63cf02b8a730a4ea4345eea6127d05a1b7cc95f",
+          "recorded_at": "2026-10-08T08:04:31.544734+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.544734+00:00",
-      "completed_at": "2026-10-08T08:04:31.544734+00:00"
+      "completed_at": "2026-10-08T08:04:31.544734+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "D",
@@ -90,12 +105,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "core/config.py；安装、合并、重复、故障回滚、卸载和诊断自动测试通过"
+          "detail": "core/config.py；安装、合并、重复、故障回滚、卸载和诊断自动测试通过",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "857c20de661db90adf5870d44aa4a0293736f673587ea7ab057f00fad358bb46",
+          "recorded_at": "2026-10-08T08:04:31.782957+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.782957+00:00",
-      "completed_at": "2026-10-08T08:04:31.782957+00:00"
+      "completed_at": "2026-10-08T08:04:31.782957+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "E",
@@ -114,12 +134,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "knowledge/INDEX.md；复盘保留原稿、知识审核及重复入库测试通过"
+          "detail": "knowledge/INDEX.md；复盘保留原稿、知识审核及重复入库测试通过",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "6a8667c41a0c84847721fd79ba13439fbda18dbfa8b727b729da03ab9b05e0b4",
+          "recorded_at": "2026-10-08T08:04:31.987365+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:31.987365+00:00",
-      "completed_at": "2026-10-08T08:04:31.987365+00:00"
+      "completed_at": "2026-10-08T08:04:31.987365+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "F",
@@ -138,12 +163,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "docs/VALIDATION.md；最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0"
+          "detail": "docs/VALIDATION.md；最终 83 项自动测试及 3 项原生探针通过；失败 0，跳过 0",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "ede085c421fcd8b0476665b0292e32c8bddaf516887d01f9dbaa4eecbae28ae6",
+          "recorded_at": "2026-10-08T08:04:32.173508+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:32.173508+00:00",
-      "completed_at": "2026-10-08T08:04:32.173508+00:00"
+      "completed_at": "2026-10-08T08:04:32.173508+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "G",
@@ -162,12 +192,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "README.md；使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c"
+          "detail": "README.md；使用、迁移、排错与手动客户端验收文档已完成，功能检查点 70f5a7c",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "fd0507afde7d01e71ac059392614d485c301cd3765dc0f59cc25921f3bb76005",
+          "recorded_at": "2026-10-08T08:04:32.361972+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:04:32.361972+00:00",
-      "completed_at": "2026-10-08T08:04:32.361972+00:00"
+      "completed_at": "2026-10-08T08:04:32.361972+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "S1",
@@ -184,12 +219,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "官方格式校验通过；18 项适配器与安装测试通过；真实显式调用已完成只读进度查询"
+          "detail": "官方格式校验通过；18 项适配器与安装测试通过；真实显式调用已完成只读进度查询",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "65047331480a862d68390472e139b7285358f408db7f882742c286b5a6ab2711",
+          "recorded_at": "2026-10-08T08:50:06.089309+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:50:06.089309+00:00",
-      "completed_at": "2026-10-08T08:50:06.089309+00:00"
+      "completed_at": "2026-10-08T08:50:06.089309+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "S2",
@@ -206,12 +246,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "101 项完整回归通过；幂等、跨目录回滚、旧版升级、未知文件保留、漂移拒绝均有测试证据"
+          "detail": "101 项完整回归通过；幂等、跨目录回滚、旧版升级、未知文件保留、漂移拒绝均有测试证据",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "106bf149298624a82da23ebc6b26c51992a594f4a6864ffab9d584f82dc5d927",
+          "recorded_at": "2026-10-08T08:50:06.236617+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T08:50:06.236617+00:00",
-      "completed_at": "2026-10-08T08:50:06.236617+00:00"
+      "completed_at": "2026-10-08T08:50:06.236617+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "S3",
@@ -228,12 +273,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "docs/SKILL_VALIDATION.md；最终自动回归 102/102、原生 Hook 3/3、真实显式/自然语言正反向 14/14；实际默认用户发现通过，临时管理文件已卸载。"
+          "detail": "docs/SKILL_VALIDATION.md；最终自动回归 102/102、原生 Hook 3/3、真实显式/自然语言正反向 14/14；实际默认用户发现通过，临时管理文件已卸载。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "fed71f85bd6245ecd2ac8c0306a09f4403596fde63368b7865ac8eef23ac6a10",
+          "recorded_at": "2026-10-08T09:13:43.651744+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T09:13:43.651744+00:00",
-      "completed_at": "2026-10-08T09:13:43.651744+00:00"
+      "completed_at": "2026-10-08T09:13:43.651744+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "S4",
@@ -250,12 +300,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "README、SMOKE_TEST、Skill 参考、SKILL_VALIDATION 和 ALTERNATIVES_EVALUATION 已完成；安装与未验证范围清楚记录，状态通过原程序保存。"
+          "detail": "README、SMOKE_TEST、Skill 参考、SKILL_VALIDATION 和 ALTERNATIVES_EVALUATION 已完成；安装与未验证范围清楚记录，状态通过原程序保存。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "650cd4b85d3eed38272877263f62f87bd62467509e0302b81d8123ae56cf41c1",
+          "recorded_at": "2026-10-08T09:13:44.175238+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T09:13:44.175238+00:00",
-      "completed_at": "2026-10-08T09:13:44.175238+00:00"
+      "completed_at": "2026-10-08T09:13:44.175238+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "E1",
@@ -272,12 +327,17 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "docs/ALTERNATIVES_EVALUATION.md；GSD 151 自动测试、2 本地查询、3 真实流程通过；发现 2 项安装/Hook问题并记录；意外新建配置已撤销。PMM 404 且用户确认已不可用，未冒充完成实测。"
+          "detail": "docs/ALTERNATIVES_EVALUATION.md；GSD 151 自动测试、2 本地查询、3 真实流程通过；发现 2 项安装/Hook问题并记录；意外新建配置已撤销。PMM 404 且用户确认已不可用，未冒充完成实测。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "54dc243cd5ad610c614d023b8ad10a427fd0d78f56c3217ddfc8dc1b79f94111",
+          "recorded_at": "2026-10-08T09:13:43.930109+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T09:13:43.930109+00:00",
-      "completed_at": "2026-10-08T09:13:43.930109+00:00"
+      "completed_at": "2026-10-08T09:13:43.930109+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL1",
@@ -294,12 +354,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "109 自动回归通过，0 失败；先前 1 项 Git 克隆沙箱管道失败已在授权执行环境复测通过。全局接入、Git 授权、会话缺失和模拟隔离已核对。"
+          "detail": "109 自动回归通过，0 失败；先前 1 项 Git 克隆沙箱管道失败已在授权执行环境复测通过。全局接入、Git 授权、会话缺失和模拟隔离已核对。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "b36ac5e1b6e1973f902ec83d95da72f779d8f2c1e0c7769c2ec7aae08ec6d602",
+          "recorded_at": "2026-10-08T16:41:41.624333+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T16:41:41.624333+00:00",
-      "completed_at": "2026-10-08T16:41:41.624333+00:00"
+      "completed_at": "2026-10-08T16:41:41.624333+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL2",
@@ -316,12 +381,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "正式默认用户 Skill 原生发现通过；原规则、config.toml、其他17个Skill保留；10项真实CLI使用核查通过。计划测试1次断言误报已核实修正，原始失败日志保留。证据 .agent/runtime/deployment/result.json。"
+          "detail": "正式默认用户 Skill 原生发现通过；原规则、config.toml、其他17个Skill保留；10项真实CLI使用核查通过。计划测试1次断言误报已核实修正，原始失败日志保留。证据 .agent/runtime/deployment/result.json。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "cbfc52ca69c38a3e227a6df3181ede1c1d61d4f43b9ac26fd0fce10a520d579f",
+          "recorded_at": "2026-10-08T16:59:30.246523+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T16:59:30.246523+00:00",
-      "completed_at": "2026-10-08T16:59:30.246523+00:00"
+      "completed_at": "2026-10-08T16:59:30.246523+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL3",
@@ -338,12 +408,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "用户OK后官方界面逐项启用，原生当前定义trusted/enabled；真实手动/自动基础及旧快照新断点共存4项验收通过，其中手动最新状态原断言误报按正确条件复核；事件、快照、回复及无覆盖证据 .agent/runtime/deployment/lifecycle/summary.json。测试器2次超时和1次误报保留，Desktop/IDE和默认长周期仍未验证。"
+          "detail": "用户OK后官方界面逐项启用，原生当前定义trusted/enabled；真实手动/自动基础及旧快照新断点共存4项验收通过，其中手动最新状态原断言误报按正确条件复核；事件、快照、回复及无覆盖证据 .agent/runtime/deployment/lifecycle/summary.json。测试器2次超时和1次误报保留，Desktop/IDE和默认长周期仍未验证。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "19350745b3de08989c24cbc59fb1633b32ce9ae42b55c09b63e87ffc4130c5b4",
+          "recorded_at": "2026-10-09T01:45:53.102475+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-09T01:45:53.102475+00:00",
-      "completed_at": "2026-10-09T01:45:53.102475+00:00"
+      "completed_at": "2026-10-09T01:45:53.102475+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL4",
@@ -360,12 +435,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "docs/PURPOSE_REVIEW.md；117自动回归通过；1项真实诊断通过且实际调用--native-hooks；原生审核查询及配置恢复哈希确认；真实压缩明确未验证，未代签信任。"
+          "detail": "docs/PURPOSE_REVIEW.md；117自动回归通过；1项真实诊断通过且实际调用--native-hooks；原生审核查询及配置恢复哈希确认；真实压缩明确未验证，未代签信任。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "f9f4c77686dbfe0d74f48fb039c2c0633daf16da3ba55817928a9bdebf0a43f3",
+          "recorded_at": "2026-10-08T17:25:55.162770+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-08T17:25:55.162770+00:00",
-      "completed_at": "2026-10-08T17:25:55.162770+00:00"
+      "completed_at": "2026-10-08T17:25:55.162770+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL5",
@@ -382,12 +462,17 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "1.1.4正式安装；122回归及2个真实CLI场景通过，原业务及Git保留、明确禁止治理不接入。配置/Hook/其他Skill/原规则核对未变；.agent/runtime/deployment/onboarding/summary.json，测试启动参数错误原始记录保留。"
+          "detail": "1.1.4正式安装；122回归及2个真实CLI场景通过，原业务及Git保留、明确禁止治理不接入。配置/Hook/其他Skill/原规则核对未变；.agent/runtime/deployment/onboarding/summary.json，测试启动参数错误原始记录保留。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "8fdf01fb4f2b72d84305223e2347255ab82564ec467239d4b9b9469228bc210e",
+          "recorded_at": "2026-10-09T03:25:59.846855+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-09T03:25:59.846855+00:00",
-      "completed_at": "2026-10-09T03:25:59.846855+00:00"
+      "completed_at": "2026-10-09T03:25:59.846855+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "DPL6",
@@ -403,7 +488,8 @@
       "dependencies": [],
       "evidence": [],
       "blocker": "",
-      "updated_at": "2026-10-10T06:17:29.565259+00:00"
+      "updated_at": "2026-10-10T06:17:29.565259+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "BRAND1",
@@ -420,7 +506,8 @@
       "dependencies": [],
       "evidence": [],
       "blocker": "Codex当前Hook已信任且CLI启动/手动压缩/接续有真实证据；保留历史自然自动压缩、锁及其他未验证边界，任务收尾登记待用户复核。Desktop/IDE补验可选未要求；Claude、WorkBuddy范围外未验证，不作发布阻塞。",
-      "updated_at": "2026-10-10T06:17:28.511844+00:00"
+      "updated_at": "2026-10-10T06:17:28.511844+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "UNI1",
@@ -440,27 +527,44 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "docs/CLIENT_VALIDATION.md第1、10节与CLIENTS按Agent Skills规范统一发现/执行条件，Claude、WorkBuddy为范围外未验证，未升级为全客户端通过。"
+          "detail": "docs/CLIENT_VALIDATION.md第1、10节与CLIENTS按Agent Skills规范统一发现/执行条件，Claude、WorkBuddy为范围外未验证，未升级为全客户端通过。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "04c0d618feffdd2fec5998f57ca2aa58439776de36bd5f64a78e908bc6d234b0",
+          "recorded_at": "2026-10-10T06:31:00.532636+00:00"
         },
         {
           "type": "test",
           "criterion": 2,
-          "detail": "py -3 -X utf8 -m unittest discover -s tests：157通过、0失败；日志.agent/runtime/universal/scope-closeout-20261010/unittest.txt。覆盖通用安装、所有权、恢复、中文空格路径及现有Codex回归；核心代码本轮未改。"
+          "detail": "py -3 -X utf8 -m unittest discover -s tests：157通过、0失败；日志.agent/runtime/universal/scope-closeout-20261010/unittest.txt。覆盖通用安装、所有权、恢复、中文空格路径及现有Codex回归；核心代码本轮未改。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "023a50034721d9b903cc138c4ea9631a7a76b79418ea007e92370c07243dddca",
+          "recorded_at": "2026-10-10T06:31:00.532636+00:00"
         },
         {
           "type": "file",
           "criterion": 3,
-          "detail": "docs/CLIENT_VALIDATION.md第5–10节保留OpenCode工作流、Cursor主聊天与交替及Codex CLI真实记录；历史失败、模型遵从、仅AGENTS.md恢复与Desktop/IDE限制保留，不要求范围外客户端验收。"
+          "detail": "docs/CLIENT_VALIDATION.md第5–10节保留OpenCode工作流、Cursor主聊天与交替及Codex CLI真实记录；历史失败、模型遵从、仅AGENTS.md恢复与Desktop/IDE限制保留，不要求范围外客户端验收。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "60fabd1cb6ba8f34e69be5306c74ae8e940d8c6c7cb4a48b041723ff34895b56",
+          "recorded_at": "2026-10-10T06:31:00.532636+00:00"
         },
         {
           "type": "command",
           "criterion": 4,
-          "detail": "用户授权后提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送，包含README和边界文档；PR #1标题/描述已更新，已从Draft转为可审查并于2026-10-10合并main，merge SHA 4e77c0df115cdd9a2841cfd61bb267dc309d04cf；GitHub确认merged=true、closed，合并树与受测提交完全相同。"
+          "detail": "用户授权后提交23aeae640e1d0cbb4d7c88d2647b8567e1592761已推送，包含README和边界文档；PR #1标题/描述已更新，已从Draft转为可审查并于2026-10-10合并main，merge SHA 4e77c0df115cdd9a2841cfd61bb267dc309d04cf；GitHub确认merged=true、closed，合并树与受测提交完全相同。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "794b5e03dc0f8c6b761e6a1f5d8ee5181fe5bae4bd21b563b6cabf6abdb54242",
+          "recorded_at": "2026-10-10T06:31:00.532636+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-10T06:31:00.532636+00:00",
-      "completed_at": "2026-10-10T06:31:00.532636+00:00"
+      "completed_at": "2026-10-10T06:31:00.532636+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "ITER1",
@@ -480,27 +584,44 @@
         {
           "type": "test",
           "criterion": 1,
-          "detail": "tests/test_iteration.py新增17项；完整174通过0失败。原始日志.agent/runtime/iteration-20261015/unittest-final-174.txt；默认status/schema1/PROGRESS口径兼容，冲突与事务保护保留。"
+          "detail": "tests/test_iteration.py新增17项；完整174通过0失败。原始日志.agent/runtime/iteration-20261015/unittest-final-174.txt；默认status/schema1/PROGRESS口径兼容，冲突与事务保护保留。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "24be49fb66761083d896a3e3261adcbfa1926697c252df68fdd84e71d7cff908",
+          "recorded_at": "2026-10-15T06:07:17.616968+00:00"
         },
         {
           "type": "review",
           "criterion": 2,
-          "detail": "docs/ITERATION_1_3_VALIDATION.md：技能入口精简并区分阶段、局部授权及决定保存；Codex完整回合4通过1失败，末项quota导致turn.failed；OpenCode0通过5失败(401阶段)，不计行为验收。"
+          "detail": "docs/ITERATION_1_3_VALIDATION.md：技能入口精简并区分阶段、局部授权及决定保存；Codex完整回合4通过1失败，末项quota导致turn.failed；OpenCode0通过5失败(401阶段)，不计行为验收。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "27dc700abba936972ccd9b1a3fa8d1b8ce62d3cd0503732d04adc56bcd271f38",
+          "recorded_at": "2026-10-15T06:07:17.616968+00:00"
         },
         {
           "type": "test",
           "criterion": 3,
-          "detail": "1.3.0版本/文档同步，原安装器正式更新；配置、信任、Hook组、114个其他Skill文件和六业务项目哈希保留；正式查询入口成功。doctor25通过0失败0警告4未验证，见本机installation-result.json与公开验证文档。"
+          "detail": "1.3.0版本/文档同步，原安装器正式更新；配置、信任、Hook组、114个其他Skill文件和六业务项目哈希保留；正式查询入口成功。doctor25通过0失败0警告4未验证，见本机installation-result.json与公开验证文档。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "5bd29ab4bd8440396ecbfba5ca34a299e208face81e77950c09bf617d0fd7874",
+          "recorded_at": "2026-10-15T06:07:17.616968+00:00"
         },
         {
           "type": "command",
           "criterion": 4,
-          "detail": "提交b65d758c562317b0421dac5cae89b16f4dc44f70已推送现有feat/universal-agent-skills，ls-remote与本地SHA一致；GitHub PR #2为open、draft=false、mergeable=true，head SHA一致：https://github.com/Jakiewbe/Project-Anchor/pull/2。远端statuses为空，不当作CI通过；未合并main。"
+          "detail": "提交b65d758c562317b0421dac5cae89b16f4dc44f70已推送现有feat/universal-agent-skills，ls-remote与本地SHA一致；GitHub PR #2为open、draft=false、mergeable=true，head SHA一致：https://github.com/Jakiewbe/Project-Anchor/pull/2。远端statuses为空，不当作CI通过；未合并main。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "bcd9683d1de2c21b49b525dd17e6bebe4730809c40976107901e7c4c8ed21894",
+          "recorded_at": "2026-10-15T06:07:17.616968+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-15T06:07:17.616968+00:00",
-      "completed_at": "2026-10-15T06:07:17.616968+00:00"
+      "completed_at": "2026-10-15T06:07:17.616968+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "REL130",
@@ -518,17 +639,26 @@
         {
           "type": "review",
           "criterion": 1,
-          "detail": "GitHub v1.3.0说明基于CHANGELOG.md、docs/ITERATION_1_3_VALIDATION.md和已验证源码；包括授权/阶段、决定保存、无变化写入、简洁查询、安装差异和兼容范围。174/0、原生3/0、格式1/0与真实对话失败边界分别保留，未宣称长期或全客户端通过。"
+          "detail": "GitHub v1.3.0说明基于CHANGELOG.md、docs/ITERATION_1_3_VALIDATION.md和已验证源码；包括授权/阶段、决定保存、无变化写入、简洁查询、安装差异和兼容范围。174/0、原生3/0、格式1/0与真实对话失败边界分别保留，未宣称长期或全客户端通过。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "1497164b6941cbfe3ff41dc0d60c917abdbc9978fc00177e2b7f835e8a6aeb3e",
+          "recorded_at": "2026-10-15T06:19:07.905074+00:00"
         },
         {
           "type": "command",
           "criterion": 2,
-          "detail": "https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0；release id413477248，draft=false、prerelease=false；发布后API读回body一致，SHA256=070efb6a38a285e1c48679112a40439cf9626e9d49ca76657d01d8e3a7fd4f1a；v1.3.0标签指向5cc849b87d39b49cafeddc7f94b918686199e46a。未合并PR/main；本机证据.agent/runtime/release-1.3.0/result.json。"
+          "detail": "https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.3.0；release id413477248，draft=false、prerelease=false；发布后API读回body一致，SHA256=070efb6a38a285e1c48679112a40439cf9626e9d49ca76657d01d8e3a7fd4f1a；v1.3.0标签指向5cc849b87d39b49cafeddc7f94b918686199e46a。未合并PR/main；本机证据.agent/runtime/release-1.3.0/result.json。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "a23a5263a3392fb8079aeee680ae99a6a012dafb3efcb51717724b339e22119f",
+          "recorded_at": "2026-10-15T06:19:07.905074+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-15T06:19:07.905074+00:00",
-      "completed_at": "2026-10-15T06:19:07.905074+00:00"
+      "completed_at": "2026-10-15T06:19:07.905074+00:00",
+      "legacy_unverified": true
     },
     {
       "task_id": "MAIN130",
@@ -547,22 +677,496 @@
         {
           "type": "command",
           "criterion": 1,
-          "detail": "GitHub确认PR#2 merged=true、closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地ff-only同步且git diff 9f43513 HEAD合并树为空，原自动174/0代码保持不变。"
+          "detail": "GitHub确认PR#2 merged=true、closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地ff-only同步且git diff 9f43513 HEAD合并树为空，原自动174/0代码保持不变。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "35778370b27673857e9dc2b2f3abaf10aa0a5ae1cc8a1b69ff7d389e2eeed301",
+          "recorded_at": "2026-10-15T06:31:48.753011+00:00"
         },
         {
           "type": "review",
           "criterion": 2,
-          "detail": "README产品说明精简为195行；保留横幅、7个图片和旧锚点，理顺Codex/通用安装、业务项目启用、查询路径与升级步骤，新增1.3.0发布/验证导航，保留真实客户端边界、不放验收统计。检查11通过0失败，GitHub官方Markdown渲染5表/7图/7二级标题/8代码块；示例命令符合实际parser。首次脚本标题数量误写8已纠正为源文档真实7，原始结果保留于.agent/runtime/readme-main-20261015。HTML结构已核对，不声称像素截图验收。"
+          "detail": "README产品说明精简为195行；保留横幅、7个图片和旧锚点，理顺Codex/通用安装、业务项目启用、查询路径与升级步骤，新增1.3.0发布/验证导航，保留真实客户端边界、不放验收统计。检查11通过0失败，GitHub官方Markdown渲染5表/7图/7二级标题/8代码块；示例命令符合实际parser。首次脚本标题数量误写8已纠正为源文档真实7，原始结果保留于.agent/runtime/readme-main-20261015。HTML结构已核对，不声称像素截图验收。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "62b72f0556acbb8b95b9fe80a3e3327bad6965f305544beab3f2548c73db56c3",
+          "recorded_at": "2026-10-15T06:31:48.753011+00:00"
         },
         {
           "type": "command",
           "criterion": 3,
-          "detail": "README提交87aa54bfefeab3d5b04b3a4574723283d8363792已推送main，ls-remote SHA一致；GitHub读取main/README.md的blob SHA414b3112376cf99969b8f53323340c4ccab5403a与本地hash-object一致，链接https://github.com/Jakiewbe/Project-Anchor/blob/main/README.md。未改代码/安装/标签，无新分支/worktree。"
+          "detail": "README提交87aa54bfefeab3d5b04b3a4574723283d8363792已推送main，ls-remote SHA一致；GitHub读取main/README.md的blob SHA414b3112376cf99969b8f53323340c4ccab5403a与本地hash-object一致，链接https://github.com/Jakiewbe/Project-Anchor/blob/main/README.md。未改代码/安装/标签，无新分支/worktree。",
+          "level": "claimed",
+          "scope_version": 0,
+          "criteria_hash": "8e9e74cab500604da8ae7d57d45900e70ad01f009b46b7dd6c1796f4aa349d49",
+          "recorded_at": "2026-10-15T06:31:48.753011+00:00"
         }
       ],
       "blocker": "",
       "updated_at": "2026-10-15T06:31:48.753011+00:00",
-      "completed_at": "2026-10-15T06:31:48.753011+00:00"
+      "completed_at": "2026-10-15T06:31:48.753011+00:00",
+      "legacy_unverified": true
+    },
+    {
+      "task_id": "AUD140",
+      "title": "审核1.4.0并升级本机已接入项目",
+      "description": "按用户要求审核已发布1.4.0，修复审核发现的问题；备份并升级本机可访问已接入真实项目及现有安装，保留原状态和业务改动，明确不可访问和未验证范围。",
+      "milestone": "1.4.0 审核与本机升级",
+      "acceptance_criteria": [
+        "核对真实GitHub发布、main和标签及审批迁移源码",
+        "修复旧证据阻止验收条目缩减的问题并完成回归",
+        "备份并迁移7个可访问已接入真实项目，保留原状态和业务改动",
+        "更新现有安装并通过技能入口读回7个项目，保留其他配置和技能",
+        "报告不可访问目录、历史任务批准边界及客户端未验证范围"
+      ],
+      "dependencies": [],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": ".agent/runtime/audit-140/remote.json；main/annotated tag/Release已读回核对；审批与迁移源码已审核",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "fd3fb5aec6e42b3ccb89f6244f27586cf353c3a26d8d5e45651724e00eb751fb",
+          "recorded_at": "2026-10-19T10:16:44.260033+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": ".agent/runtime/audit-140-fixed-tests.log；完整回归194通过0失败；tests/test_approval.py含缩减范围回归",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "f3019afb275fcb7aa31f0613a71ad063eecb182de06ccbfa7a8dedbc602480ed",
+          "recorded_at": "2026-10-19T10:16:44.260033+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 3,
+          "detail": ".agent/runtime/audit-140/migration-results.json及project-backups；7通过0失败；业务改动指纹一致",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "edbfa6d07d1db3d2bc1c90ab2d0ccf709af0c192a89ed85d66d95d142e3c3b9c",
+          "recorded_at": "2026-10-19T10:16:44.260033+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 4,
+          "detail": ".agent/runtime/audit-140/installation-results.json；入口7通过0失败；114其他技能文件及配置保持",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "a81e8e47a50eb71a781904bce2cbf9739c778a40581f95c337d0dfbe98d807be",
+          "recorded_at": "2026-10-19T10:16:44.260033+00:00"
+        },
+        {
+          "type": "review",
+          "criterion": 5,
+          "detail": ".agent/runtime/audit-140/REPORT.md；明确F盘目录不可访问、legacy不自动批准、DSH未验证、本地修复未发布",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "cd7adbd445db9bff5d6b34fef4b1624b84417abc701490e210e1d4b893484fc8",
+          "recorded_at": "2026-10-19T10:16:44.260033+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-19T10:16:44.260033+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "AUD140",
+        "version": 1,
+        "hash": "bb2ac149ac6ae589be2cedd00d21a6553a23d1c5fb02bc804fc845323d9f1c04",
+        "description": "按用户要求审核已发布1.4.0，修复审核发现的问题；备份并升级本机可访问已接入真实项目及现有安装，保留原状态和业务改动，明确不可访问和未验证范围。",
+        "acceptance_criteria": [
+          "核对真实GitHub发布、main和标签及审批迁移源码",
+          "修复旧证据阻止验收条目缩减的问题并完成回归",
+          "备份并迁移7个可访问已接入真实项目，保留原状态和业务改动",
+          "更新现有安装并通过技能入口读回7个项目，保留其他配置和技能",
+          "报告不可访问目录、历史任务批准边界及客户端未验证范围"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-19T10:16:42.168614+00:00",
+        "source": "user",
+        "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
+      },
+      "completed_at": "2026-10-19T10:16:44.260033+00:00"
+    },
+    {
+      "task_id": "OPT140",
+      "title": "继续审查和优化1.4.0",
+      "description": "检查审批历史、无变化写入、迁移预检和DSH诊断，复现后进行最小修复，同步相关说明并验证现有项目可读；保留先前改动，不发布远程。",
+      "milestone": "1.4.0 后续质量修复",
+      "acceptance_criteria": [
+        "已复现的问题有针对性回归，修复保持schema2和既有数据兼容",
+        "完整回归通过且相关技能与文档和实现一致",
+        "现有安装同步更新，7个已迁移项目通过读取，原业务状态保持",
+        "审核结果、边界、决策及交接保存，不把安装测试冒充原生客户端验收"
+      ],
+      "dependencies": [],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": ".agent/runtime/opt140/REPORT.md与失败复现日志；审批历史、空证据、迁移和DSH诊断均有回归，schema2兼容",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "75d95f9947ad083092730999777636d92a8d8055065d8f1155a4397622d2ba7f",
+          "recorded_at": "2026-10-19T10:55:19.439788+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": ".agent/runtime/opt140/full-tests.log：200通过0失败；skill-validation.log通过，相关参考与实现一致",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "acc4f9db49ba6592ce1c78e8e1e400b0e1ae29c8341b08f6a0425bc25622726e",
+          "recorded_at": "2026-10-19T10:55:19.439788+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 3,
+          "detail": ".agent/runtime/opt140/installation.json：7项目读取通过；状态、配置、114个其他技能文件保留，重复安装无变化",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "ef116b3235a8afb43784f00c84725f308ec02b6920b92ec387fd935187cf2851",
+          "recorded_at": "2026-10-19T10:55:19.439788+00:00"
+        },
+        {
+          "type": "review",
+          "criterion": 4,
+          "detail": ".agent/runtime/opt140/REPORT.md及DECISIONS/LESSONS/CURRENT/RETRO；明确未发布和原生验收边界",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "a3f01524ae1483cb0fc71c784d1387e16f96a3f4e98effea786df70a22f917e0",
+          "recorded_at": "2026-10-19T10:55:19.439788+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-19T10:55:19.439788+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "OPT140",
+        "version": 1,
+        "hash": "9d16fda10e576bece0dab4765f2cad2f485909295e3e732ef8ba9666cf0be7ee",
+        "description": "检查审批历史、无变化写入、迁移预检和DSH诊断，复现后进行最小修复，同步相关说明并验证现有项目可读；保留先前改动，不发布远程。",
+        "acceptance_criteria": [
+          "已复现的问题有针对性回归，修复保持schema2和既有数据兼容",
+          "完整回归通过且相关技能与文档和实现一致",
+          "现有安装同步更新，7个已迁移项目通过读取，原业务状态保持",
+          "审核结果、边界、决策及交接保存，不把安装测试冒充原生客户端验收"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-19T10:49:57.933238+00:00",
+        "source": "user",
+        "reason": "用户要求继续检查和优化1.4.0，限复现问题的针对性修复"
+      },
+      "completed_at": "2026-10-19T10:55:19.439788+00:00"
+    },
+    {
+      "task_id": "DSHP0",
+      "title": "DSH 宿主插件 P0 骨架：bundle 清单、状态工具、规则 section、doctor",
+      "description": "按 docs/DSH_PLUGIN_DESIGN.md 落地 DSH 宿主插件 P0：packages/dsh 下的 bundle 清单与 patch、kit.js spawn 适配、anchor_status 与 anchor_doctor 两个工具、systemPrompt 规则 section；核心侧新增只读 kit.py context 复用 hook_runtime.context；静态一致性测试。不安装 bundle、不改状态格式、不退役 AGENTS.md 规则块。",
+      "milestone": "1.5.0 DSH 宿主插件",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "packages/dsh 的清单、patch、locale、icon 齐全且被静态测试校验",
+        "kit.py context PATH --json 复用 core/hook_runtime.context，只读且未信任项目不注入内容",
+        "anchor_status 与 anchor_doctor 通过 kit.py 返回真实 JSON，退出码为错误信号",
+        "systemPrompt section 由插件注册，不修改 system-prompt/assemble",
+        "node 语法检查和 Python 回归全部通过"
+      ],
+      "blocker": "P0 代码与本地验证完成（11 项测试、full 回归 211 通过）；本会话无 plugin_manager 工具，bundle 未安装到 DSH profile，四个 inspect 项与真实会话证据待补。",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "tests/test_dsh_plugin.py ManifestTests 4 项全过：test_manifest_and_patch_agree、test_patch_config_is_a_subset_of_the_schema、test_files_cover_every_runtime_module、test_display_resources_are_real",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "4011b1333a4ae387f191fc9b4bce2cae1c53252c00ac89abd183ea23a242df74",
+          "recorded_at": "2026-10-26T05:58:07.554285+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": "tests/test_dsh_plugin.py ContextCommandTests 4 项全过，含未信任项目只返回指引、信任注入不写盘、limit 截断、未初始化目录失败",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "0d9ad18ab9c966a11e4449c784cbeb8ed4016e4638a1843800c03abc33d71328",
+          "recorded_at": "2026-10-26T05:58:07.554285+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 3,
+          "detail": "tests/test_dsh_plugin.py HostModuleTests.test_status_tool_reads_the_real_ledger 与 test_status_tool_fails_loudly_outside_a_project 全过；真实调用 kit.py 并校验非零退出码",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "fb83345d2c3462247acffe15f69a0b32731da43a48cb04db5ee07dafbf835760",
+          "recorded_at": "2026-10-26T05:58:07.554285+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 4,
+          "detail": "HostModuleTests.test_registration_and_schemas 断言 applied.sections 为 project-anchor:governance 且 guard.assembleBlocked === true（探针以 Proxy 只暴露 systemPrompt.section）",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "2b1269d5afdf52111f1d1382926e391405f8714b6e936ac4ce939f9c292e58b1",
+          "recorded_at": "2026-10-26T05:58:07.554285+00:00"
+        },
+        {
+          "type": "command",
+          "criterion": 5,
+          "detail": "node --check index.js/tools.js/prompt.js/kit.js/dsh_probe.mjs 5/5 通过（Node v24.12.0）；py -3 -X utf8 -m unittest discover -s tests -q 220 通过 0 失败",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "2edfea28f25c905cf7795eba43dd63deb764f5d2099f22db7bd1fa8d7ad311b8",
+          "recorded_at": "2026-10-26T05:58:07.554285+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T05:58:07.554285+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "DSHP0",
+        "version": 1,
+        "hash": "9c5d79ecb629418ca1e563bafc9bde012ac8e68668dff98a8787a60d4a7fac99",
+        "description": "按 docs/DSH_PLUGIN_DESIGN.md 落地 DSH 宿主插件 P0：packages/dsh 下的 bundle 清单与 patch、kit.js spawn 适配、anchor_status 与 anchor_doctor 两个工具、systemPrompt 规则 section；核心侧新增只读 kit.py context 复用 hook_runtime.context；静态一致性测试。不安装 bundle、不改状态格式、不退役 AGENTS.md 规则块。",
+        "acceptance_criteria": [
+          "packages/dsh 的清单、patch、locale、icon 齐全且被静态测试校验",
+          "kit.py context PATH --json 复用 core/hook_runtime.context，只读且未信任项目不注入内容",
+          "anchor_status 与 anchor_doctor 通过 kit.py 返回真实 JSON，退出码为错误信号",
+          "systemPrompt section 由插件注册，不修改 system-prompt/assemble",
+          "node 语法检查和 Python 回归全部通过"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-23T12:04:29.979465+00:00",
+        "source": "user",
+        "reason": "用户在同一轮明确回复可以，授权落地 DSH 插件 P0 骨架"
+      },
+      "completed_at": "2026-10-26T05:58:07.554285+00:00"
+    },
+    {
+      "task_id": "LEDG1",
+      "title": "为 state 历史加上限：仅保留近期文档全文，其余按摘要裁剪",
+      "description": "用户已批准本轮优化。state.json 475KB 中 history 占 97%，document-version 条目重复保存整篇文档（content 401KB）。为 history 增加条数上限，并只让最近若干条 document-version 保留 content，其余剥离为摘要；裁剪后追加 history:prune 记录。不改 schema、不要求迁移旧账本、不触碰 tasks.json 历史、不剥离快照内嵌 state。",
+      "milestone": "1.5.0 账本与上下文优化",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "裁剪后 load()/validate() 通过，revision 单调，文档哈希与 state 记录一致",
+        "旧 state.json（无新配置键）可直接读写，不要求 migrate",
+        "document-version 仅在最近若干条保留 content，摘要条目保留 file/previous_sha256/timestamp",
+        "全量回归通过，并在本仓库副本上实测 state.json 体积明显下降"
+      ],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "tests/test_history.py 覆盖裁剪后 load()/validate() 通过、revision 单调、文档哈希一致；全量回归 220 通过",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "ea13ae330227a986f9ab9cc077689ac735301ad5643334f6ad7e24eccd3f5455",
+          "recorded_at": "2026-10-26T05:58:08.585610+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": "test_no_new_state_schema_or_required_key_is_introduced 断言 state.schema 仍为 1、无 history_keep 键，写入无需 migrate",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "eeb633f54ccb83b223f31a443457ca237650ae7c3ef6b2a6b888561aa2595b30",
+          "recorded_at": "2026-10-26T05:58:08.585610+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 3,
+          "detail": "test_recent_document_text_survives_and_older_content_is_pruned 断言保留最近 N 条 content、更早条目保留 file/previous_sha256/timestamp 且带 content_pruned 标记",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "6d5c573b1eab73e1596ecfe1ff47b2dd40e72dafa76dca0b6d6aa634323a267e",
+          "recorded_at": "2026-10-26T05:58:08.585610+00:00"
+        },
+        {
+          "type": "command",
+          "criterion": 4,
+          "detail": "本仓库实测 state.json 477105 -> 101302 B（-79%），三次连续写入后稳定 101302 B；测得 head 为 history:prune 记录 dropped=117",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "3d9c3a72e6951fbeceaaaf635480efb037c3d531c511381737812998809b517d",
+          "recorded_at": "2026-10-26T05:58:08.585610+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T05:58:08.586610+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "LEDG1",
+        "version": 1,
+        "hash": "e15f28ee9c58cacf076d771ec4147349f7274e646a305094976012a3573c00a2",
+        "description": "用户已批准本轮优化。state.json 475KB 中 history 占 97%，document-version 条目重复保存整篇文档（content 401KB）。为 history 增加条数上限，并只让最近若干条 document-version 保留 content，其余剥离为摘要；裁剪后追加 history:prune 记录。不改 schema、不要求迁移旧账本、不触碰 tasks.json 历史、不剥离快照内嵌 state。",
+        "acceptance_criteria": [
+          "裁剪后 load()/validate() 通过，revision 单调，文档哈希与 state 记录一致",
+          "旧 state.json（无新配置键）可直接读写，不要求 migrate",
+          "document-version 仅在最近若干条保留 content，摘要条目保留 file/previous_sha256/timestamp",
+          "全量回归通过，并在本仓库副本上实测 state.json 体积明显下降"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T05:52:27.331528+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      },
+      "completed_at": "2026-10-26T05:58:08.586610+00:00"
+    },
+    {
+      "task_id": "VIEW1",
+      "title": "status --brief 折叠已完成任务，降低每会话 token",
+      "description": "用户已批准本轮优化。status --brief 实测 12.7KB，其中 tasks 段 6.2KB 主要为 23 个 done 任务。改为 --brief 默认只列非终态任务，done/cancelled 折叠进 summary 计数；新增 --all 显式返回全量；显式 --task/--milestone 选择不受折叠影响。summary 统计口径保持不变。",
+      "milestone": "1.5.0 账本与上下文优化",
+      "dependencies": [],
+      "acceptance_criteria": [
+        "--brief 的 tasks 不含 done/cancelled，summary.statuses 与 approved_done 计数与折叠前一致",
+        "--all 与完整 status 返回全量任务；显式 --task/--milestone 仍返回目标任务的完成态",
+        "全量回归通过，同一项目 --brief 输出体积下降"
+      ],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "test",
+          "criterion": 1,
+          "detail": "test_brief_folds_finished_tasks_but_keeps_counts 断言 tasks 不含 done、summary.statuses.done 与 approved_done 不变、folded_final=1",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "f6b4444395f043d4530390d6d6063e973916e55f288191d09c377accfc337281",
+          "recorded_at": "2026-10-26T05:58:09.702620+00:00"
+        },
+        {
+          "type": "test",
+          "criterion": 2,
+          "detail": "test_include_final_returns_every_task 与 test_explicit_selection_is_never_folded 断言 --all 全量、--task/--milestone 仍返回 done 的真实状态；test_full_view_still_returns_every_field 保持完整视图",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "375d52e9a35303a59c10a2200021ff4b168312211232d2b523e4b1ae5c28afac",
+          "recorded_at": "2026-10-26T05:58:09.702620+00:00"
+        },
+        {
+          "type": "command",
+          "criterion": 3,
+          "detail": "本仓库 --brief 实测 12690 -> 7254 B；全量回归 220 通过",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "673f294b1bd12c8b604f3698ab1a2409564e8974d9d0b2bf7757e3fb4210dfc4",
+          "recorded_at": "2026-10-26T05:58:09.702620+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T05:58:09.703620+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "VIEW1",
+        "version": 1,
+        "hash": "a5b937abdc46e6ba16be920cb7356ebb3c5c745fe18df6e3110225cdb89f7c3e",
+        "description": "用户已批准本轮优化。status --brief 实测 12.7KB，其中 tasks 段 6.2KB 主要为 23 个 done 任务。改为 --brief 默认只列非终态任务，done/cancelled 折叠进 summary 计数；新增 --all 显式返回全量；显式 --task/--milestone 选择不受折叠影响。summary 统计口径保持不变。",
+        "acceptance_criteria": [
+          "--brief 的 tasks 不含 done/cancelled，summary.statuses 与 approved_done 计数与折叠前一致",
+          "--all 与完整 status 返回全量任务；显式 --task/--milestone 仍返回目标任务的完成态",
+          "全量回归通过，同一项目 --brief 输出体积下降"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T05:52:27.977571+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      },
+      "completed_at": "2026-10-26T05:58:09.703620+00:00"
+    },
+    {
+      "task_id": "CICD1",
+      "title": "DSHP0 收口、GitHub Actions 回归与验证文档数字校正",
+      "description": "用户已批准本轮优化。把 DSHP0 五条批准标准逐条映射到具体测试或命令证据后结项；新增 GitHub Actions 工作流（windows-latest 阻断、ubuntu-latest 试运行）；校正验证文档中与实际 211 项不一致的旧测试数字；按代码/DSH/状态三层切分提交，不推送、不建分支或 worktree。",
+      "milestone": "1.5.0 账本与上下文优化",
+      "dependencies": [
+        "LEDG1",
+        "VIEW1"
+      ],
+      "acceptance_criteria": [
+        "DSHP0 五条标准各有可复核的测试名或命令证据",
+        ".github/workflows/tests.yml 在 windows-latest 运行完整回归",
+        "验证文档中的测试数字与实测一致，且不改写历史失败记录",
+        "提交按层切分，未推送、未创建分支或 worktree"
+      ],
+      "blocker": "",
+      "status": "done",
+      "plan": "approved",
+      "evidence": [
+        {
+          "type": "file",
+          "criterion": 1,
+          "detail": "docs/ITERATION_1_5_VALIDATION.md 第五节逐条映射 DSHP0 五条标准到测试名/命令；DSHP0 已按证据结项",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "2f406e2837f5206e02404bc54a5d2b167c3a4004af669c8b01049b33bf791d14",
+          "recorded_at": "2026-10-26T05:58:10.729500+00:00"
+        },
+        {
+          "type": "file",
+          "criterion": 2,
+          "detail": ".github/workflows/tests.yml 的 windows job 运行 python -X utf8 -m unittest discover -s tests -q；YAML 已用 yaml.safe_load 解析通过，尚未在 GitHub 真实运行",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "2d1ec46a92c474816ad985f74a03739033ca209768f239a06e88b39107670e91",
+          "recorded_at": "2026-10-26T05:58:10.729500+00:00"
+        },
+        {
+          "type": "file",
+          "criterion": 3,
+          "detail": "docs/ITERATION_1_5_VALIDATION.md 记录 220 通过；历史轮次 193/200 等记录保持原样未改写；CHANGELOG 新增 1.5.0 未发布小节",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "dcca31885670b5dd7e45bf6899a56a63fed7c7264d4c84e4f1c8c35c21d38195",
+          "recorded_at": "2026-10-26T05:58:10.729500+00:00"
+        },
+        {
+          "type": "command",
+          "criterion": 4,
+          "detail": "按代码/DSH/治理状态三层切分提交，未推送、未创建分支或 worktree",
+          "level": "claimed",
+          "scope_version": 1,
+          "criteria_hash": "ff0084f1910921f6843160ebd9b7d16d37561431723860a68dc0b4e287747be8",
+          "recorded_at": "2026-10-26T05:58:10.729500+00:00"
+        }
+      ],
+      "legacy_unverified": false,
+      "updated_at": "2026-10-26T05:58:10.729500+00:00",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "CICD1",
+        "version": 1,
+        "hash": "abba028f80db097529272e70c9d67e8a960bad6360f80192e7279715b38a294a",
+        "description": "用户已批准本轮优化。把 DSHP0 五条批准标准逐条映射到具体测试或命令证据后结项；新增 GitHub Actions 工作流（windows-latest 阻断、ubuntu-latest 试运行）；校正验证文档中与实际 211 项不一致的旧测试数字；按代码/DSH/状态三层切分提交，不推送、不建分支或 worktree。",
+        "acceptance_criteria": [
+          "DSHP0 五条标准各有可复核的测试名或命令证据",
+          ".github/workflows/tests.yml 在 windows-latest 运行完整回归",
+          "验证文档中的测试数字与实测一致，且不改写历史失败记录",
+          "提交按层切分，未推送、未创建分支或 worktree"
+        ],
+        "dependencies": [
+          "LEDG1",
+          "VIEW1"
+        ],
+        "approved_at": "2026-10-26T05:52:28.567795+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      },
+      "completed_at": "2026-10-26T05:58:10.729500+00:00"
     }
   ],
   "history": [
@@ -1769,6 +2373,515 @@
         ]
       },
       "reason": "合并、README验证和远端main内容均已核对"
+    },
+    {
+      "revision": 82,
+      "timestamp": "2026-10-19T10:14:25.267232+00:00",
+      "action": "schema:migrate",
+      "payload": {
+        "from": 1,
+        "to": 2
+      },
+      "reason": "用户授权升级 Project Anchor 1.4.0；保留历史，不补造批准"
+    },
+    {
+      "revision": 83,
+      "timestamp": "2026-10-19T10:16:41.613862+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "AUD140",
+        "title": "审核1.4.0并升级本机已接入项目",
+        "description": "按用户要求审核已发布1.4.0，修复审核发现的问题；备份并升级本机可访问已接入真实项目及现有安装，保留原状态和业务改动，明确不可访问和未验证范围。",
+        "milestone": "1.4.0 审核与本机升级",
+        "acceptance_criteria": [
+          "核对真实GitHub发布、main和标签及审批迁移源码",
+          "修复旧证据阻止验收条目缩减的问题并完成回归",
+          "备份并迁移7个可访问已接入真实项目，保留原状态和业务改动",
+          "更新现有安装并通过技能入口读回7个项目，保留其他配置和技能",
+          "报告不可访问目录、历史任务批准边界及客户端未验证范围"
+        ]
+      },
+      "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
+    },
+    {
+      "revision": 84,
+      "timestamp": "2026-10-19T10:16:42.168614+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "AUD140"
+      },
+      "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
+    },
+    {
+      "revision": 85,
+      "timestamp": "2026-10-19T10:16:42.721806+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "AUD140",
+        "status": "doing"
+      },
+      "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
+    },
+    {
+      "revision": 86,
+      "timestamp": "2026-10-19T10:16:44.260033+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "AUD140",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "review",
+            "criterion": 1,
+            "detail": ".agent/runtime/audit-140/remote.json；main/annotated tag/Release已读回核对；审批与迁移源码已审核"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": ".agent/runtime/audit-140-fixed-tests.log；完整回归194通过0失败；tests/test_approval.py含缩减范围回归"
+          },
+          {
+            "type": "test",
+            "criterion": 3,
+            "detail": ".agent/runtime/audit-140/migration-results.json及project-backups；7通过0失败；业务改动指纹一致"
+          },
+          {
+            "type": "test",
+            "criterion": 4,
+            "detail": ".agent/runtime/audit-140/installation-results.json；入口7通过0失败；114其他技能文件及配置保持"
+          },
+          {
+            "type": "review",
+            "criterion": 5,
+            "detail": ".agent/runtime/audit-140/REPORT.md；明确F盘目录不可访问、legacy不自动批准、DSH未验证、本地修复未发布"
+          }
+        ]
+      },
+      "reason": "用户授权审核 1.4.0 后升级全部可访问已接入项目"
+    },
+    {
+      "revision": 87,
+      "timestamp": "2026-10-19T10:49:57.667952+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "OPT140",
+        "title": "继续审查和优化1.4.0",
+        "description": "检查审批历史、无变化写入、迁移预检和DSH诊断，复现后进行最小修复，同步相关说明并验证现有项目可读；保留先前改动，不发布远程。",
+        "milestone": "1.4.0 后续质量修复",
+        "acceptance_criteria": [
+          "已复现的问题有针对性回归，修复保持schema2和既有数据兼容",
+          "完整回归通过且相关技能与文档和实现一致",
+          "现有安装同步更新，7个已迁移项目通过读取，原业务状态保持",
+          "审核结果、边界、决策及交接保存，不把安装测试冒充原生客户端验收"
+        ]
+      },
+      "reason": "用户要求继续检查和优化1.4.0，限复现问题的针对性修复"
+    },
+    {
+      "revision": 88,
+      "timestamp": "2026-10-19T10:49:57.933238+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "OPT140"
+      },
+      "reason": "用户要求继续检查和优化1.4.0，限复现问题的针对性修复"
+    },
+    {
+      "revision": 89,
+      "timestamp": "2026-10-19T10:49:58.232948+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "OPT140",
+        "status": "doing"
+      },
+      "reason": "用户要求继续检查和优化1.4.0，限复现问题的针对性修复"
+    },
+    {
+      "revision": 90,
+      "timestamp": "2026-10-19T10:55:19.439788+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "OPT140",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": ".agent/runtime/opt140/REPORT.md与失败复现日志；审批历史、空证据、迁移和DSH诊断均有回归，schema2兼容"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": ".agent/runtime/opt140/full-tests.log：200通过0失败；skill-validation.log通过，相关参考与实现一致"
+          },
+          {
+            "type": "test",
+            "criterion": 3,
+            "detail": ".agent/runtime/opt140/installation.json：7项目读取通过；状态、配置、114个其他技能文件保留，重复安装无变化"
+          },
+          {
+            "type": "review",
+            "criterion": 4,
+            "detail": ".agent/runtime/opt140/REPORT.md及DECISIONS/LESSONS/CURRENT/RETRO；明确未发布和原生验收边界"
+          }
+        ]
+      },
+      "reason": "本轮四类优化和验证完成"
+    },
+    {
+      "revision": 91,
+      "timestamp": "2026-10-23T12:04:25.821663+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "DSHP0",
+        "title": "DSH 宿主插件 P0 骨架：bundle 清单、状态工具、规则 section、doctor",
+        "description": "按 docs/DSH_PLUGIN_DESIGN.md 落地 DSH 宿主插件 P0：packages/dsh 下的 bundle 清单与 patch、kit.js spawn 适配、anchor_status 与 anchor_doctor 两个工具、systemPrompt 规则 section；核心侧新增只读 kit.py context 复用 hook_runtime.context；静态一致性测试。不安装 bundle、不改状态格式、不退役 AGENTS.md 规则块。",
+        "milestone": "1.5.0 DSH 宿主插件",
+        "dependencies": [],
+        "acceptance_criteria": [
+          "packages/dsh 的清单、patch、locale、icon 齐全且被静态测试校验",
+          "kit.py context PATH --json 复用 core/hook_runtime.context，只读且未信任项目不注入内容",
+          "anchor_status 与 anchor_doctor 通过 kit.py 返回真实 JSON，退出码为错误信号",
+          "systemPrompt section 由插件注册，不修改 system-prompt/assemble",
+          "node 语法检查和 Python 回归全部通过"
+        ]
+      },
+      "reason": "user-approved: 把 project-anchor 设计为 DSH 宿主插件并先落地 P0 骨架（2026-10-23）"
+    },
+    {
+      "revision": 92,
+      "timestamp": "2026-10-23T12:04:29.979465+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "DSHP0"
+      },
+      "reason": "用户在同一轮明确回复可以，授权落地 DSH 插件 P0 骨架",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "DSHP0",
+        "version": 1,
+        "hash": "9c5d79ecb629418ca1e563bafc9bde012ac8e68668dff98a8787a60d4a7fac99",
+        "description": "按 docs/DSH_PLUGIN_DESIGN.md 落地 DSH 宿主插件 P0：packages/dsh 下的 bundle 清单与 patch、kit.js spawn 适配、anchor_status 与 anchor_doctor 两个工具、systemPrompt 规则 section；核心侧新增只读 kit.py context 复用 hook_runtime.context；静态一致性测试。不安装 bundle、不改状态格式、不退役 AGENTS.md 规则块。",
+        "acceptance_criteria": [
+          "packages/dsh 的清单、patch、locale、icon 齐全且被静态测试校验",
+          "kit.py context PATH --json 复用 core/hook_runtime.context，只读且未信任项目不注入内容",
+          "anchor_status 与 anchor_doctor 通过 kit.py 返回真实 JSON，退出码为错误信号",
+          "systemPrompt section 由插件注册，不修改 system-prompt/assemble",
+          "node 语法检查和 Python 回归全部通过"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-23T12:04:29.979465+00:00",
+        "source": "user",
+        "reason": "用户在同一轮明确回复可以，授权落地 DSH 插件 P0 骨架"
+      }
+    },
+    {
+      "revision": 93,
+      "timestamp": "2026-10-23T12:14:28.813428+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DSHP0",
+        "status": "doing",
+        "blocker": "P0 代码与本地验证完成（11 项测试、full 回归 211 通过）；本会话无 plugin_manager 工具，bundle 未安装到 DSH profile，四个 inspect 项与真实会话证据待补。"
+      },
+      "reason": "P0 代码与本地验证完成；本会话没有 plugin_manager，bundle 尚未安装到 DSH profile"
+    },
+    {
+      "revision": 94,
+      "timestamp": "2026-10-26T05:52:23.564201+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "LEDG1",
+        "title": "为 state 历史加上限：仅保留近期文档全文，其余按摘要裁剪",
+        "description": "用户已批准本轮优化。state.json 475KB 中 history 占 97%，document-version 条目重复保存整篇文档（content 401KB）。为 history 增加条数上限，并只让最近若干条 document-version 保留 content，其余剥离为摘要；裁剪后追加 history:prune 记录。不改 schema、不要求迁移旧账本、不触碰 tasks.json 历史、不剥离快照内嵌 state。",
+        "milestone": "1.5.0 账本与上下文优化",
+        "dependencies": [],
+        "acceptance_criteria": [
+          "裁剪后 load()/validate() 通过，revision 单调，文档哈希与 state 记录一致",
+          "旧 state.json（无新配置键）可直接读写，不要求 migrate",
+          "document-version 仅在最近若干条保留 content，摘要条目保留 file/previous_sha256/timestamp",
+          "全量回归通过，并在本仓库副本上实测 state.json 体积明显下降"
+        ]
+      },
+      "reason": "用户批准本轮账本与上下文优化"
+    },
+    {
+      "revision": 95,
+      "timestamp": "2026-10-26T05:52:24.050860+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "VIEW1",
+        "title": "status --brief 折叠已完成任务，降低每会话 token",
+        "description": "用户已批准本轮优化。status --brief 实测 12.7KB，其中 tasks 段 6.2KB 主要为 23 个 done 任务。改为 --brief 默认只列非终态任务，done/cancelled 折叠进 summary 计数；新增 --all 显式返回全量；显式 --task/--milestone 选择不受折叠影响。summary 统计口径保持不变。",
+        "milestone": "1.5.0 账本与上下文优化",
+        "dependencies": [],
+        "acceptance_criteria": [
+          "--brief 的 tasks 不含 done/cancelled，summary.statuses 与 approved_done 计数与折叠前一致",
+          "--all 与完整 status 返回全量任务；显式 --task/--milestone 仍返回目标任务的完成态",
+          "全量回归通过，同一项目 --brief 输出体积下降"
+        ]
+      },
+      "reason": "用户批准本轮账本与上下文优化"
+    },
+    {
+      "revision": 96,
+      "timestamp": "2026-10-26T05:52:24.600012+00:00",
+      "action": "add",
+      "payload": {
+        "task_id": "CICD1",
+        "title": "DSHP0 收口、GitHub Actions 回归与验证文档数字校正",
+        "description": "用户已批准本轮优化。把 DSHP0 五条批准标准逐条映射到具体测试或命令证据后结项；新增 GitHub Actions 工作流（windows-latest 阻断、ubuntu-latest 试运行）；校正验证文档中与实际 211 项不一致的旧测试数字；按代码/DSH/状态三层切分提交，不推送、不建分支或 worktree。",
+        "milestone": "1.5.0 账本与上下文优化",
+        "dependencies": [
+          "LEDG1",
+          "VIEW1"
+        ],
+        "acceptance_criteria": [
+          "DSHP0 五条标准各有可复核的测试名或命令证据",
+          ".github/workflows/tests.yml 在 windows-latest 运行完整回归",
+          "验证文档中的测试数字与实测一致，且不改写历史失败记录",
+          "提交按层切分，未推送、未创建分支或 worktree"
+        ]
+      },
+      "reason": "用户批准本轮账本与上下文优化"
+    },
+    {
+      "revision": 97,
+      "timestamp": "2026-10-26T05:52:27.331528+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "LEDG1"
+      },
+      "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "LEDG1",
+        "version": 1,
+        "hash": "e15f28ee9c58cacf076d771ec4147349f7274e646a305094976012a3573c00a2",
+        "description": "用户已批准本轮优化。state.json 475KB 中 history 占 97%，document-version 条目重复保存整篇文档（content 401KB）。为 history 增加条数上限，并只让最近若干条 document-version 保留 content，其余剥离为摘要；裁剪后追加 history:prune 记录。不改 schema、不要求迁移旧账本、不触碰 tasks.json 历史、不剥离快照内嵌 state。",
+        "acceptance_criteria": [
+          "裁剪后 load()/validate() 通过，revision 单调，文档哈希与 state 记录一致",
+          "旧 state.json（无新配置键）可直接读写，不要求 migrate",
+          "document-version 仅在最近若干条保留 content，摘要条目保留 file/previous_sha256/timestamp",
+          "全量回归通过，并在本仓库副本上实测 state.json 体积明显下降"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T05:52:27.331528+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      }
+    },
+    {
+      "revision": 98,
+      "timestamp": "2026-10-26T05:52:27.977571+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "VIEW1"
+      },
+      "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "VIEW1",
+        "version": 1,
+        "hash": "a5b937abdc46e6ba16be920cb7356ebb3c5c745fe18df6e3110225cdb89f7c3e",
+        "description": "用户已批准本轮优化。status --brief 实测 12.7KB，其中 tasks 段 6.2KB 主要为 23 个 done 任务。改为 --brief 默认只列非终态任务，done/cancelled 折叠进 summary 计数；新增 --all 显式返回全量；显式 --task/--milestone 选择不受折叠影响。summary 统计口径保持不变。",
+        "acceptance_criteria": [
+          "--brief 的 tasks 不含 done/cancelled，summary.statuses 与 approved_done 计数与折叠前一致",
+          "--all 与完整 status 返回全量任务；显式 --task/--milestone 仍返回目标任务的完成态",
+          "全量回归通过，同一项目 --brief 输出体积下降"
+        ],
+        "dependencies": [],
+        "approved_at": "2026-10-26T05:52:27.977571+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      }
+    },
+    {
+      "revision": 99,
+      "timestamp": "2026-10-26T05:52:28.567795+00:00",
+      "action": "approve",
+      "payload": {
+        "task_id": "CICD1"
+      },
+      "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作",
+      "approved_scope": {
+        "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+        "task_id": "CICD1",
+        "version": 1,
+        "hash": "abba028f80db097529272e70c9d67e8a960bad6360f80192e7279715b38a294a",
+        "description": "用户已批准本轮优化。把 DSHP0 五条批准标准逐条映射到具体测试或命令证据后结项；新增 GitHub Actions 工作流（windows-latest 阻断、ubuntu-latest 试运行）；校正验证文档中与实际 211 项不一致的旧测试数字；按代码/DSH/状态三层切分提交，不推送、不建分支或 worktree。",
+        "acceptance_criteria": [
+          "DSHP0 五条标准各有可复核的测试名或命令证据",
+          ".github/workflows/tests.yml 在 windows-latest 运行完整回归",
+          "验证文档中的测试数字与实测一致，且不改写历史失败记录",
+          "提交按层切分，未推送、未创建分支或 worktree"
+        ],
+        "dependencies": [
+          "LEDG1",
+          "VIEW1"
+        ],
+        "approved_at": "2026-10-26T05:52:28.567795+00:00",
+        "source": "user",
+        "reason": "用户在会话中明确批准 A/C/B 三个方向的优化工作"
+      }
+    },
+    {
+      "revision": 100,
+      "timestamp": "2026-10-26T05:58:07.554285+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "DSHP0",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "tests/test_dsh_plugin.py ManifestTests 4 项全过：test_manifest_and_patch_agree、test_patch_config_is_a_subset_of_the_schema、test_files_cover_every_runtime_module、test_display_resources_are_real"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": "tests/test_dsh_plugin.py ContextCommandTests 4 项全过，含未信任项目只返回指引、信任注入不写盘、limit 截断、未初始化目录失败"
+          },
+          {
+            "type": "test",
+            "criterion": 3,
+            "detail": "tests/test_dsh_plugin.py HostModuleTests.test_status_tool_reads_the_real_ledger 与 test_status_tool_fails_loudly_outside_a_project 全过；真实调用 kit.py 并校验非零退出码"
+          },
+          {
+            "type": "test",
+            "criterion": 4,
+            "detail": "HostModuleTests.test_registration_and_schemas 断言 applied.sections 为 project-anchor:governance 且 guard.assembleBlocked === true（探针以 Proxy 只暴露 systemPrompt.section）"
+          },
+          {
+            "type": "command",
+            "criterion": 5,
+            "detail": "node --check index.js/tools.js/prompt.js/kit.js/dsh_probe.mjs 5/5 通过（Node v24.12.0）；py -3 -X utf8 -m unittest discover -s tests -q 220 通过 0 失败"
+          }
+        ]
+      },
+      "reason": "P0 五条标准各有测试或命令证据；真实会话证据属 P1"
+    },
+    {
+      "revision": 101,
+      "timestamp": "2026-10-26T05:58:08.080058+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "LEDG1",
+        "status": "doing"
+      },
+      "reason": "A 已实现并验证"
+    },
+    {
+      "revision": 102,
+      "timestamp": "2026-10-26T05:58:08.586610+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "LEDG1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "tests/test_history.py 覆盖裁剪后 load()/validate() 通过、revision 单调、文档哈希一致；全量回归 220 通过"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": "test_no_new_state_schema_or_required_key_is_introduced 断言 state.schema 仍为 1、无 history_keep 键，写入无需 migrate"
+          },
+          {
+            "type": "test",
+            "criterion": 3,
+            "detail": "test_recent_document_text_survives_and_older_content_is_pruned 断言保留最近 N 条 content、更早条目保留 file/previous_sha256/timestamp 且带 content_pruned 标记"
+          },
+          {
+            "type": "command",
+            "criterion": 4,
+            "detail": "本仓库实测 state.json 477105 -> 101302 B（-79%），三次连续写入后稳定 101302 B；测得 head 为 history:prune 记录 dropped=117"
+          }
+        ]
+      },
+      "reason": "A 已实现并验证"
+    },
+    {
+      "revision": 103,
+      "timestamp": "2026-10-26T05:58:09.178908+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "VIEW1",
+        "status": "doing"
+      },
+      "reason": "C 已实现并验证"
+    },
+    {
+      "revision": 104,
+      "timestamp": "2026-10-26T05:58:09.703620+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "VIEW1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "test",
+            "criterion": 1,
+            "detail": "test_brief_folds_finished_tasks_but_keeps_counts 断言 tasks 不含 done、summary.statuses.done 与 approved_done 不变、folded_final=1"
+          },
+          {
+            "type": "test",
+            "criterion": 2,
+            "detail": "test_include_final_returns_every_task 与 test_explicit_selection_is_never_folded 断言 --all 全量、--task/--milestone 仍返回 done 的真实状态；test_full_view_still_returns_every_field 保持完整视图"
+          },
+          {
+            "type": "command",
+            "criterion": 3,
+            "detail": "本仓库 --brief 实测 12690 -> 7254 B；全量回归 220 通过"
+          }
+        ]
+      },
+      "reason": "C 已实现并验证"
+    },
+    {
+      "revision": 105,
+      "timestamp": "2026-10-26T05:58:10.228878+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "CICD1",
+        "status": "doing"
+      },
+      "reason": "B 已收口"
+    },
+    {
+      "revision": 106,
+      "timestamp": "2026-10-26T05:58:10.729500+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "CICD1",
+        "status": "done",
+        "evidence": [
+          {
+            "type": "file",
+            "criterion": 1,
+            "detail": "docs/ITERATION_1_5_VALIDATION.md 第五节逐条映射 DSHP0 五条标准到测试名/命令；DSHP0 已按证据结项"
+          },
+          {
+            "type": "file",
+            "criterion": 2,
+            "detail": ".github/workflows/tests.yml 的 windows job 运行 python -X utf8 -m unittest discover -s tests -q；YAML 已用 yaml.safe_load 解析通过，尚未在 GitHub 真实运行"
+          },
+          {
+            "type": "file",
+            "criterion": 3,
+            "detail": "docs/ITERATION_1_5_VALIDATION.md 记录 220 通过；历史轮次 193/200 等记录保持原样未改写；CHANGELOG 新增 1.5.0 未发布小节"
+          },
+          {
+            "type": "command",
+            "criterion": 4,
+            "detail": "按代码/DSH/治理状态三层切分提交，未推送、未创建分支或 worktree"
+          }
+        ]
+      },
+      "reason": "B 已收口"
     }
   ]
 }

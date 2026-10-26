@@ -1,7 +1,7 @@
 # Project Anchor — 进度（程序生成，请勿手工编辑）
 
-账本修订: 81
-总任务: 23；有效任务: 23；已完成: 21；完成率: 91%
+账本修订: 106
+总任务: 29；有效任务: 29；已完成: 27；完成率: 93%
 [##################--]
 
 ## 里程碑
@@ -14,6 +14,10 @@
 | 1.3.0 main与产品说明 | 1 / 1 |
 | 1.3.0 发布说明 | 1 / 1 |
 | 1.3.0 日常使用优化 | 1 / 1 |
+| 1.4.0 后续质量修复 | 1 / 1 |
+| 1.4.0 审核与本机升级 | 1 / 1 |
+| 1.5.0 DSH 宿主插件 | 1 / 1 |
+| 1.5.0 账本与上下文优化 | 3 / 3 |
 | v1.0 | 7 / 7 |
 | 实际使用验收 | 0 / 1 |
 | 本机全局部署 | 5 / 5 |
@@ -35,16 +39,16 @@
 
 | ID | 标题 | 计划 | 依赖 / 阻塞 |
 | --- | --- | --- | --- |
+| CICD1 | DSHP0 收口、GitHub Actions 回归与验证文档数字校正 | approved | LEDG1, VIEW1 |
+| VIEW1 | status --brief 折叠已完成任务，降低每会话 token | approved |  |
+| LEDG1 | 为 state 历史加上限：仅保留近期文档全文，其余按摘要裁剪 | approved |  |
+| DSHP0 | DSH 宿主插件 P0 骨架：bundle 清单、状态工具、规则 section、doctor | approved | P0 代码与本地验证完成（11 项测试、full 回归 211 通过）；本会话无 plugin_manager 工具，bundle 未安装到 DSH profile，四个 inspect 项与真实会话证据待补。 |
+| OPT140 | 继续审查和优化1.4.0 | approved |  |
+| AUD140 | 审核1.4.0并升级本机已接入项目 | approved |  |
 | MAIN130 | 合并1.3.0到main并优化README | approved |  |
 | REL130 | 发布1.3.0更新说明 | approved |  |
 | ITER1 | 第一轮日常使用优化与GitHub更新 | approved |  |
 | UNI1 | 通用 Agent Skills 适配与可审查 PR | approved |  |
-| DPL5 | 修正旧业务约束与默认治理接入的歧义 | approved |  |
-| DPL3 | 原生 Hook 生命周期验收 | approved |  |
-| DPL4 | 六项初衷复核和使用问题修正 | approved |  |
-| DPL2 | 本机安装与真实使用验证 | approved |  |
-| DPL1 | 部署策略和诊断修正 | approved |  |
-| S4 | 文档与状态交付 | approved |  |
 
 ## 下一阶段
 

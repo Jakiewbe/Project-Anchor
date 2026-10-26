@@ -1,34 +1,25 @@
 # 当前断点
 
 ## 当前阶段
-1.3.0更新已合并main，README优化已推送main；本轮完成。
+1.5.0 账本与上下文优化已完成实现、验证与文档；DSH P0 结项；CI 入口已加但未在 GitHub 真实运行。
 
 ## 当前任务
-MAIN130 done；ITER1、REL130已完成，旧DPL6/BRAND1验收缺口保留。
-第二轮功能未开展，不自动继续。
+LEDG1、VIEW1、CICD1 已按证据登记 done；DSHP0 按批准标准结项，真实 DSH 会话证据留给 P1。
 
 ## 已完成工作
-PR#2 merged/closed，merge8b669d58b554627fabf1cf529364ac8fc34898d3；本地仅快进。
-README产品页与Git前置安装说明同步main；本次补充官方安装入口、WinGet、PATH和终端重启/版本检查。
-产品定位、Codex/通用安装、业务项目启用、查询、升级和文档导航已整理。
-保留横幅、图示、旧锚点和能力边界；链接1.3.0发布及验证，不在正文放验收统计。
-前轮文档核对11/0；本次Git说明范围与结构检查4通过0失败，未改其他README内容。
-GitHub正文通过提交和文件哈希核对；当前README以main为准，本轮未安装或重装Git。
-首次检查脚本标题数量误写8已修正为实际7，首次结果保留，不改README凑测试。
-业务核心未变，原自动回归174/0、原生3/0等历史结果不冒充本轮重测。
-原Codex对话4/1、OpenCode认证阶段0/5等限制继续保留，不重复模型请求。
+`state.json` 的 history 加上限：最近 10 条 `document-version` 保留全文，更早的剥离 `content`，条目总数上限 200，超出合并成一条 `history:prune`；本仓库 477 KB → 101 KB，连续写入保持稳定。
+`status --brief` 默认折叠 `done`/`cancelled`，计数仍在 `summary.folded_final`；新增 `--all`；显式 `--task`/`--milestone` 不折叠。本仓库 12.7 KB → 7.3 KB。
+新增 `tests/test_history.py` 9 项、`.github/workflows/tests.yml`、`docs/ITERATION_1_5_VALIDATION.md`；DSH 探针加 Proxy 守护，访问 `systemPrompt.assemble` 直接抛错。
+全量回归 220 通过 0 失败；`node --check` 5/5；工作流 YAML 解析通过。
 
 ## 当前阻塞
-本轮无阻塞；历史压缩/长期遵从和客户端限制不因合并或README优化升级为通过。
+无阻塞。CI 尚未在 GitHub 真实执行；Linux 分支（`shlex.join` 路径）本机无法验证。
 
 ## 下一步动作
-本轮结束，等待用户下一项明确需求；不自动开展第二轮或改动发布标签。
+推送后观察首次 Actions 结果，失败则如实记录而不是改绿。P1（注入、guard、写工具、批准 seam）需另行授权。快照体积与 `tasks.json` 历史本轮未处理。
 
 ## 状态修订
-以state.json/tasks.json为准；本轮证据.agent/runtime/readme-main-20261015不上传。
-详细功能验证仍在docs/ITERATION_1_3_VALIDATION.md，复盘追加RETRO。
+state.json revision 与 tasks.json 由本轮 kit.py 写入推进；任务 DSHP0/LEDG1/VIEW1/CICD1 为 done。
 
 ## Git 检查
-保留既有feat/universal-agent-skills检出，直接推送用户授权的main；无新分支/worktree。
-main已包含PR#2和README，治理收尾同样同步main；无强推、历史改写或标签移动。
-当前工作区与最终提交以Git命令为准；没有远端CI项不当作CI通过。
+本轮改动按「代码与测试 / DSH 包 / 治理状态」三层提交，未推送、未创建分支或 worktree。
