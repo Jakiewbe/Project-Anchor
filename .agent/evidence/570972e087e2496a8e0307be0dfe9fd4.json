@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "run_id": "570972e087e2496a8e0307be0dfe9fd4",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "README150",
+  "criterion": 1,
+  "kind": "review",
+  "scope_version": 1,
+  "scope_hash": "30b10318e5c514907bdde10a7b6d907597ec3437f1eca0bffbe1671c1f91dd21",
+  "criteria_hash": "5eb59905644766968900ea27ca48681a0f01200448814be195a3ce5154a454d6",
+  "expected_revision": 241,
+  "input_hash": "ceb85479d39682c7747dc334267d9fddc071071f628c7be9c361cbafb0297698",
+  "inputs": [
+    "README.md",
+    "CHANGELOG.md",
+    "docs/ITERATION_1_5_VALIDATION.md"
+  ],
+  "started_at": "2026-10-26T09:53:50.120986+00:00",
+  "reason": "README自查与远程推送核对均完成",
+  "result": "pass",
+  "review": {
+    "criterion": 1,
+    "findings": "Review查Bug：核对Git/Python前置、安装入口、命令、schema3迁移、候选状态及客户端边界；修订了旧README重点分散与命令说明重复的问题。提交清单只含已验证实现和相关记录，未提交运行目录或秘密。",
+    "resolution": "文档链接、只读命令与原回归凭据一致性3组通过0失败；代码材料仍与253项通过的凭据一致。正常快进推送7395325..f76a6aa到main，远程refs/heads/main确认为f76a6aa1ca9ec3cfec80f99c249771e6ba322bde；GitHub读取README blob 7d913cd67bd14cc4f166cd20ba80ff32de97805c与本地提交一致。远程CI未确认，不称已通过。",
+    "simpler": "重用现有图片、徽章和文档，把首页集中到定位、安装、日常使用、升级及边界；详细参数和验证数字继续留在专门文档，不增加依赖或新分支。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "文档链接、只读命令与原回归凭据一致性3组通过0失败；代码材料仍与253项通过的凭据一致。正常快进推送7395325..f76a6aa到main，远程refs/heads/main确认为f76a6aa1ca9ec3cfec80f99c249771e6ba322bde；GitHub读取README blob 7d913cd67bd14cc4f166cd20ba80ff32de97805c与本地提交一致。远程CI未确认，不称已通过。",
+  "finished_at": "2026-10-26T09:53:50.128482+00:00"
+}

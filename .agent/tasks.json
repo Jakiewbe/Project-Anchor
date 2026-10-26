@@ -1,7 +1,7 @@
 {
   "schema": 3,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 123,
+  "revision": 125,
   "tasks": [
     {
       "task_id": "A",
@@ -1452,11 +1452,26 @@
       ],
       "dependencies": [],
       "blocker": "",
-      "status": "doing",
+      "status": "done",
       "plan": "approved",
-      "evidence": [],
+      "evidence": [
+        {
+          "type": "review",
+          "criterion": 1,
+          "detail": "文档链接、只读命令与原回归凭据一致性3组通过0失败；代码材料仍与253项通过的凭据一致。正常快进推送7395325..f76a6aa到main，远程refs/heads/main确认为f76a6aa1ca9ec3cfec80f99c249771e6ba322bde；GitHub读取README blob 7d913cd67bd14cc4f166cd20ba80ff32de97805c与本地提交一致。远程CI未确认，不称已通过。",
+          "level": "claimed",
+          "run_id": "570972e087e2496a8e0307be0dfe9fd4",
+          "receipt_sha256": "5a93736bbd8853b935b0873806b27f198ead70600f1922643602e3075b875781",
+          "input_hash": "ceb85479d39682c7747dc334267d9fddc071071f628c7be9c361cbafb0297698",
+          "result": "pass",
+          "scope_version": 1,
+          "criteria_hash": "5eb59905644766968900ea27ca48681a0f01200448814be195a3ce5154a454d6",
+          "recorded_at": "2026-10-26T09:53:50.156404+00:00",
+          "reviewer_kind": "self"
+        }
+      ],
       "legacy_unverified": false,
-      "updated_at": "2026-10-26T09:48:13.908586+00:00",
+      "updated_at": "2026-10-26T09:53:50.395059+00:00",
       "approved_scope": {
         "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
         "task_id": "README150",
@@ -1481,7 +1496,8 @@
             ]
           }
         ]
-      }
+      },
+      "completed_at": "2026-10-26T09:53:50.395059+00:00"
     }
   ],
   "history": [
@@ -3571,6 +3587,23 @@
       "timestamp": "2026-10-26T09:51:09.603717+00:00",
       "run_id": "d83f5ecfecba40c4a46245b64bbc63e7",
       "reason": "README重写后重新核对原完成任务的文档材料"
+    },
+    {
+      "action": "verify:review",
+      "revision": 124,
+      "timestamp": "2026-10-26T09:53:50.156404+00:00",
+      "run_id": "570972e087e2496a8e0307be0dfe9fd4",
+      "reason": "README自查与远程推送核对均完成"
+    },
+    {
+      "revision": 125,
+      "timestamp": "2026-10-26T09:53:50.395059+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "README150",
+        "status": "done"
+      },
+      "reason": "远程main提交与README内容读回一致，完成本轮"
     }
   ]
 }

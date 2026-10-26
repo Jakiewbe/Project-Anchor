@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 245,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "3e274453df94d882781a88fbde748b9e01bce78e3d8675902cbd9b53b2941133",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n1.4.0 后续修复之后，新增 DSH 宿主插件 P0 骨架；本地验证通过，未安装、未发布。\r\n\r\n## 当前任务\r\nDSHP0 doing：P0 已落地，等待安装与真实会话证据；前轮 AUD140/OPT140 边界保留。\r\n\r\n## 已完成工作\r\n新增 packages/dsh：bundle 清单、cordis.patch.yml、locale/icon、kit.js spawn 适配、anchor_status 与 anchor_doctor 两个只读工具、project-anchor:governance 提示词 section。\r\n新增只读 kit.py context，与 Codex Hook 共用 core/hook_runtime.context()；未信任项目只返回读取指引。\r\n测试用桩件加载真实 Host 模块并真跑一次只读 status；新增 11 项，full 回归 211 通过 0 失败。\r\n设计文档 docs/DSH_PLUGIN_DESIGN.md 记录 P0 之后的注入、guard、写工具、批准 seam 与 UI 分期。\r\n\r\n## 当前阻塞\r\n本会话无 plugin_manager 工具：bundle 未安装到 DSH profile，未取得真实会话证据。\r\n待 inspect 确认：write/edit/bash 工具名与 exec 形状、审批 decision 字段、composer.dock props、配置 schema 回读。\r\n\r\n## 下一步动作\r\nP0 验收后再定 P1（guard + 首步/压缩后注入）范围；未获授权不扩大目标、不安装、不退役 AGENTS.md 规则块。\r\n\r\n## 状态修订\r\nstate.json 200 / tasks.json 93，任务 DSHP0 status=doing。\r\n\r\n## Git 检查\r\n未提交、推送，未新建分支或 worktree；packages/dsh 与 tests/dsh_probe.mjs 为新增未跟踪文件。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-23T12:14:38.239329+00:00"
+    },
+    {
+      "revision": 110,
+      "action": "state:update",
+      "reason": "保存自然压缩及名称迁移已验证经验，不写入跨项目知识库",
+      "timestamp": "2026-10-09T08:15:29.230535+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "3232c6a28383aae9f6b379db41097f12dbc665e94b0b8b319464704fc2ee423d",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:29:49.857553+00:00",
+      "content_pruned": true
+    }
+  ]
+}

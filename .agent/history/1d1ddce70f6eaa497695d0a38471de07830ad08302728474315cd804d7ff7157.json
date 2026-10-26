@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 244,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "cd93d9936cdd4a3f8bded44cb89893463cce79a8af76f54ae07642bea868a60b",
+      "content": "# 当前断点\n\n## 当前阶段\n1.4.0后续质量优化完成，现有安装已同步；本地修改尚未发布。\n\n## 当前任务\nOPT140 done；保留前轮AUD140的修复、迁移和历史任务边界。\n\n## 已完成工作\n本轮修复审批快照丢失、空证据假更新、迁移预检漏校验和DSH诊断误报。\n审批/修订追加完整历史；有效证据仍绑定当前范围，失效旧证据保留。\n迁移预检与正式迁移共用完整转换校验，先校验再备份，不丢弃未知字段。\n现有schema2格式不变，不要求再次迁移；7个项目通过安装入口读取，状态未改。\n完整回归200通过0失败，技能格式检查通过，git diff检查通过。\n现有全局安装同步；原配置/认证/Hook组/信任及其他114技能文件保持。\nCHANGELOG与公开验证记录明确未发布；本轮私人证据.agent/runtime/opt140。\n\n## 当前阻塞\n无本轮本机阻塞；不能恢复此前已丢失的批准历史。\n真实原生客户端/模型行为与前轮不可访问目录的范围限制继续保留。\n\n## 下一步动作\n本轮完成；等待用户下一项要求，不自动提交、推送或修改发布标签。\n\n## 状态修订\n以state.json/tasks.json为准，详细报告.agent/runtime/opt140/REPORT.md。\nCURRENT已同步任务修订，GOAL未改，未重新批准历史任务。\n\n## Git 检查\n保留feat/universal-agent-skills和前轮未提交修改；本轮未提交、推送或新建分支/worktree。\n实际清单以git diff为准，修改包括最小核心修复、回归、技能参考及治理记录。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-19T10:55:19.724086+00:00"
+    },
+    {
+      "revision": 109,
+      "action": "state:update",
+      "reason": "正式迁移、回归完成后及时保存真实状态与原生审核阻塞",
+      "timestamp": "2026-10-09T08:15:28.304833+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "LESSONS.md",
+      "previous_sha256": "f3d63dd96770d413c84bd377e1a0d9593bc7c1cc661de66b841f1b09c93a8da2",
+      "user_approved": false,
+      "timestamp": "2026-10-09T08:15:29.220535+00:00",
+      "content_pruned": true
+    }
+  ]
+}
