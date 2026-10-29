@@ -35,7 +35,7 @@ class ApprovalTests(unittest.TestCase):
         state, _, _ = load(self.project)
         fields.setdefault("checks", checks_for(self.project, criteria))
         return task_change(self.project, state["revision"], "add",
-                           {"task_id": "T1", "title": "任务", "description": "原始范围",
+                           {"deliverables": [], "task_id": "T1", "title": "任务", "description": "原始范围",
                             "acceptance_criteria": list(criteria), **fields}, "创建草案")
 
     def approve(self, source="user"):
@@ -60,7 +60,7 @@ class ApprovalTests(unittest.TestCase):
         state, _, _ = load(self.project)
         with self.assertRaises(io.KitError):
             task_change(self.project, state["revision"], "add",
-                        {"task_id": "T1", "title": "任务", "acceptance_criteria": ["完成"],
+                        {"deliverables": [], "task_id": "T1", "title": "任务", "acceptance_criteria": ["完成"],
                          "plan": "approved"}, "自批")
         self.assertEqual(load(self.project)[2]["tasks"], [])
 
@@ -123,7 +123,7 @@ class ApprovalTests(unittest.TestCase):
         self.approve()
         state, _, _ = load(self.project)
         task_change(self.project, state["revision"], "add",
-                    {"task_id": "T2", "title": "依赖任务", "acceptance_criteria": ["完成"],
+                    {"deliverables": [], "task_id": "T2", "title": "依赖任务", "acceptance_criteria": ["完成"],
                      "dependencies": ["T1"], "checks": checks_for(self.project, ["完成"])}, "创建依赖")
         state, _, _ = load(self.project)
         task_change(self.project, state["revision"], "approve", {"task_id": "T2"},

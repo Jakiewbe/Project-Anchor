@@ -1,6 +1,8 @@
 """Versioned project state, snapshots, context and reviewed knowledge."""
 import copy
+from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -23,7 +25,8 @@ CURRENT_HEADINGS = ("当前阶段", "当前任务", "已完成工作", "当前�
 def git_info(root):
     try:
         def run(args):
-            result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, encoding="utf-8", errors="replace", timeout=10)
+            result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, encoding="utf-8", errors="replace", timeout=10,
+                                    env=dict(os.environ, GIT_OPTIONAL_LOCKS="0"))
             return result.stdout.strip() if result.returncode == 0 else None
         top = run(["rev-parse", "--show-toplevel"])
         return {"root": top, "branch": run(["branch", "--show-current"]) if top else None,
@@ -49,6 +52,31 @@ def project_root(path):
 def paths(root):
     agent = safe_path(Path(root) / ".agent", root)
     return agent, agent / ".lock", agent / ".transaction.json"
+
+
+@contextmanager
+def reading(root):
+    """Read without a writable lock; never accept a concurrent governance write."""
+    agent, _, journal = paths(root)
+    check_pending(journal)
+    before = (agent / "state.json").read_bytes()
+    load(root)
+    yield
+    check_pending(journal)
+    load(root)
+    if (agent / "state.json").read_bytes() != before:
+        raise KitError("读取期间项目状态变化；本次结果无效，请重新判断后查询")
+
+
+def current_alignment(state):
+    binding = state.get("current_scope")
+    if binding is None:
+        return "unknown"
+    if (binding["goal_version"] != state["goal_version"]
+            or binding["task_revision"] != state["task_revision"]
+            or set(binding["task_ids"]) != set((state.get("focus") or {}).get("task_ids", []))):
+        return "changed"
+    return "aligned"
 
 
 def validate_doc(name, value):
@@ -109,6 +137,16 @@ def load(root, supplied_state=None):
                 or not isinstance(focus.get("reason"), str) or not focus["reason"].strip()
                 or not isinstance(focus.get("updated_at"), str)):
             raise KitError("本轮任务指针损坏")
+    binding = state.get("current_scope")
+    if binding is not None:
+        if (not isinstance(binding, dict) or set(binding) != {"task_ids", "goal_version", "task_revision"}
+                or not isinstance(binding["task_ids"], list)
+                or any(not isinstance(t, str) for t in binding["task_ids"])
+                or len(set(binding["task_ids"])) != len(binding["task_ids"])
+                or set(binding["task_ids"]) - {t["task_id"] for t in ledger["tasks"]}
+                or type(binding["goal_version"]) is not int or not 1 <= binding["goal_version"] <= state["goal_version"]
+                or type(binding["task_revision"]) is not int or not 0 <= binding["task_revision"] <= ledger["revision"]):
+            raise KitError("断点任务关联损坏")
     return state, content, ledger
 
 
@@ -314,7 +352,7 @@ def migration_rollback(root, expected, reason, backup_path):
 
 
 def migrate(root, expected, reason, dry_run=False):
-    """Move a schema 1 ledger to schema 2 without inventing approvals."""
+    """Upgrade old ledgers without inventing approvals or artifact declarations."""
     if not isinstance(reason, str) or not reason.strip():
         raise KitError("迁移原因不能为空")
     agent, lock, _ = paths(root)
@@ -323,14 +361,15 @@ def migrate(root, expected, reason, dry_run=False):
         _revision(state, expected)
         if ledger["schema"] == SCHEMA:
             return {"changed": False, "schema": SCHEMA, "revision": state["revision"]}
-        if ledger["schema"] not in (1, 2):
+        if ledger["schema"] not in (1, 2, 3):
             raise KitError("不支持的任务账本版本")
         migrated = copy.deepcopy(ledger)
         old_schema = ledger["schema"]
         migrated["schema"] = SCHEMA
         migrated["revision"] += 1
         for task in migrated["tasks"]:
-            task["verification_legacy"] = True
+            if old_schema < 3:
+                task["verification_legacy"] = True
             if old_schema == 1:
                 task["legacy_unverified"] = task["plan"] == "approved"
             for item in task["evidence"]:
@@ -380,7 +419,7 @@ def rename_project(root, expected, name, reason):
         return _save(root, state, ledger, {}, "project:rename", reason)
 
 
-def doc_change(root, expected, name, value, reason, approved=False, adopt=False):
+def doc_change(root, expected, name, value, reason, approved=False, adopt=False, task_ids=None):
     if name not in DOCS or not reason.strip():
         raise KitError("状态文件名或变更原因无效")
     validate_doc(name, value)
@@ -408,10 +447,23 @@ def doc_change(root, expected, name, value, reason, approved=False, adopt=False)
             state, content, ledger = load(root)
             require_schema2(ledger)
         _revision(state, expected)
+        binding = None
+        if name == "CURRENT.md":
+            if task_ids is None:
+                raise KitError("保存CURRENT需要 --task ID 或 --no-task 明确关联")
+            if (len(set(task_ids)) != len(task_ids)
+                    or any(not isinstance(t, str) for t in task_ids)
+                    or set(task_ids) - {t["task_id"] for t in ledger["tasks"]}):
+                raise KitError("断点任务 ID 不存在或重复")
+            binding = {"task_ids": list(task_ids), "goal_version": state["goal_version"],
+                       "task_revision": ledger["revision"]}
+        elif task_ids is not None:
+            raise KitError("只有CURRENT接受任务关联")
         same_bytes = digest(document_data) == state["hashes"][name]
         same_text = not adopt and content[name].replace("\r\n", "\n") == value.replace("\r\n", "\n")
         metadata_changed = ((name == "GOAL.md" and not state["goal_approved"])
-                            or (name == "CURRENT.md" and state["current_task_revision"] != ledger["revision"]))
+                            or (name == "CURRENT.md" and (state["current_task_revision"] != ledger["revision"]
+                                                        or state.get("current_scope") != binding)))
         if (same_bytes or same_text) and not metadata_changed:
             return state["revision"]
         if same_text:
@@ -421,6 +473,7 @@ def doc_change(root, expected, name, value, reason, approved=False, adopt=False)
             state["goal_approved"] = True
         if name == "CURRENT.md":
             state["current_task_revision"] = ledger["revision"]
+            state["current_scope"] = binding
         state["history"].append({"action": "document-version", "revision": state["revision"] + 1, "file": name,
                                  "previous_sha256": state["hashes"][name], "content": value,
                                  "user_approved": approved, "timestamp": now()})
@@ -501,9 +554,15 @@ def retro(root):
         if target.exists():
             raise KitError("RETRO.md 已存在，拒绝覆盖")
         body = (KIT_ROOT / "templates/RETRO.md").read_text(encoding="utf-8")
-        body = body.replace("{{project}}", state["name"]).replace("{{goal}}", content["GOAL.md"])
-        body = body.replace("{{delivered}}", "\n".join(f"- {t['task_id']}: {t['title']}；证据: {json.dumps(t['evidence'], ensure_ascii=False)}" for t in ledger["tasks"] if t["status"] == "done") or "尚无完成任务")
-        body = body.replace("{{decisions}}", content["DECISIONS.md"]).replace("{{lessons}}", content["LESSONS.md"])
+        body = body.replace("{{project}}", state["name"]).replace("{{goal}}", f"见 [项目目标](GOAL.md)，版本 {state['goal_version']}；批准：{state['goal_approved']}")
+        delivered = []
+        for task in ledger["tasks"]:
+            if task["status"] == "done":
+                receipts = sorted({e["run_id"] for e in task["evidence"] if e.get("run_id")})
+                links = ", ".join(f"[凭据](evidence/{rid}.json)" for rid in receipts)
+                delivered.append(f"- {task['task_id']}: {task['title']}；历史完成，当前有效性请查询status；{links or '证据见tasks.json对应任务'}")
+        body = body.replace("{{delivered}}", "\n".join(delivered) or "尚无完成任务")
+        body = body.replace("{{decisions}}", "见 [重要决策](DECISIONS.md)").replace("{{lessons}}", "见 [项目教训](LESSONS.md)；仅填写已核实的新结论。")
         atomic_write(target, body.encode("utf-8"))
         return target
 

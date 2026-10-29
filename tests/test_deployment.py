@@ -122,7 +122,7 @@ class DeploymentTests(Environment):
         config.trust_project(self.project, self.home)
         state, content, _ = memory.load(self.project)
         memory.doc_change(self.project, state["revision"], "CURRENT.md",
-                          content["CURRENT.md"] + "\n已确认的最新断点。\n", "保存断点")
+                          content["CURRENT.md"] + "\n已确认的最新断点。\n", "保存断点", task_ids=[])
         reminder = context(self.project, self.home)
         self.assertIn("status", reminder)
         self.assertIn("读取资料不需要重新 trust-project", reminder)

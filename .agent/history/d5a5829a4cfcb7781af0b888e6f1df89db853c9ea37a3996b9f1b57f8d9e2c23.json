@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 255,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "ec85cbcdb2d88c02fdba6a6cb74d21d725950fe93c46fd0db857f3acbbebe65d",
+      "content": "# 当前断点\n\n## 当前阶段\n1.5.0 账本与上下文优化已完成实现、验证与文档；DSH P0 结项；CI 入口已加但未在 GitHub 真实运行。\n\n## 当前任务\nLEDG1、VIEW1、CICD1 已按证据登记 done；DSHP0 按批准标准结项，真实 DSH 会话证据留给 P1。\n\n## 已完成工作\n`state.json` 的 history 加上限：最近 10 条 `document-version` 保留全文，更早的剥离 `content`，条目总数上限 200，超出合并成一条 `history:prune`；本仓库 477 KB → 101 KB，连续写入保持稳定。\n`status --brief` 默认折叠 `done`/`cancelled`，计数仍在 `summary.folded_final`；新增 `--all`；显式 `--task`/`--milestone` 不折叠。本仓库 12.7 KB → 7.3 KB。\n新增 `tests/test_history.py` 9 项、`.github/workflows/tests.yml`、`docs/ITERATION_1_5_VALIDATION.md`；DSH 探针加 Proxy 守护，访问 `systemPrompt.assemble` 直接抛错。\n全量回归 220 通过 0 失败；`node --check` 5/5；工作流 YAML 解析通过。\n\n## 当前阻塞\n无阻塞。CI 尚未在 GitHub 真实执行；Linux 分支（`shlex.join` 路径）本机无法验证。\n\n## 下一步动作\n推送后观察首次 Actions 结果，失败则如实记录而不是改绿。P1（注入、guard、写工具、批准 seam）需另行授权。快照体积与 `tasks.json` 历史本轮未处理。\n\n## 状态修订\nstate.json revision 与 tasks.json 由本轮 kit.py 写入推进；任务 DSHP0/LEDG1/VIEW1/CICD1 为 done。\n\n## Git 检查\n本轮改动按「代码与测试 / DSH 包 / 治理状态」三层提交，未推送、未创建分支或 worktree。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-26T05:58:31.447333+00:00"
+    },
+    {
+      "revision": 116,
+      "action": "state:update",
+      "reason": "用户授权发布图文README；检查通过，发布证据保存在Git提交及远端",
+      "timestamp": "2026-10-09T09:03:07.908802+00:00"
+    },
+    {
+      "revision": 117,
+      "action": "task:add",
+      "reason": "用户授权通用 Agent Skills 适配及 PR",
+      "timestamp": "2026-10-09T11:40:28.881509+00:00"
+    }
+  ]
+}

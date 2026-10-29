@@ -179,7 +179,7 @@ class SkillTests(unittest.TestCase):
 
     def test_adapter_task_and_memory_handoff(self):
         init_project(self.project,"project")
-        task={"task_id":"T1","title":"检查","acceptance_criteria":["通过"],"checks":checks_for(self.project,["通过"])}
+        task={"deliverables": [], "task_id":"T1","title":"检查","acceptance_criteria":["通过"],"checks":checks_for(self.project,["通过"])}
         for action, payload, rev in [("add",task,0)]:
             result=self.run_skill("task",action,self.project,"--json-input","--expected-revision",rev,"--reason","验收",payload=json.dumps(payload,ensure_ascii=False))
             self.assertEqual(result.returncode,0,result.stderr)
@@ -194,7 +194,7 @@ class SkillTests(unittest.TestCase):
         self.assertEqual(result.returncode,0,result.stderr)
         state, content, ledger=load(self.project)
         current=content["CURRENT.md"].replace("确认目标和计划。","准备交接。")
-        result=self.run_skill("state","update",self.project,"CURRENT.md","--text-input","--expected-revision",state["revision"],"--reason","主动交接",payload=current)
+        result=self.run_skill("state","update",self.project,"CURRENT.md","--no-task","--text-input","--expected-revision",state["revision"],"--reason","主动交接",payload=current)
         self.assertEqual(result.returncode,0,result.stderr)
         result=self.run_skill("snapshot",self.project)
         self.assertEqual(result.returncode,0,result.stderr)
@@ -204,7 +204,7 @@ class SkillTests(unittest.TestCase):
 
     def test_adapter_invalid_evidence_preserves_ledger(self):
         init_project(self.project,"project")
-        task_change(self.project,0,"add",{"task_id":"T1","title":"任务","acceptance_criteria":["验收"],"checks":checks_for(self.project,["验收"])},"添加")
+        task_change(self.project,0,"add",{"deliverables": [], "task_id":"T1","title":"任务","acceptance_criteria":["验收"],"checks":checks_for(self.project,["验收"])},"添加")
         task_change(self.project,1,"approve",{"task_id":"T1"},"批准",source="user")
         task_change(self.project,2,"update",{"task_id":"T1","status":"doing"},"开始")
         before=(self.project / ".agent/tasks.json").read_bytes()

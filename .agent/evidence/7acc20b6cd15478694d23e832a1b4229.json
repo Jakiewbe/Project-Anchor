@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "run_id": "7acc20b6cd15478694d23e832a1b4229",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 2,
+  "scope_hash": "649bd30be954378e474bc4d380957736b11f521cdd508dd8d2ecd37c34c21f6e",
+  "criteria_hash": "4a8d9ffe9217ad9d084f8012a13851e581b86a675ee3e5daab3ecb49a3f189dd",
+  "expected_revision": 256,
+  "input_hash": "d4707104341fbbc8e3c0014ab214b2b8dd62a56edf746d74a181424bbbc8c029",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages"
+  ],
+  "started_at": "2026-10-29T16:57:23.658991+00:00",
+  "reason": "冻结源码与Skill文档后的最终完整Windows回归",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/7acc20b6cd15478694d23e832a1b4229/stdout.log",
+      "sha256": "e058f6b76663f8b6b7482622dd7fac5cfd710ee8ba4e9660382ac926ff311ec0",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/7acc20b6cd15478694d23e832a1b4229/stderr.log",
+      "sha256": "f94377e333da95848412fe2941f370ebe98c00029fafa8b19ba9de3ea126bb4b",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-10-29T16:59:29.495755+00:00"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 249,
+  "entries": [
+    {
+      "revision": 113,
+      "action": "state:update",
+      "reason": "实际发布成功后保存检查点及未完成的原生审核边界",
+      "timestamp": "2026-10-09T08:36:31.318548+00:00"
+    }
+  ]
+}

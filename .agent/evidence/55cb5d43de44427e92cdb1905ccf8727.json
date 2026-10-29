@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "run_id": "55cb5d43de44427e92cdb1905ccf8727",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 2,
+  "kind": "review",
+  "scope_version": 2,
+  "scope_hash": "649bd30be954378e474bc4d380957736b11f521cdd508dd8d2ecd37c34c21f6e",
+  "criteria_hash": "a6dfb5e0b592826589918e3a33e28a236ec4d7e18d5e335d728a21bfde1506cb",
+  "expected_revision": 265,
+  "input_hash": "f2e1d7d73e68c7f971ddfa4a0f2e70b44f1f4bc16d33969082fe78558dc6beda",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "docs"
+  ],
+  "started_at": "2026-10-29T17:07:29.749015+00:00",
+  "reason": "发布前再次查Bug及简化自查",
+  "result": "pass",
+  "review": {
+    "criterion": 2,
+    "findings": "再次Review确认六项改动、迁移保留、真实只读权限及交付物消失修复；本轮只更新发布说明和项目规则，核心代码与274项通过凭据输入保持一致。",
+    "resolution": "274通过0失败，真实项目副本27通过0失败，原生接续2通过0失败；现有全局安装1.5.1读回通过，1363个其他技能/登录/配置文件不变，重复安装无变化。文档明确将最终CI与资产身份记录在发布验证清单，不提前虚构成功。",
+    "simpler": "沿用唯一核心和受控写入，不新增模型判词、缓存服务或自动迁移业务项目；发布验证清单放包外，避免提交与包校验自引用。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "274通过0失败，真实项目副本27通过0失败，原生接续2通过0失败；现有全局安装1.5.1读回通过，1363个其他技能/登录/配置文件不变，重复安装无变化。文档明确将最终CI与资产身份记录在发布验证清单，不提前虚构成功。",
+  "finished_at": "2026-10-29T17:07:29.757014+00:00"
+}

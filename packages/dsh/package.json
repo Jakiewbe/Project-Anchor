@@ -1,6 +1,6 @@
 {
   "name": "@local/project-anchor-dsh",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
   "type": "module",
   "description": "Project Anchor governance for DeepSeek Harness: read-only status and doctor tools plus a governance prompt section over the Python kit.py.",

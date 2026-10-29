@@ -39,7 +39,7 @@ class IterationTests(unittest.TestCase):
         plan = fields.pop("plan", "draft")
         fields.setdefault("checks", checks_for(self.project, fields.get("acceptance_criteria", ["输出5"])))
         revision = task_change(self.project, s["revision"], "add",
-                               {"task_id": tid, "title": tid, "acceptance_criteria": ["输出5"], **fields}, "授权测试范围")
+                               {"deliverables": [], "task_id": tid, "title": tid, "acceptance_criteria": ["输出5"], **fields}, "授权测试范围")
         if plan == "approved":
             s, _, _ = load(self.project)
             revision = task_change(self.project, s["revision"], "approve", {"task_id": tid},
@@ -156,12 +156,12 @@ class IterationTests(unittest.TestCase):
         self.add()
         s, c, ledger = load(self.project)
         current_bytes = (self.project / ".agent/CURRENT.md").read_bytes()
-        rev = doc_change(self.project, s["revision"], "CURRENT.md", c["CURRENT.md"], "同步任务修订")
+        rev = doc_change(self.project, s["revision"], "CURRENT.md", c["CURRENT.md"], "同步任务修订", task_ids=[])
         self.assertEqual(rev, s["revision"] + 1)
         self.assertEqual(load(self.project)[0]["current_task_revision"], ledger["revision"])
         self.assertEqual(current_bytes, (self.project / ".agent/CURRENT.md").read_bytes())
         before = self.fingerprint()
-        self.assertEqual(doc_change(self.project, rev, "CURRENT.md", c["CURRENT.md"], "重复同步"), rev)
+        self.assertEqual(doc_change(self.project, rev, "CURRENT.md", c["CURRENT.md"], "重复同步", task_ids=[]), rev)
         self.assertEqual(before, self.fingerprint())
 
     def test_same_goal_without_approval_is_not_accepted(self):

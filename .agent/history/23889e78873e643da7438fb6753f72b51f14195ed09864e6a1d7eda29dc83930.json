@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 251,
+  "entries": [
+    {
+      "revision": 114,
+      "action": "state:update",
+      "reason": "用户要求重写README并配图；文档7项检查及本地视觉核对通过，保持功能和未验证边界",
+      "timestamp": "2026-10-09T08:59:03.858361+00:00"
+    }
+  ]
+}

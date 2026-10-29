@@ -155,7 +155,7 @@ class AgentsInstallTests(ClientBase):
         for args in steps:
             result = self.run_skill(self.skill, *args)
             self.assertEqual(result.returncode, 0, result.stderr)
-        task = {"task_id": "T1", "title": "核对", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
+        task = {"deliverables": [], "task_id": "T1", "title": "核对", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
         result = self.run_skill(self.skill, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "规划", payload=json.dumps(task, ensure_ascii=False))
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -373,7 +373,7 @@ class CrossClientTests(ClientBase):
         install_client("claude", claude_home)
         first, second = Path(agents["skill"]), claude_home / "skills/project-anchor"
         init_project(self.project, "共享项目")
-        task = {"task_id": "T1", "title": "共享", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
+        task = {"deliverables": [], "task_id": "T1", "title": "共享", "acceptance_criteria": ["通过"], "checks": checks_for(self.project, ["通过"])}
         result = self.run_skill(first, "task", "add", self.project, "--json-input", "--expected-revision", 0,
                                 "--reason", "客户端一", payload=json.dumps(task, ensure_ascii=False))
         self.assertEqual(result.returncode, 0, result.stderr)

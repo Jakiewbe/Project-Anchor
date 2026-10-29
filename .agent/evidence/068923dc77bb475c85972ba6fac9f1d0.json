@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "run_id": "068923dc77bb475c85972ba6fac9f1d0",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 2,
+  "kind": "review",
+  "scope_version": 2,
+  "scope_hash": "649bd30be954378e474bc4d380957736b11f521cdd508dd8d2ecd37c34c21f6e",
+  "criteria_hash": "a6dfb5e0b592826589918e3a33e28a236ec4d7e18d5e335d728a21bfde1506cb",
+  "expected_revision": 257,
+  "input_hash": "28131422fad3425e749d5a2e60f6bc475772e97c4231e1088c5688a62bfaeaf4",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "docs"
+  ],
+  "started_at": "2026-10-29T17:00:28.746427+00:00",
+  "reason": "完成Bug审查及第一性原理简化检查",
+  "result": "pass",
+  "review": {
+    "criterion": 2,
+    "findings": "Review查Bug发现并修复源码树查询写缓存、验收中空目录交付物消失仍可能附加pass、Skill旧示例缺deliverables与schema3迁移表述冲突；真实Windows只读ACL、全依赖链和schema3凭据保留有实际负向验证。",
+    "resolution": "最终完整回归274通过0失败，run_id 7acc20b6cd15478694d23e832a1b4229；四个真实项目副本27通过0失败且检查范围内原件哈希不变；Codex新会话和原生压缩后2通过0失败，config.toml不变且Hook关闭；文档3通过0失败。详见docs/ITERATION_1_5_1_VALIDATION.md。",
+    "simpler": "沿用唯一核心、原事务和锁；只读前后校验不回退不重试；仅查询内共享文件哈希，无持久缓存；复盘索引不复制原文。未宣称生产、仪器、Hook或DSH真实宿主通过。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "最终完整回归274通过0失败，run_id 7acc20b6cd15478694d23e832a1b4229；四个真实项目副本27通过0失败且检查范围内原件哈希不变；Codex新会话和原生压缩后2通过0失败，config.toml不变且Hook关闭；文档3通过0失败。详见docs/ITERATION_1_5_1_VALIDATION.md。",
+  "finished_at": "2026-10-29T17:00:28.753160+00:00"
+}

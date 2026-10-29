@@ -1,4 +1,4 @@
-"""Schema 1/2 -> 3 migration and old-writer refusal tests."""
+"""Schema 1/2 -> 4 migration and old-writer refusal tests."""
 import json
 import os
 from pathlib import Path
@@ -92,7 +92,7 @@ class MigrationTests(unittest.TestCase):
         self.assertTrue(json.loads(result.stdout)["changed"])
         state, _, ledger = memory.load(self.project)
         task = ledger["tasks"][0]
-        self.assertEqual(ledger["schema"], 3)
+        self.assertEqual(ledger["schema"], 4)
         self.assertTrue(task["legacy_unverified"])
         self.assertNotIn("approved_scope", task)
         self.assertEqual(task["evidence"][0]["scope_version"], 0)
@@ -124,7 +124,7 @@ class MigrationTests(unittest.TestCase):
                                "旧任务直接开始")
         memory.task_change(self.project, state["revision"], "revise", {"task_id": "T1"}, "修订")
         state, _, _ = memory.load(self.project)
-        memory.task_change(self.project, state["revision"], "update", {"task_id": "T1", "checks": checks_for(self.project, ["旧验收"])}, "补齐验收")
+        memory.task_change(self.project, state["revision"], "update", {"task_id": "T1", "deliverables": [], "checks": checks_for(self.project, ["旧验收"])}, "补齐验收")
         state, _, _ = memory.load(self.project)
         memory.task_change(self.project, state["revision"], "approve", {"task_id": "T1"},
                            "重新批准", source="user")
@@ -202,6 +202,7 @@ class MigrationTests(unittest.TestCase):
             return memory.task_change(self.project, memory.load(self.project)[0]["revision"], action, value, "configure", source="policy")
         change("revise", {"task_id": "D"})
         change("update", {"task_id": "D", "checks": checks_for(self.project, ["criterion"])})
+        change("update", {"task_id": "D", "deliverables": []})
         change("approve", {"task_id": "D"})
         self.assertFalse(memory.load(self.project)[2]["tasks"][0]["verification_legacy"])
 

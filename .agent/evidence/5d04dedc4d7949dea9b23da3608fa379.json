@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "run_id": "5d04dedc4d7949dea9b23da3608fa379",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 2,
+  "scope_hash": "649bd30be954378e474bc4d380957736b11f521cdd508dd8d2ecd37c34c21f6e",
+  "criteria_hash": "4a8d9ffe9217ad9d084f8012a13851e581b86a675ee3e5daab3ecb49a3f189dd",
+  "expected_revision": 256,
+  "input_hash": "91f59f6eaa2a0265386b71b17f141bb6e4182e6255c6219a971093713f20f58e",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages"
+  ],
+  "started_at": "2026-10-29T16:54:33.897542+00:00",
+  "reason": "最终代码含源码树只读修正的完整Windows回归",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/5d04dedc4d7949dea9b23da3608fa379/stdout.log",
+      "sha256": "cbeae8b724cdc4dc5629de7afe1db1fb6b9d301bad092f690b6473c00ef0e970",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/5d04dedc4d7949dea9b23da3608fa379/stderr.log",
+      "sha256": "f7189ca7aaf65179d224053b98f485ed26637106a4f9c260704a3994b3692e5f",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-10-29T16:56:42.832171+00:00"
+}

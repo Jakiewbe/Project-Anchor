@@ -10,12 +10,12 @@ import time
 import uuid
 
 from .atomic_io import KitError, atomic_write, digest, encode_json, locked, read_json, safe_path
-from .tasks import criterion_hash, evidence_valid, now, validate
+from .tasks import criterion_hash, deliverable_coverage, evidence_valid, now, validate
 
 OUTPUT_LIMIT = 8 * 1024 * 1024
 
 
-def fingerprint(root, inputs):
+def fingerprint(root, inputs, cache=None):
     root = Path(root).resolve()
     files = {}
     for item in inputs:
@@ -29,7 +29,13 @@ def fingerprint(root, inputs):
         for path in candidates:
             path = safe_path(path, root)
             if path.is_file():
-                files[path.relative_to(root).as_posix()] = digest(path.read_bytes())
+                if cache is None:
+                    value = digest(path.read_bytes())
+                else:
+                    if path not in cache:
+                        cache[path] = digest(path.read_bytes())
+                    value = cache[path]
+                files[path.relative_to(root).as_posix()] = value
                 found = True
         if not found:
             raise KitError(f"检查输入没有文件: {item}")
@@ -54,6 +60,12 @@ def read_receipt(root, run_id):
 
 
 def show(root, run_id):
+    from .memory import reading
+    with reading(root):
+        return _show(root, run_id)
+
+
+def _show(root, run_id):
     value = read_receipt(root, run_id)
     result = dict(value)
     logs = {}
@@ -65,11 +77,14 @@ def show(root, run_id):
     return result
 
 
-def state(root, task):
+def state(root, task, cache=None):
     if task.get("verification_legacy") or task.get("legacy_unverified"):
         return "legacy"
     if not task.get("checks"):
         return "unconfigured"
+    for item in task.get("deliverables", []):
+        if not safe_path(Path(root) / item, root).exists():
+            return "stale"
     outcomes = []
     for check in task["checks"]:
         evidence = next((ev for ev in reversed(task["evidence"])
@@ -82,6 +97,7 @@ def state(root, task):
             if digest(_receipt_path(root, evidence["run_id"]).read_bytes()) != evidence["receipt_sha256"]:
                 raise KitError("执行凭据哈希不一致")
             if (receipt["task_id"] != task["task_id"] or receipt["scope_version"] != task["approved_scope"]["version"]
+                    or receipt["scope_hash"] != task["approved_scope"]["hash"]
                     or receipt["criteria_hash"] != criterion_hash(task["acceptance_criteria"][check["criterion"] - 1])
                     or receipt["criterion"] != check["criterion"] or receipt["kind"] != check["kind"]
                     or receipt["input_hash"] != evidence["input_hash"]):
@@ -92,7 +108,7 @@ def state(root, task):
                 outcomes.append("invalid")
             else:
                 try:
-                    outcomes.append("pass" if fingerprint(root, check["inputs"]) == receipt["input_hash"] else "stale")
+                    outcomes.append("pass" if fingerprint(root, check["inputs"], cache) == receipt["input_hash"] else "stale")
                 except (OSError, KitError):
                     outcomes.append("stale")
         except (OSError, KitError, KeyError, TypeError, ValueError):
@@ -104,6 +120,8 @@ def state(root, task):
 
 
 def require_fresh(root, task):
+    if deliverable_coverage(task) != "covered":
+        raise KitError(f"任务 {task['task_id']} 的交付未声明；须修订并重新批准")
     value = state(root, task)
     if value != "pass":
         raise KitError(f"任务 {task['task_id']} 的验收记录为 {value}，需要当前材料对应的检查结果")
@@ -121,6 +139,11 @@ def _prepare(root, expected, task_id, criterion, kind, reason):
         task = next((t for t in ledger["tasks"] if t["task_id"] == task_id), None)
         if not task or task["plan"] != "approved" or task.get("verification_legacy") or task.get("legacy_unverified"):
             raise KitError("检查需要已批准的新版任务")
+        if deliverable_coverage(task) != "covered":
+            raise KitError("验收前须修订任务、声明deliverables并重新批准")
+        for item in task["deliverables"]:
+            if not safe_path(Path(root) / item, root).exists():
+                raise KitError(f"交付物不存在: {item}；请先生成交付物再验收")
         if task["status"] == "cancelled":
             raise KitError("已取消任务不能验收")
         if type(criterion) is not int:
@@ -159,6 +182,9 @@ def _finish(root, receipt):
         task = next(t for t in ledger["tasks"] if t["task_id"] == receipt["task_id"])
         if task.get("approved_scope", {}).get("hash") != receipt["scope_hash"]:
             raise KitError(f"检查期间批准范围变化；结果保留但未登记证据，run_id={receipt['run_id']}")
+        for item in task["deliverables"]:
+            if not safe_path(Path(root) / item, root).exists():
+                raise KitError(f"检查期间交付物消失: {item}；结果保留但未登记证据，run_id={receipt['run_id']}")
         check = next(c for c in task["checks"] if c["criterion"] == receipt["criterion"])
         if fingerprint(root, check["inputs"]) != receipt["input_hash"]:
             raise KitError(f"检查期间输入文件变化；结果保留但未登记证据，run_id={receipt['run_id']}")

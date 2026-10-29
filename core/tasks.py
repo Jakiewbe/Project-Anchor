@@ -11,10 +11,11 @@ from datetime import datetime, timezone
 import copy
 import json
 import re
+from pathlib import PurePosixPath, PureWindowsPath
 
 from .atomic_io import KitError, digest
 
-SCHEMA = 3
+SCHEMA = 4
 STATUSES = {"todo", "doing", "blocked", "done", "cancelled"}
 # Brief queries fold finished tasks into summary counts unless the caller asks for them.
 FINAL_STATUSES = {"done", "cancelled"}
@@ -27,12 +28,12 @@ TRANSITIONS = {
 }
 EVIDENCE_TYPES = {"test", "file", "review", "manual", "command"}
 EVIDENCE_LEVELS = {"claimed", "observed", "reviewed"}
-SCOPE_FIELDS = ("description", "acceptance_criteria", "dependencies", "checks")
+SCOPE_FIELDS = ("description", "acceptance_criteria", "dependencies", "checks", "deliverables")
 TASK_FIELDS = {
     "task_id", "title", "description", "milestone", "status", "plan",
     "dependencies", "acceptance_criteria", "evidence", "blocker",
     "approved_scope", "legacy_unverified", "updated_at", "completed_at",
-    "checks", "verification_legacy",
+    "checks", "verification_legacy", "deliverables",
 }
 EVIDENCE_FIELDS = {
     "type", "criterion", "detail", "level", "scope_version", "criteria_hash",
@@ -41,7 +42,7 @@ EVIDENCE_FIELDS = {
 }
 APPROVED_SCOPE_FIELDS = {
     "project_id", "task_id", "version", "hash", "description",
-    "acceptance_criteria", "dependencies", "approved_at", "source", "reason", "checks",
+    "acceptance_criteria", "dependencies", "approved_at", "source", "reason", "checks", "deliverables",
 }
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 
@@ -76,6 +77,8 @@ def approved_scope_hash(scope):
     value = scope_values(scope["description"], scope["acceptance_criteria"], scope["dependencies"])
     if "checks" in scope:
         value["checks"] = scope["checks"]
+    if "deliverables" in scope:
+        value["deliverables"] = scope["deliverables"]
     return digest(_canonical(value))
 
 
@@ -127,7 +130,7 @@ def validate(ledger, project_id=None):
     schema = ledger.get("schema") if isinstance(ledger, dict) else None
     if schema == 1:
         return _validate_v1(ledger, project_id)
-    if schema in (2, 3):
+    if schema in (2, 3, 4):
         return _validate_v2(ledger, project_id)
     raise KitError("不支持的任务账本版本")
 
@@ -201,6 +204,26 @@ def _validate_v1(ledger, project_id=None):
     return ledger
 
 
+def validate_paths(items, label, allow_empty=False):
+    if (not isinstance(items, list) or (not items and not allow_empty)
+            or any(not isinstance(p, str) for p in items) or len(set(items)) != len(items)):
+        raise KitError(f"{label} 必须为不重复的相对路径数组")
+    for item in items:
+        if (not item.strip() or "\\" in item or PurePosixPath(item).is_absolute()
+                or PureWindowsPath(item).drive or ".." in PurePosixPath(item).parts
+                or any(c in item for c in "*?[]\0") or not PurePosixPath(item).parts
+                or PurePosixPath(item).parts[0] in {".agent", ".git"}):
+            raise KitError(f"{label} 只接受明确的项目相对业务路径")
+
+
+def deliverable_coverage(task):
+    if "deliverables" not in task or "deliverables" not in (task.get("approved_scope") or {}):
+        return "undeclared"
+    inputs = [PurePosixPath(p) for c in task.get("checks", []) for p in c["inputs"]]
+    return "covered" if all(any(PurePosixPath(p).is_relative_to(i) for i in inputs)
+                            for p in task["deliverables"]) else "uncovered"
+
+
 def validate_checks(checks, criteria, complete=False):
     if not isinstance(checks, list):
         raise KitError("checks 必须为数组")
@@ -214,15 +237,7 @@ def validate_checks(checks, criteria, complete=False):
         seen.add(index)
         if check.get("kind") not in {"command", "review"}:
             raise KitError("检查类型必须为 command 或 review")
-        inputs = check.get("inputs")
-        if not isinstance(inputs, list) or not inputs or len(set(map(str, inputs))) != len(inputs):
-            raise KitError("检查 inputs 必须是非空且不重复的项目相对路径数组")
-        from pathlib import PurePosixPath, PureWindowsPath
-        for item in inputs:
-            if (not isinstance(item, str) or not item.strip() or "\\" in item
-                    or PurePosixPath(item).is_absolute() or PureWindowsPath(item).drive
-                    or ".." in PurePosixPath(item).parts or any(c in item for c in "*?[]")):
-                raise KitError("检查 inputs 只接受明确的项目相对文件或目录，不接受通配符或越界路径")
+        validate_paths(check.get("inputs"), "检查 inputs")
         if check["kind"] == "command":
             argv = check.get("argv")
             if not isinstance(argv, list) or not argv or any(not isinstance(a, str) or not a or "\0" in a for a in argv):
@@ -237,7 +252,7 @@ def validate_checks(checks, criteria, complete=False):
 
 
 def _validate_v2(ledger, project_id=None):
-    if not isinstance(ledger, dict) or ledger.get("schema") not in (2, 3):
+    if not isinstance(ledger, dict) or ledger.get("schema") not in (2, 3, 4):
         raise KitError("不支持的任务账本版本")
     if project_id and ledger.get("project_id") != project_id:
         raise KitError("任务账本属于其他项目")
@@ -255,6 +270,10 @@ def _validate_v2(ledger, project_id=None):
             raise KitError(f"未知任务字段: {', '.join(sorted(unknown))}")
         if ledger["schema"] == 2 and set(task) & {"checks", "verification_legacy"}:
             raise KitError("schema 2 不接受新版验收配置")
+        if ledger["schema"] < 4 and "deliverables" in task:
+            raise KitError("旧schema不接受交付声明")
+        if "deliverables" in task:
+            validate_paths(task["deliverables"], "deliverables", allow_empty=True)
         for key in ("task_id", "title", "description", "milestone", "status", "plan"):
             text(task.get(key), key)
         tid = task["task_id"]
@@ -271,7 +290,7 @@ def _validate_v2(ledger, project_id=None):
             text(criterion, "验收标准")
         if type(task.get("verification_legacy", False)) is not bool:
             raise KitError("verification_legacy 必须是布尔值")
-        if ledger["schema"] == 3:
+        if ledger["schema"] >= 3:
             validate_checks(task.get("checks", []), task["acceptance_criteria"],
                             complete=task["plan"] == "approved" and not task.get("verification_legacy"))
         if any(not isinstance(dep, str) for dep in task["dependencies"]) or len(set(task["dependencies"])) != len(task["dependencies"]):
@@ -314,6 +333,12 @@ def _validate_v2(ledger, project_id=None):
                 raise KitError("批准范围内容与哈希不一致")
             if "checks" in approved:
                 validate_checks(approved["checks"], approved["acceptance_criteria"], complete=True)
+            if "deliverables" in approved:
+                if ledger["schema"] < 4:
+                    raise KitError("旧schema不接受交付批准")
+                validate_paths(approved["deliverables"], "批准deliverables", allow_empty=True)
+                if deliverable_coverage({**approved, "approved_scope": approved}) != "covered":
+                    raise KitError("交付物未被验收inputs完整覆盖")
         if legacy and approved is not None:
             raise KitError("legacy 任务不能同时带有批准范围")
         if task["plan"] == "approved" and not legacy and approved is None:
@@ -426,6 +451,11 @@ def _approve(task, ledger, reason, source):
     if task.get("verification_legacy"):
         raise KitError("旧任务需要先 task revise、补齐 checks，再重新批准")
     validate_checks(task.get("checks", []), task["acceptance_criteria"], complete=True)
+    if "deliverables" not in task:
+        raise KitError("批准前须显式声明deliverables；无本地交付请填空数组")
+    validate_paths(task["deliverables"], "deliverables", allow_empty=True)
+    if deliverable_coverage({**task, "approved_scope": task}) != "covered":
+        raise KitError("交付物未被验收inputs完整覆盖")
     if task["plan"] == "approved" and not task.get("legacy_unverified") and not scope_dirty(task):
         return task, False
     previous = task.get("approved_scope")
@@ -438,6 +468,7 @@ def _approve(task, ledger, reason, source):
         "dependencies": list(task["dependencies"]),
         "approved_at": now(), "source": source, "reason": reason,
         "checks": copy.deepcopy(task["checks"]),
+        "deliverables": list(task["deliverables"]),
     }
     task["plan"] = "approved"
     task["legacy_unverified"] = False
@@ -478,7 +509,7 @@ def mutate(ledger, action, payload, reason, source=None):
             raise KitError("新增任务只能建立草案；批准请使用 task approve")
         if set(payload) & {"evidence", "approved_scope", "legacy_unverified", "verification_legacy"}:
             raise KitError("新增任务不能携带证据或批准范围")
-        allowed = {"task_id", "title", "description", "milestone", "plan", "dependencies", "acceptance_criteria", "blocker", "checks"}
+        allowed = {"task_id", "title", "description", "milestone", "plan", "dependencies", "acceptance_criteria", "blocker", "checks", "deliverables"}
         if set(payload) - allowed:
             raise KitError("未知任务字段")
         item = dict(payload)
@@ -495,7 +526,7 @@ def mutate(ledger, action, payload, reason, source=None):
         internal = {"plan", "approved_scope", "legacy_unverified", "verification_legacy"}
         if set(payload) & internal:
             raise KitError("plan、approved_scope、legacy_unverified 不能由 task update 修改；请使用 task approve/revise")
-        allowed = {"task_id", "title", "description", "milestone", "status", "dependencies", "acceptance_criteria", "evidence", "blocker", "checks"}
+        allowed = {"task_id", "title", "description", "milestone", "status", "dependencies", "acceptance_criteria", "evidence", "blocker", "checks", "deliverables"}
         if set(payload) - allowed:
             raise KitError("未知任务字段")
         status = payload.get("status", previous["status"])
@@ -507,9 +538,11 @@ def mutate(ledger, action, payload, reason, source=None):
         candidate = {**previous, **{key: value for key, value in payload.items() if key != "evidence"}}
         if "status" in payload and status in {"doing", "done"} and (candidate.get("legacy_unverified") or candidate.get("verification_legacy")):
             raise KitError("旧任务未配置新版验收；请先 task revise、补齐 checks，再 task approve")
+        if "status" in payload and status in {"doing", "done"} and deliverable_coverage(candidate) != "covered":
+            raise KitError("旧任务交付未声明；请先 task revise、补齐deliverables，再 task approve")
         if "evidence" in payload:
             if payload["evidence"] != [] or not isinstance(payload["evidence"], list):
-                raise KitError("schema 3 证据只能由 verify run 或 task review 生成")
+                raise KitError("证据只能由 verify run 或 task review 生成")
             if status == "done" and previous["status"] == "done":
                 raise KitError("先重新打开任务再更改证据")
             if candidate.get("plan") != "approved":

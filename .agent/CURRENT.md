@@ -1,27 +1,25 @@
 # 当前断点
 
 ## 当前阶段
-README与已验证1.5.0候选实现已正常推送GitHub main；未创建Release。
+用户已授权正式发布1.5.1；本地代码与安装验证通过，准备推送并运行远程CI。
 
 ## 当前任务
-本轮README150 done，验收pass；focus保留该任务。
-IMP150保持历史done，README变更后已重新自查，验收pass。
+IMP151 doing：标准1命令通过、标准2自查通过；标准3等待固定提交与远程CI。
+REL151 approved/todo，待IMP151完成后发布及核对资产。
 
 ## 已完成工作
-README按定位、Git/Python安装、日常使用、升级、边界重写。
-文档核对3通过0失败；源码仍绑定253项通过回归凭据；原生接续2通过0失败。
-代码/文档提交f76a6aa1ca9ec3cfec80f99c249771e6ba322bde，main读回一致。
-GitHub README blob 7d913cd67bd14cc4f166cd20ba80ff32de97805c与本地提交一致。
-提交排除原始运行日志与秘密；没有创建分支/worktree、强推或升级其他项目。
+六项优化及schema4兼容已实现。完整回归274通过0失败；项目副本27通过0失败；原生接续2通过0失败。
+全局Skill已更新1.5.1；1363个其他技能/登录/配置文件未变，重复安装无变化，Skill读回通过。
+报告docs/ITERATION_1_5_1_VALIDATION.md；本机证据.agent/runtime/release151及implementation151。
 
 ## 当前阻塞
-远程CI结果未确认；Hook自动注入与DSH真实宿主仍未验证。
+无权限阻塞；远程Windows CI与固定提交包尚待执行。Hook及DSH真实宿主仍未验证，不扩大声明。
 
 ## 下一步动作
-本轮交付结束；本记录随治理检查点提交推送，不创建正式Release。
+正常提交推送main，核对CI，固定提交打包并公开v1.5.1；核对下载与标签后结项。
 
 ## 状态修订
-本页对齐最新任务账本；本轮原始核对在.agent/runtime/readme150。
+关联IMP151；正式业务项目原件未迁移。
 
 ## Git 检查
-本地保留feat/universal-agent-skills，目标main正常快进；未改写历史。
+现有feat/universal-agent-skills；未新建分支/worktree，计划正常快进推送，不强推。

@@ -37,6 +37,9 @@ function projectStatus(value) {
   for (const key of ['goal_approved', 'current_stale', 'focus_missing']) {
     if (typeof value[key] !== 'boolean') throw new Error(`status 缺少布尔 ${key}`)
   }
+  if (!['unknown', 'changed', 'aligned'].includes(value.current_alignment)) {
+    throw new Error('status 缺少有效断点关联')
+  }
   if (!Array.isArray(value.tasks) || !Array.isArray(value.external_dependencies)
       || !value.summary || !Number.isInteger(value.summary.folded_final)) {
     throw new Error('status 缺少任务、依赖或折叠统计')
@@ -93,6 +96,13 @@ function renderStatus(value) {
   ]
   lines.push(`折叠 ${value.summary.folded_final} 项；本轮${value.focus_missing ? '尚未设置' : '查询见 selection'}。`)
   if (value.current_stale) lines.push('WARN CURRENT 落后于任务修订')
+  lines.push(`断点关联：${value.current_alignment}；仅证明记录关联，不判断文字语义。`)
+  for (const task of value.tasks) {
+    lines.push(`${task.task_id}: 历史状态 ${task.status} · 当前验收 ${task.verification_state} · 交付覆盖 ${task.deliverable_coverage}`)
+    for (const check of task.check_summary ?? []) {
+      lines.push(`  标准${check.criterion}: ${check.kind} · ${check.level} · 记录结果 ${check.result}`)
+    }
+  }
   return [{ type: 'text', text: lines.join('\n') }]
 }
 

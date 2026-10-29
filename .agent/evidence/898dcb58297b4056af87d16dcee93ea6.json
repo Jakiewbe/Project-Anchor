@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "run_id": "898dcb58297b4056af87d16dcee93ea6",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 2,
+  "scope_hash": "649bd30be954378e474bc4d380957736b11f521cdd508dd8d2ecd37c34c21f6e",
+  "criteria_hash": "4a8d9ffe9217ad9d084f8012a13851e581b86a675ee3e5daab3ecb49a3f189dd",
+  "expected_revision": 255,
+  "input_hash": "e4f52148447ba2b7f7190ae189f07051529bd04f1566021d7f0dfbdef6ed9416",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages"
+  ],
+  "started_at": "2026-10-29T16:51:00.769620+00:00",
+  "reason": "1.5.1完整Windows回归及真实只读权限验收",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/898dcb58297b4056af87d16dcee93ea6/stdout.log",
+      "sha256": "3d4708d716640297b0a57c3d963a291fc10e108717c70421da05182a8343b5f6",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/898dcb58297b4056af87d16dcee93ea6/stderr.log",
+      "sha256": "ee940679032bb4d7d982c04588144f34b8fb15dbafd5af7b1bad2a702f1c9390",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-10-29T16:53:04.362837+00:00"
+}

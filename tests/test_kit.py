@@ -38,7 +38,7 @@ class Environment(unittest.TestCase):
     def add(self, tid="T1", **fields):
         state, _, _ = memory.load(self.project)
         plan = fields.pop("plan", "draft")
-        task = {"task_id": tid, "title": tid, "acceptance_criteria": ["可验证"], **fields}
+        task = {"deliverables": [], "task_id": tid, "title": tid, "acceptance_criteria": ["可验证"], **fields}
         task.setdefault("checks", checks_for(self.project, task["acceptance_criteria"]))
         revision = memory.task_change(self.project, state["revision"], "add", task, "测试创建")
         if plan == "approved":
@@ -179,7 +179,7 @@ class ProjectTests(Environment):
         current = self.project / ".agent/CURRENT.md"
         original = current.read_bytes()
         current.write_bytes(b"\xef\xbb\xbf" + original.replace(b"\n", b"\r\n"))
-        memory.doc_change(self.project, 0, "CURRENT.md", current.read_text(encoding="utf-8-sig"), "确认编码", adopt=True)
+        memory.doc_change(self.project, 0, "CURRENT.md", current.read_text(encoding="utf-8-sig"), "确认编码", adopt=True, task_ids=[])
         subprocess.run(["git", "-C", str(self.project), "-c", "core.autocrlf=true", "add", ".agent", ".gitattributes", ".gitignore", "AGENTS.md"], check=True, capture_output=True)
         subprocess.run(["git", "-C", str(self.project), "-c", "user.name=Test", "-c", "user.email=test@example.invalid", "commit", "-m", "state"], check=True, capture_output=True)
         clone = self.base / "克隆 项目"
@@ -349,7 +349,7 @@ class TaskTests(Environment):
 
     def test_two_processes_same_revision_one_wins(self):
         payload = self.base / "payload.json"
-        payload.write_bytes(io.encode_json({"task_id": "C1", "title": "并发", "acceptance_criteria": ["一次写入"]}))
+        payload.write_bytes(io.encode_json({"deliverables": [], "task_id": "C1", "title": "并发", "acceptance_criteria": ["一次写入"]}))
         args = [sys.executable, str(ROOT / "kit.py"), "task", "add", str(self.project), "--file", str(payload), "--expected-revision", "0", "--reason", "并发测试"]
         processes = [subprocess.Popen(args, env=self.env, stdout=subprocess.PIPE, stderr=subprocess.PIPE) for _ in range(2)]
         for process in processes:
@@ -370,7 +370,7 @@ class TaskTests(Environment):
     def test_large_dependency_chain(self):
         state, _, ledger = memory.load(self.project)
         for i in range(1500):
-            ledger["tasks"].append({"task_id": f"T{i}", "title": "任务", "description": "任务", "milestone": "m", "status": "todo", "plan": "draft", "acceptance_criteria": ["完成"], "evidence": [], "blocker": "", "dependencies": [f"T{i-1}"] if i else []})
+            ledger["tasks"].append({"deliverables": [], "task_id": f"T{i}", "title": "任务", "description": "任务", "milestone": "m", "status": "todo", "plan": "draft", "acceptance_criteria": ["完成"], "evidence": [], "blocker": "", "dependencies": [f"T{i-1}"] if i else []})
         tasks.validate(ledger)
 
     def test_reopen_invalidates_old_evidence(self):
@@ -437,7 +437,7 @@ class MemoryTests(Environment):
     def test_current_size_limit(self):
         value = memory.load(self.project)[1]["CURRENT.md"] + "line\n" * 60
         with self.assertRaises(io.KitError):
-            memory.doc_change(self.project, 0, "CURRENT.md", value, "原因")
+            memory.doc_change(self.project, 0, "CURRENT.md", value, "原因", task_ids=[])
 
     def test_goal_approval_and_history(self):
         value = memory.load(self.project)[1]["GOAL.md"].replace("待确认。", "已确认内容。")
@@ -452,7 +452,7 @@ class MemoryTests(Environment):
         path = self.project / ".agent/CURRENT.md"
         value = path.read_text(encoding="utf-8") + "\n外部确认的修订。\n"
         path.write_text(value, encoding="utf-8")
-        memory.doc_change(self.project, 0, "CURRENT.md", value, "审核编辑", adopt=True)
+        memory.doc_change(self.project, 0, "CURRENT.md", value, "审核编辑", adopt=True, task_ids=[])
         self.assertEqual(memory.load(self.project)[0]["revision"], 1)
 
     def test_adopt_refuses_other_drift(self):
@@ -461,13 +461,13 @@ class MemoryTests(Environment):
         path.write_text(value, encoding="utf-8")
         (self.project / ".agent/LESSONS.md").write_text("another edit", encoding="utf-8")
         with self.assertRaises(io.KitError):
-            memory.doc_change(self.project, 0, "CURRENT.md", value, "审核", adopt=True)
+            memory.doc_change(self.project, 0, "CURRENT.md", value, "审核", adopt=True, task_ids=[])
 
     def test_bom_document_snapshot_integrity(self):
         path = self.project / ".agent/CURRENT.md"
         path.write_bytes(b"\xef\xbb\xbf" + path.read_bytes())
         value = path.read_text(encoding="utf-8-sig")
-        memory.doc_change(self.project, 0, "CURRENT.md", value, "审核 BOM", adopt=True)
+        memory.doc_change(self.project, 0, "CURRENT.md", value, "审核 BOM", adopt=True, task_ids=[])
         snap = memory.snapshot(self.project)
         self.assertFalse(memory.snapshot_check(self.project, snap)["stale"])
         self.assertTrue(io.read_json(snap)["files"]["CURRENT.md"].startswith("\ufeff"))
@@ -485,7 +485,7 @@ class MemoryTests(Environment):
         config.trust_project(self.project, self.home)
         self.assertIn("state_revision", context(self.project, self.home))
         value = memory.load(self.project)[1]["CURRENT.md"] + "\n更新\n"
-        memory.doc_change(self.project, 0, "CURRENT.md", value, "状态更新")
+        memory.doc_change(self.project, 0, "CURRENT.md", value, "状态更新", task_ids=[])
         self.assertIn("未审核", context(self.project, self.home))
 
     def test_context_length(self):
@@ -500,7 +500,7 @@ class MemoryTests(Environment):
         self.add()
         state, content, ledger = memory.load(self.project)
         self.assertNotEqual(state["current_task_revision"], ledger["revision"])
-        memory.doc_change(self.project, 1, "CURRENT.md", content["CURRENT.md"], "同步断点")
+        memory.doc_change(self.project, 1, "CURRENT.md", content["CURRENT.md"], "同步断点", task_ids=[])
         self.assertEqual(memory.load(self.project)[0]["current_task_revision"], 1)
 
 
@@ -755,7 +755,7 @@ class KnowledgeAndCLITests(Environment):
         result = self.cli("init-project", self.project, "--name", "研发项目", "--git-init")
         self.assertEqual(result.returncode, 0, result.stderr)
         source = self.base / "task.json"
-        source.write_bytes(io.encode_json({"task_id": "T1", "title": "检查", "acceptance_criteria": ["检查通过"], "checks": checks_for(self.project,["检查通过"])}))
+        source.write_bytes(io.encode_json({"deliverables": [], "task_id": "T1", "title": "检查", "acceptance_criteria": ["检查通过"], "checks": checks_for(self.project,["检查通过"])}))
         self.assertEqual(self.cli("task", "add", self.project, "--file", source, "--expected-revision", 0, "--reason", "创建草案").returncode, 0)
         self.assertEqual(self.cli("task", "approve", self.project, "--task-id", "T1", "--expected-revision", 1,
                                   "--reason", "用户批准", "--source", "user").returncode, 0)

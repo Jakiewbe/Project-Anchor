@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 261,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 226,
+      "file": "CURRENT.md",
+      "previous_sha256": "c60e1802951adaa42856a0ffc370014efe410d4812ae2d67969779f72318fc9e",
+      "content": "# 当前断点\n\n## 当前阶段\n按用户批准计划实施1.5.0候选；核心实现完成，正在最终验收，未发布。\n\n## 当前任务\n本轮IMP150 doing，指针仅指向该任务；不自动继续历史任务。\n\n## 已完成工作\nschema3、focus、verify、自查、输入过期检查、裁剪前归档和迁移回退已实现。\n已完成250项全量回归；新增迁移边界7项专项通过，最终全量仍待确认。\n工具箱自身已预检、备份和迁移；其他真实项目本轮未迁移。\nSkill/DSH/README/命令与升级文档已同步；程序与Agent自查来源分开记录。\n\n## 当前阻塞\n真实客户端新会话与压缩接续正在隔离验证；CI需要发布流程另行触发。\n\n## 下一步动作\n核对完整回归、模型验收、安装保留检查和文档，按新协议验收IMP150。\n\n## 状态修订\n以state/tasks为准；原始证据和迁移备份索引在.agent/runtime/implementation150。\n\n## Git 检查\n保留既有分支与pi并行的路径兼容修正；不提交、推送或创建worktree。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-26T09:16:40.651198+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "1411a831d12d949574ddce51dfcf8d66795742ad13ea94dc5106df84b6e4efbf",
+      "user_approved": false,
+      "timestamp": "2026-10-09T12:44:35.796103+00:00",
+      "content_pruned": true
+    },
+    {
+      "revision": 122,
+      "action": "state:update",
+      "reason": "记录Draft PR与阻塞",
+      "timestamp": "2026-10-09T12:44:35.806359+00:00"
+    }
+  ]
+}

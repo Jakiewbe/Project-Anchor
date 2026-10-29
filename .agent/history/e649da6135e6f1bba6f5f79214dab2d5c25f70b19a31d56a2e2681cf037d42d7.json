@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 246,
+  "entries": [
+    {
+      "revision": 111,
+      "action": "state:update",
+      "reason": "保存已完成真实调用及网络失败，原生审核和外部未验证项保留",
+      "timestamp": "2026-10-09T08:29:49.868553+00:00"
+    }
+  ]
+}

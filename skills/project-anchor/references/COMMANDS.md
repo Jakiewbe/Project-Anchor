@@ -42,12 +42,12 @@ task/state 返回 `revision` 和 `changed`。`changed=false` 是有效请求没�
 
 `init-project` 的“初始化”指新增治理记录：创建 `.agent/`，保留并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`；默认不初始化Git，不改业务代码或依赖。审批和用户说明必须包含这四处写入范围；传入 `--git-init` 需要另有明确授权。
 
-## schema 3 的任务与验收
+## schema 4 的任务与验收
 
 task add 只建草案，验收配置 `checks` 与标准逐项对应，属于批准范围：
 
 ```json
-{"task_id":"T1","title":"实现接口","description":"本轮授权范围","acceptance_criteria":["测试通过","实现经自查"],"checks":[{"criterion":1,"kind":"command","inputs":["src","tests"],"argv":["C:/Python311/python.exe","-B","-m","unittest","discover","-s","tests"],"timeout_seconds":600},{"criterion":2,"kind":"review","inputs":["src"]}]}
+{"deliverables":["src"],"task_id":"T1","title":"实现接口","description":"本轮授权范围","acceptance_criteria":["测试通过","实现经自查"],"checks":[{"criterion":1,"kind":"command","inputs":["src","tests"],"argv":["C:/Python311/python.exe","-B","-m","unittest","discover","-s","tests"],"timeout_seconds":600},{"criterion":2,"kind":"review","inputs":["src"]}]}
 ```
 
 示例路径必须换成真实项目材料和解释器。inputs 是非空、明确的项目相对文件/目录，使用 `/`，不接受通配符、越界、链接、空目录、项目根目录、`.agent` 或 `.git`。目录递归比较文件清单与内容哈希；新增、删除、重命名都会改变指纹。不要将生成缓存和输出文件放进输入目录。检查只覆盖声明的输入，不能证明未覆盖材料。
@@ -80,9 +80,9 @@ result 为 pass/fail；程序固定记录 `level=claimed`、`reviewer_kind=self`
 
 ## 迁移和受保护回退
 
-schema 1/2 只读。`migrate PATH --expected-revision N --reason TEXT --dry-run` 与正式迁移共用完整转换校验；通过后去掉 --dry-run 执行。备份包含受影响状态、全部保护文档和清单，保留原批准哈希/快照/证据/历史，增加 verification_legacy，不生成新版执行凭据。旧任务继续前先 revise、补齐 checks、重新批准。旧 done 保留，查询显示 legacy。
+schema 1/2/3 只读。`migrate PATH --expected-revision N --reason TEXT --dry-run` 与正式迁移共用完整转换校验；通过后去掉 --dry-run 执行。备份包含受影响状态、全部保护文档和清单，保留原批准哈希/快照/证据/历史，schema1/2增加 verification_legacy，schema3保留原凭据并显示交付undeclared，不生成新版执行凭据。旧任务继续、结项或作为依赖前先 revise、补齐deliverables和checks、重新批准。旧done保留，schema1/2查询仍显示legacy。
 
-重复迁移 changed=false。旧版不能读写schema3。`migrate PATH --rollback BACKUP绝对路径 --expected-revision N --reason TEXT` 仅允许迁移后修订和全部文件字节仍相同时回退；有新改动就停止。事务中断单独用 recover；不能反复迁移直到成功。
+重复迁移 changed=false。旧版不能读写schema4。`migrate PATH --rollback BACKUP绝对路径 --expected-revision N --reason TEXT` 仅允许迁移后修订和全部文件字节仍相同时回退；有新改动就停止。事务中断单独用 recover；不能反复迁移直到成功。
 
 state update 接收完整文档。GOAL 必须有核心目标、项目背景、关键约束、非目标、验收标准、目标版本；CURRENT 必须有当前阶段、当前任务、已完成工作、当前阻塞、下一步动作、状态修订、Git 检查，50 行以内。普通更新禁止直接改原文件；外部既有编辑必须单独审核后 state adopt 登记，不用于绕过冲突。
 
@@ -93,3 +93,11 @@ state update 接收完整文档。GOAL 必须有核心目标、项目背景、�
 `--expect-event` 可重复，仅用于客户端证据已确认应触发的事件，必须同时传 `--session-id`。普通 doctor 的历史成功不能代替本会话检查；本会话缺失但未确认应触发时为 UNVERIFIED，模拟记录不证明客户端执行。
 
 Python检查建议用-B避免产生字节码缓存；输入目录中的生成文件也属于真实变化，不会被自动忽略。检查命令应在前台运行，不启动常驻进程；此执行器不是进程隔离环境。
+
+## 1.5.1接口
+
+CURRENT：`state update PATH CURRENT.md --file MARKDOWN --task T1 --task T2 --expected-revision N --reason TEXT`；无活动任务用互斥的`--no-task`，其他文档拒绝关联参数。`current_alignment`为unknown/changed/aligned；`current_stale`仍只比较任务修订。
+
+任务JSON新增批准字段`deliverables`，如`["catalog/shared-library/theme.json","templates/shared/xy"]`，无本地交付显式`[]`。每项必须等于某检查inputs或位于其目录下；不支持通配符、项目根或治理目录。文件缺失不能正式验收。
+
+`status`保留verification_state，新增deliverable_coverage（undeclared/covered/uncovered）、check_summary（命令observed或自查claimed/self及历史记录结果）、dependency_verification（含完整依赖链）。pass只代表对应批准检查；不是用户验收。schema3原凭据迁移后不降级但覆盖undeclared，继续执行或作为依赖前须revise补声明重批。

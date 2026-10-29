@@ -31,7 +31,7 @@ class HistoryTests(unittest.TestCase):
 
     def save(self, marker):
         return doc_change(self.project, self.state()["revision"], "CURRENT.md",
-                          self.current + "\n" + marker, "记录断点")
+                          self.current + "\n" + marker, "记录断点", task_ids=[])
 
     def documents(self, state):
         return [entry for entry in state["history"] if entry.get("action") == "document-version"]
@@ -109,7 +109,7 @@ class BriefViewTests(unittest.TestCase):
         return task_change(self.project, load(self.project)[0]["revision"], action, payload, "测试", source=source)
 
     def add(self, task_id, **fields):
-        self.write("add", {"task_id": task_id, "title": f"任务 {task_id}", "description": "范围",
+        self.write("add", {"deliverables": [], "task_id": task_id, "title": f"任务 {task_id}", "description": "范围",
                            "acceptance_criteria": ["完成"], "checks": checks_for(self.project, ["完成"]), **fields})
         self.write("approve", {"task_id": task_id}, source="user")
 

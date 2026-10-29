@@ -2,7 +2,7 @@
 
 [返回项目首页](../README.md) · [工作流参考](../skills/project-anchor/references/WORKFLOWS.md) · [CLI 参数](../skills/project-anchor/references/COMMANDS.md)
 
-适用版本：Project Anchor 1.5.0 候选。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
+适用版本：Project Anchor 1.5.1 候选。`install-global` 面向 Codex，`install-client` 面向其他客户端；Windows 是主要验证环境。以下命令用于独立操作和排错，日常可以通过 Skill 用自然语言完成。
 
 产品提供符合 [Agent Skills 规范](https://agentskills.io/specification) 的通用 `SKILL.md` 与 `scripts/run.py`，始终调用同一 `kit.py`，项目状态唯一来源为 `.agent/`。兼容扫描 `.agents/skills` 及用户级同名目录、可执行本地 Python 且获得权限的 Agent 可以发现并调用；不要求逐个客户端完成生命周期验收。当前证据和范围以 [CLIENT_VALIDATION.md 第 10 节](CLIENT_VALIDATION.md#scope-closeout) 为准。
 
@@ -88,7 +88,7 @@ py -3 $kit status $project --brief --milestone "v1"
 py -3 $kit status $project --task T1 --task T2
 ```
 
---brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 保留原字段并增量增加 `task_schema`、`scope_dirty`、`legacy_unverified`，原 PROGRESS 完成率口径保持不变。旧 schema 1/2 项目可读，但写入前需要显式 `migrate`。
+--brief 省略任务长描述与证据；需要验收标准和证据时不带该参数。任务与里程碑同时指定时取交集，未知项或空交集报错。筛选范围外的直接依赖单列，保留其状态和阻塞。summary 的 approved_active 排除草案和取消任务，draft 单独统计；默认 status 保留原字段并增量增加 `task_schema`、`scope_dirty`、`legacy_unverified`，原 PROGRESS 完成率口径保持不变。旧 schema 1/2/3 项目可读，但写入前需要显式 `migrate`。
 筛选查询不允许 --rebuild；重建全项目进度单独执行原命令，失败查询不会顺便修复视图。
 
 先确认真实目标。复制 .agent/GOAL.md 到一个编辑文件，填写所有章节，取得用户批准后保存：
@@ -102,12 +102,12 @@ py -3 $kit state update $project GOAL.md --file $goalFile --expected-revision 0 
 
 目标批准会登记为目标版本 2。state.json 的版本号为准；文档中的版本文字也应如实填写。`--approved` 是对已有用户批准的记录，不是授权工具或模型自行批准。
 
-## schema 3：配置检查后再批准
+## schema 4：配置检查后再批准
 
 每次写入前查询当前 revision。以下是任务 JSON 示例，路径和命令必须替换为真实材料；详细参数见 [命令参考](../skills/project-anchor/references/COMMANDS.md)。
 
 ```json
-{"task_id":"T1","title":"交付本轮功能","description":"用户已授权的局部范围","acceptance_criteria":["测试通过","实现经自查"],"checks":[{"criterion":1,"kind":"command","inputs":["src","tests"],"argv":["C:/Python311/python.exe","-B","-m","unittest","discover","-s","tests"]},{"criterion":2,"kind":"review","inputs":["src"]}]}
+{"deliverables":["src"],"task_id":"T1","title":"交付本轮功能","description":"用户已授权的局部范围","acceptance_criteria":["测试通过","实现经自查"],"checks":[{"criterion":1,"kind":"command","inputs":["src","tests"],"argv":["C:/Python311/python.exe","-B","-m","unittest","discover","-s","tests"]},{"criterion":2,"kind":"review","inputs":["src"]}]}
 ```
 
 用 task add 建草案；用户已明确要求实施时，task approve 记录已有批准，再 task update 转 doing。检查配置属于批准范围，不能用更新绕过 revise。Agent 的自查不等同于用户亲自确认，也不是独立审核。
@@ -138,14 +138,14 @@ py -3 $kit task review $project --task-id T1 --file <自查JSON文件> --expecte
 
 ## 迁移与回退
 
-旧 schema 1/2 账本只读。先取得真实 revision，再预检：
+旧 schema 1/2/3 账本只读。先取得真实 revision，再预检：
 
 ```powershell
-py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema3" --dry-run
-py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema3"
+py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema4" --dry-run
+py -3 $kit migrate $project --expected-revision <N> --reason "升级到schema4"
 ```
 
-预检与正式转换共用校验。正式迁移备份全部受影响治理文件并生成清单；保留旧目标、任务状态、批准快照/哈希、证据和历史，不补造observed记录。旧任务显示legacy，继续执行前先revise、补齐checks、重新批准。重复迁移无变化，旧版写入器拒绝schema3。
+预检与正式转换共用校验。正式迁移备份全部受影响治理文件并生成清单；保留旧目标、任务状态、批准快照/哈希、证据和历史，不补造observed记录。schema1/2旧任务显示legacy；schema3保留原凭据、交付显示undeclared。继续执行、重新结项或作为依赖前先revise、补齐deliverables及checks、重新批准。重复迁移无变化，旧版写入器拒绝schema4。
 
 ```powershell
 py -3 $kit migrate $project --rollback <返回的备份绝对路径> --expected-revision <迁移后的revision> --reason "撤回尚无后续修改的迁移"
@@ -172,7 +172,7 @@ task/state 输出额外的 changed 字段。相同内容且元数据已同步时
 $currentFile = Join-Path $project "current-review.md"
 Copy-Item -LiteralPath (Join-Path $project ".agent\CURRENT.md") -Destination $currentFile
 # 编辑 current-review.md，保留必要章节，不超过 50 行。
-py -3 $kit state update $project CURRENT.md --file $currentFile --expected-revision 4 --reason "更新已完成工作与下一步"
+py -3 $kit state update $project CURRENT.md --task T1 --file $currentFile --expected-revision 4 --reason "更新已完成工作与下一步"
 py -3 $kit status $project --rebuild
 py -3 $kit snapshot $project
 py -3 $kit retro $project
@@ -265,3 +265,7 @@ py -3 kit.py knowledge-add --file "审核过的教训.json" --approved
 [MIT License](../LICENSE)。
 
 Python检查建议用-B避免产生字节码缓存；输入目录中的生成文件也属于真实变化，不会被自动忽略。检查命令应在前台运行，不启动常驻进程；此执行器不是进程隔离环境。
+
+## 1.5.1断点与交付
+
+保存CURRENT须显式--task ID（可重复）或--no-task，其他文档不传。先登记实际本轮工作，再保存断点；程序只检查关联，不理解文字语义。任务批准新增deliverables并要求由inputs覆盖；无本地交付显式[]。先生成交付物，再运行验收。旧schema3凭据迁移保留，但继续/依赖前要补声明重批；schema1/2仍为legacy。参考[1.5.1验证](ITERATION_1_5_1_VALIDATION.md)。

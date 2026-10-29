@@ -42,7 +42,7 @@
 
 改名后的 Hook 定义需在客户端重新核对当前信任，不继承模型自行声明的批准。现有项目 `.agent/` 内容不会因工具改名被覆盖。
 
-## 1.5.0 候选版本
+## 1.5.1 候选版本
 
-任务账本schema1/2只读；写入前预检、备份迁移schema3。继续旧任务须补齐checks并重新批准，不伪造旧执行结果。明确本轮后用focus set，接续status --brief --focus；command走verify run，自查走task review，固定claimed/self。
+任务账本schema1/2/3只读；写入前预检、备份迁移schema4。继续旧任务须补齐checks并重新批准，不伪造旧执行结果。明确本轮后用focus set，接续status --brief --focus；command走verify run，自查走task review，固定claimed/self。
 DSH只读入口透传核心完整查询，支持all和focus，错误路径、清单、版本立即失败；真实宿主仍未验证。Codex显式Skill新会话与手动原生压缩后的只读接续另有实测，本轮关闭Hook，不把这当成Hook自动发现、信任或注入验收。

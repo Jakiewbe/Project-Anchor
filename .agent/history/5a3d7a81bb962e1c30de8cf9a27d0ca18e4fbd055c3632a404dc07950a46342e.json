@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 266,
+  "entries": [
+    {
+      "revision": 126,
+      "action": "task:update",
+      "reason": "独立验收完成可执行范围，保留真实失败和人工验收阻塞",
+      "timestamp": "2026-10-09T13:32:53.228641+00:00"
+    }
+  ]
+}

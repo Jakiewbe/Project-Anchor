@@ -7,6 +7,9 @@ import os
 from pathlib import Path
 import sys
 
+# CLI reads must not create bytecode directories even when code lives in the project.
+sys.dont_write_bytecode = True
+
 if sys.version_info < (3, 11):
     sys.stderr.write("Project Anchor 需要 Python 3.11+；Windows 请使用 py -3 kit.py\n")
     raise SystemExit(2)
@@ -17,8 +20,8 @@ from core.config import codex_home, install, uninstall, locations, trust_project
 from core.diagnostics import doctor
 from core.memory import (doc_change, init_project, knowledge_add, load, migrate, paths,
                          project_root, rebuild, retro, snapshot, snapshot_check,
-                         task_change, git_info, rename_project)
-from core.tasks import decorate, task_view
+                         task_change, git_info, rename_project, reading, current_alignment)
+from core.tasks import decorate, task_view, deliverable_coverage
 
 
 def parser():
@@ -125,6 +128,9 @@ def parser():
     child.add_argument("--expected-revision", type=int, required=True)
     child.add_argument("--reason", required=True)
     child.add_argument("--approved", action="store_true")
+    association = child.add_mutually_exclusive_group()
+    association.add_argument("--task", action="append", metavar="ID")
+    association.add_argument("--no-task", action="store_true")
     child = sub.add_parser("trust-project")
     child.add_argument("path")
     child.add_argument("--codex-home")
@@ -249,27 +255,44 @@ def main(argv=None):
                     raise KitError("筛选查询不能重建全项目进度；请单独执行 status PATH --rebuild")
                 if args.rebuild:
                     rebuild(root)
-                _, lock, _ = paths(root)
-                with locked(lock):
+                with reading(root):
                     state, content, ledger = load(root)
                     from core.verification import state as verification_state
-                    views = {task["task_id"]: verification_state(root, task) if ledger["schema"] == 3 else "legacy"
-                             for task in ledger["tasks"]}
-                result = {"project": str(root), "name": state["name"], "revision": state["revision"],
-                          "goal_version": state["goal_version"], "goal_approved": state["goal_approved"],
-                          "current_stale": state["current_task_revision"] != ledger["revision"],
-                          "task_revision": ledger["revision"], "task_schema": ledger["schema"],
-                          "tasks": [decorate(task) for task in ledger["tasks"]],
-                          "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root)}
-                focus = state.get("focus")
-                selected_ids = focus["task_ids"] if args.focus and focus else args.task
-                selected, summary, external = task_view(ledger, args.brief, selected_ids, args.milestone,
-                                                        args.all or args.focus)
-                if args.focus and not focus:
-                    selected, external = [], []
-                    summary = {**summary, "selected_total": 0}
-                for task in [*selected, *external]:
-                    task["verification_state"] = views[task["task_id"]]
+                    focus = state.get("focus")
+                    selected_ids = focus["task_ids"] if args.focus and focus else args.task
+                    selected, summary, external = task_view(ledger, args.brief, selected_ids, args.milestone,
+                                                            args.all or args.focus)
+                    if args.focus and not focus:
+                        selected, external = [], []
+                        summary = {**summary, "selected_total": 0}
+                    by_id = {t["task_id"]: t for t in ledger["tasks"]}
+                    visible = {t["task_id"] for t in [*selected, *external]}
+                    pending = list(visible)
+                    while pending:
+                        for dep in by_id[pending.pop()]["dependencies"]:
+                            if dep not in visible:
+                                visible.add(dep)
+                                pending.append(dep)
+                    cache = {}
+                    views = {tid: verification_state(root, by_id[tid], cache) if ledger["schema"] >= 3 else "legacy"
+                             for tid in sorted(visible)}
+                    for task in [*selected, *external]:
+                        source = by_id[task["task_id"]]
+                        task["verification_state"] = views[task["task_id"]]
+                        task["deliverable_coverage"] = deliverable_coverage(source)
+                        task["check_summary"] = [{"criterion": c["criterion"], "kind": c["kind"],
+                                                  "level": "observed" if c["kind"] == "command" else "claimed/self",
+                                                  "result": next((e.get("result", "unknown") for e in reversed(source["evidence"])
+                                                                  if e["criterion"] == c["criterion"] and not e.get("invalidated_at")), "pending")}
+                                                 for c in source.get("checks", [])]
+                    result = {"project": str(root), "name": state["name"], "revision": state["revision"],
+                              "goal_version": state["goal_version"], "goal_approved": state["goal_approved"],
+                              "current_stale": state["current_task_revision"] != ledger["revision"],
+                              "current_alignment": current_alignment(state), "current_scope": state.get("current_scope"),
+                              "task_revision": ledger["revision"], "task_schema": ledger["schema"],
+                              "goal": content["GOAL.md"], "current": content["CURRENT.md"], "git": git_info(root),
+                              "dependency_verification": {tid: views[tid] for tid in sorted(visible)
+                                                          if tid not in {t["task_id"] for t in selected}}}
                 result.update(tasks=selected, summary=summary, external_dependencies=external, focus=focus,
                               focus_missing=bool(args.focus and not focus),
                               selection={"task_ids": selected_ids or [], "milestone": args.milestone, "focus": args.focus})
@@ -355,7 +378,7 @@ def main(argv=None):
             elif args.command == "state":
                 value = sys.stdin.buffer.read().decode("utf-8-sig") if args.text_input else Path(args.file).read_text(encoding="utf-8-sig")
                 revision = doc_change(root, args.expected_revision, args.document, value, args.reason,
-                                      args.approved, args.action == "adopt")
+                                      args.approved, args.action == "adopt", [] if args.no_task else args.task)
                 result = {"revision": revision, "changed": revision != args.expected_revision}
             elif args.command == "trust-project":
                 if args.client == "claude":

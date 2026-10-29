@@ -188,7 +188,7 @@ class HostModuleTests(unittest.TestCase):
         self.assertIn("未初始化", done.stderr)
 
     def test_full_status_and_focus_preserve_every_core_fact(self):
-        task_change(self.project, 0, "add", {"task_id": "T1", "title": "task", "acceptance_criteria": ["criterion"],
+        task_change(self.project, 0, "add", {"deliverables": [], "task_id": "T1", "title": "task", "acceptance_criteria": ["criterion"],
                                              "checks": checks_for(self.project, ["criterion"])}, "test")
         focus_change(self.project, 1, ["T1"], "明确本轮")
         config = {"kitPath": str(ROOT), "pythonPath": sys.executable}

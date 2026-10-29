@@ -4,7 +4,7 @@
   <p><strong>换个会话，接着做对的事。</strong></p>
   <p>File-based project memory and governance for AI agents.</p>
 
-  <a href="CHANGELOG.md"><img src="docs/assets/badge-version.svg" alt="1.5.0 candidate"></a>
+  <a href="CHANGELOG.md"><img src="docs/assets/badge-version.svg" alt="1.5.1"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-python.svg" alt="Python 3.11+"></a>
   <a href="pyproject.toml"><img src="docs/assets/badge-runtime.svg" alt="Python standard library"></a>
   <a href="LICENSE"><img src="docs/assets/badge-license.svg" alt="MIT License"></a>
@@ -23,7 +23,7 @@
 
 Project Anchor 把项目目标、任务、决定和工作断点保存在仓库的 `.agent/` 中。Agent 换会话或压缩上下文后，可以重新读取磁盘记录，明确本轮做什么、做到哪里，以及完成结论对应哪些检查。
 
-**当前源码为 1.5.0 候选版本。** [最近正式发布为 1.4.0](https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.4.0)；候选版本的能力和验证范围见[更新记录](CHANGELOG.md)与[验证记录](docs/ITERATION_1_5_VALIDATION.md)。
+**当前源码版本为 1.5.1。** [发布与下载](https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.5.1) · [更新记录](CHANGELOG.md) · [验证记录](docs/ITERATION_1_5_1_VALIDATION.md)。
 
 <a id="why"></a>
 ## 把“记得做过”变成可以重新核对的记录
@@ -34,7 +34,15 @@ Project Anchor 用项目文件保存事实，用一个 Python 核心检查写入
 
 <a id="v14"></a>
 <a id="v15"></a>
-### 1.5.0 带来了什么
+### 1.5.1 带来了什么
+
+本版包含此前未正式发布的1.5.0接续/凭据/归档能力，并修正实际项目中断点关联和交付漏验的问题。
+
+- 只读查询不创建锁、目录或日志；读取期间治理状态变化直接失败。
+- CURRENT显式关联任务，报告unknown/changed/aligned；关联一致不证明文字语义。
+- 交付物deliverables纳入批准范围，漏出验收inputs不能批准。
+- 本轮查询只校验可见任务和完整依赖链，单次共享文件哈希。
+- 历史完成、当前验收、交付覆盖、命令执行和自查分别展示；复盘仅生成证据索引。
 
 | 需要解决的问题 | 对应能力 |
 | :--- | :--- |
@@ -140,7 +148,7 @@ py -3 kit.py history list "D:\Projects\my-app"
 <a id="upgrade"></a>
 ## 从旧版本升级
 
-**1.5.0 使用任务账本 schema 3。** 多台机器或多个客户端共用项目时，先统一工具箱版本，重新执行原安装命令，再迁移旧 schema 1/2 账本。
+**1.5.1 使用任务账本 schema 4。** 多台机器或多个客户端共用项目时，先统一工具箱版本，重新执行原安装命令，再迁移旧 schema 1/2/3 账本。
 
 先获取源码更新并检查版本：
 
@@ -149,7 +157,7 @@ git pull --ff-only
 py -3 kit.py --version
 ```
 
-如果 Git 提示本地有冲突或不能快进，先处理原因；不要强制覆盖工作区。确认已取得 1.5.0 后，重新执行原来选择的 `install-global` 或 `install-client` 命令。
+如果 Git 提示本地有冲突或不能快进，先处理原因；不要强制覆盖工作区。确认已取得 1.5.1 后，重新执行原来选择的 `install-global` 或 `install-client` 命令。
 
 读取项目修订号，再预检和迁移：
 
@@ -157,11 +165,11 @@ py -3 kit.py --version
 py -3 kit.py status "D:\Projects\my-app" --brief
 
 # 将 12 替换为刚读到的 revision；预检成功不会增加修订号。
-py -3 kit.py migrate "D:\Projects\my-app" --expected-revision 12 --reason "升级到1.5.0" --dry-run
-py -3 kit.py migrate "D:\Projects\my-app" --expected-revision 12 --reason "升级到1.5.0"
+py -3 kit.py migrate "D:\Projects\my-app" --expected-revision 12 --reason "升级到1.5.1" --dry-run
+py -3 kit.py migrate "D:\Projects\my-app" --expected-revision 12 --reason "升级到1.5.1"
 ```
 
-正式迁移前备份受影响的治理文件和清单，保留旧任务状态、批准快照与证据，不补造新版检查结果。旧任务显示为 `legacy`；继续执行或重新验收前，需要修订、补齐检查配置并重新批准。旧版写入器会拒绝 schema 3，迁移后的保护回退见[使用手册](docs/USAGE.md#迁移与回退)。
+正式迁移前备份受影响的治理文件和清单，保留旧任务状态、批准快照与证据，不补造新版检查结果。schema1/2旧任务继续显示 `legacy`；schema3凭据仍按原范围判断，交付覆盖显示 `undeclared`。继续执行、重新结项或作为依赖前，需修订、显式声明deliverables（无本地交付填[]）、补齐检查并重新批准。旧版写入器会拒绝 schema 4，迁移后的保护回退见[使用手册](docs/USAGE.md#迁移与回退)。
 
 <a id="clients"></a>
 ## 支持范围与验证边界
@@ -180,7 +188,7 @@ Codex 的 Hook 需要在支持该入口的客户端中审核当前定义；Codex
 py -3 kit.py doctor --native-hooks --native-skills
 ```
 
-安装成功、Hook 已信任、脚本实际执行和模型遵守规则是不同层级。本轮真实接续验收关闭了 Hook，不代表自动注入已通过；远程 CI 与其他宿主的验证状态见[验证记录](docs/ITERATION_1_5_VALIDATION.md)。
+安装成功、Hook 已信任、脚本实际执行和模型遵守规则是不同层级。本轮真实接续验收关闭了 Hook，不代表自动注入已通过；远程 CI 与其他宿主的验证状态见[验证记录](docs/ITERATION_1_5_1_VALIDATION.md)。
 
 程序能核对修订、批准范围、依赖、材料指纹和执行凭据。**它不能证明 `--source user` 是用户本人，不能把退出码为零等同于需求满足，也不能把 Agent 自查当成独立审核。** 拥有相同文件权限的工具仍能绕过本地流程；多个分支的治理账本不支持自动合并。
 
@@ -214,7 +222,7 @@ py -3 kit.py doctor --native-hooks --native-skills
 | :--- | :--- |
 | [使用手册](docs/USAGE.md) | 安装、任务、检查、迁移、回退与卸载 |
 | [命令参考](skills/project-anchor/references/COMMANDS.md) · [Skill工作流](skills/project-anchor/references/WORKFLOWS.md) | 参数与自然语言操作 |
-| [更新记录](CHANGELOG.md) · [1.5.0验证记录](docs/ITERATION_1_5_VALIDATION.md) | 版本变化、实测范围与未验证事项 |
+| [更新记录](CHANGELOG.md) · [1.5.1验证记录](docs/ITERATION_1_5_1_VALIDATION.md) | 版本变化、实测范围与未验证事项 |
 | [客户端验证](docs/CLIENT_VALIDATION.md) · [故障排查](docs/TROUBLESHOOTING.md) | 客户端差异、安装定位与恢复 |
 | [架构说明](docs/ARCHITECTURE.md) · [冒烟检查](SMOKE_TEST.md) | 核心设计与维护检查 |
 
@@ -227,3 +235,5 @@ py -3 -B -X utf8 -m unittest discover -s tests -q
 ## 许可证
 
 [MIT License](LICENSE)
+
+发布准备与升级细节见[1.5.1发布说明](docs/RELEASE_1_5_1.md)及[批准计划](docs/plans/1.5.1.md)。固定提交、远程CI和下载包校验见发布资产中的验证清单。

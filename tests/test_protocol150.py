@@ -36,7 +36,7 @@ class ProtocolTests(unittest.TestCase):
         check = {"criterion": 1, "kind": kind, "inputs": ["material"]}
         if kind == "command":
             check["argv"] = [sys.executable, "-c", code]
-        self.change("add", {"task_id": tid, "title": tid, "acceptance_criteria": ["works"],
+        self.change("add", {"deliverables": [], "task_id": tid, "title": tid, "acceptance_criteria": ["works"],
                             "checks": [check], **fields})
         self.change("approve", {"task_id": tid})
         return check
@@ -111,7 +111,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(verification.state(self.project, self.task()), "pending")
 
     def test_empty_config_cannot_approve(self):
-        self.change("add", {"task_id": "T1", "title": "t", "acceptance_criteria": ["criterion"]})
+        self.change("add", {"deliverables": [], "task_id": "T1", "title": "t", "acceptance_criteria": ["criterion"]})
         with self.assertRaises(KitError):
             self.change("approve", {"task_id": "T1"})
 
@@ -243,7 +243,7 @@ class ProtocolTests(unittest.TestCase):
         current = memory.load(self.project)[1]["CURRENT.md"]
         with patch("core.memory.HISTORY_KEEP", 5), patch("core.memory.DOC_CONTENT_KEEP", 1):
             for i in range(7):
-                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + f"\nmarker{i}", "断点")
+                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + f"\nmarker{i}", "断点", task_ids=[])
         entries = history.listing(self.project)
         originals = [entry for item in entries for entry in history.show(self.project, item["archive_id"])["entries"]]
         self.assertTrue(any("marker0" in e.get("content", "") for e in originals))
@@ -252,7 +252,7 @@ class ProtocolTests(unittest.TestCase):
 
     def test_archive_failure_leaves_every_governance_byte_unchanged(self):
         current = memory.load(self.project)[1]["CURRENT.md"]
-        memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\none", "断点")
+        memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\none", "断点", task_ids=[])
         before = {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir() if p.is_file()}
         original = atomic_io.atomic_write
         def fail_archive(path, data):
@@ -261,11 +261,11 @@ class ProtocolTests(unittest.TestCase):
             return original(path, data)
         with patch("core.memory.DOC_CONTENT_KEEP", 1), patch("core.atomic_io.atomic_write", side_effect=fail_archive):
             with self.assertRaises(OSError):
-                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\ntwo", "断点")
+                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\ntwo", "断点", task_ids=[])
         self.assertEqual(before, {p.name: p.read_bytes() for p in (self.project / ".agent").iterdir() if p.is_file()})
 
     def test_unapproved_focus_does_not_approve(self):
-        self.change("add", {"task_id": "T1", "title": "t", "acceptance_criteria": ["criterion"]})
+        self.change("add", {"deliverables": [], "task_id": "T1", "title": "t", "acceptance_criteria": ["criterion"]})
         memory.focus_change(self.project, self.revision(), ["T1"], "明确本轮")
         with self.assertRaises(KitError):
             self.change("update", {"task_id": "T1", "status": "doing"})
@@ -300,7 +300,7 @@ class ProtocolTests(unittest.TestCase):
 
     def test_archive_crash_can_recover_without_overwriting_external_edits(self):
         current = memory.load(self.project)[1]["CURRENT.md"]
-        memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\none", "one")
+        memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\none", "one", task_ids=[])
         original = atomic_io.atomic_write
         def crash_archive(path, data):
             original(path, data)
@@ -308,7 +308,7 @@ class ProtocolTests(unittest.TestCase):
                 raise KeyboardInterrupt()
         with patch("core.memory.DOC_CONTENT_KEEP", 1), patch("core.atomic_io.atomic_write", side_effect=crash_archive):
             with self.assertRaises(KeyboardInterrupt):
-                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\ntwo", "two")
+                memory.doc_change(self.project, self.revision(), "CURRENT.md", current + "\ntwo", "two", task_ids=[])
         journal = self.project / ".agent/.transaction.json"
         self.assertTrue(journal.exists())
         atomic_io.recover(self.project, journal)

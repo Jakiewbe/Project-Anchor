@@ -185,21 +185,41 @@ def _hook_checks(add, log, session_id, expected_events):
 
 
 def _project_checks(add, root):
+    from .memory import reading
+    rows = []
+    try:
+        if root:
+            with reading(root):
+                _project_checks_loaded(lambda *row: rows.append(row), root)
+        else:
+            _project_checks_loaded(lambda *row: rows.append(row), root)
+    except (KitError, OSError, KeyError, ValueError, TypeError) as exc:
+        add("FAIL", "项目状态", str(exc))
+        return
+    for row in rows:
+        add(*row)
+
+
+def _project_checks_loaded(add, root):
     if root:
         try:
             state, content, ledger = load(root)
             add("PASS", "项目状态完整性", f"{state['name']}；修订 {state['revision']}；任务修订 {ledger['revision']}")
-            add("PASS" if ledger["schema"] == 3 else "WARN", "任务账本版本",
-                "schema 3（执行凭据）" if ledger["schema"] == 3 else f"schema {ledger['schema']}（只读；写入前执行 migrate）")
+            add("PASS" if ledger["schema"] == 4 else "WARN", "任务账本版本",
+                "schema 4（交付覆盖）" if ledger["schema"] == 4 else f"schema {ledger['schema']}（只读；写入前执行 migrate）")
             legacy = sum(bool(item.get("legacy_unverified")) for item in ledger["tasks"])
             if legacy:
                 add("WARN", "旧批准任务", f"{legacy} 个 legacy_unverified；继续前 task revise、补齐 checks，再 task approve")
-            dirty = sum(scope_dirty(item) for item in ledger["tasks"]) if ledger["schema"] in (2, 3) else 0
+            dirty = sum(scope_dirty(item) for item in ledger["tasks"]) if ledger["schema"] >= 2 else 0
             if dirty:
                 add("WARN", "批准范围漂移", f"{dirty} 个任务当前范围与批准快照不一致；执行 task revise 后重新批准")
-            if ledger["schema"] == 3:
+            if ledger["schema"] >= 3:
                 from .verification import state as verification_state
-                states = [verification_state(root, t) for t in ledger["tasks"]]
+                cache = {}
+                states = [verification_state(root, t, cache) for t in ledger["tasks"]]
+                from .tasks import deliverable_coverage
+                undeclared = sum(deliverable_coverage(t) != "covered" for t in ledger["tasks"])
+                add("WARN" if undeclared else "PASS", "交付声明", f"{undeclared} 个任务未覆盖或未声明；旧证据不升级")
                 invalid = sum(s == "invalid" for s in states)
                 add("FAIL" if invalid else "PASS", "执行凭据完整性", f"{invalid} 个任务引用损坏或缺失凭据")
                 pending = sum(s in {"stale", "failed", "legacy"} for s in states)
@@ -209,6 +229,9 @@ def _project_checks(add, root):
                 add("PASS", "持久历史归档", "内容哈希与项目身份有效；不自动恢复")
             add("PASS" if state["goal_approved"] else "WARN", "目标批准", "已登记批准" if state["goal_approved"] else "目标仍是草案")
             add("PASS" if state["current_task_revision"] == ledger["revision"] else "WARN", "CURRENT 修订", "与任务修订比对")
+            from .memory import current_alignment
+            alignment = current_alignment(state)
+            add("PASS" if alignment == "aligned" else "WARN", "断点任务关联", alignment)
             expected = progress(state["name"], ledger)
             actual = (root / ".agent/PROGRESS.md").read_text(encoding="utf-8") if (root / ".agent/PROGRESS.md").exists() else ""
             add("PASS" if actual == expected else "WARN", "进度视图", "视图比对；不一致时执行 status --rebuild")

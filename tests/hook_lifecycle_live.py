@@ -70,7 +70,7 @@ def fixture(project):
     s, content, _ = load(project)
     doc_change(project, s["revision"], "DECISIONS.md", content["DECISIONS.md"] + "\n测试已确认：使用JSON文件，不使用数据库；决策标记 DECISION-4826。\n", "合成测试已确认决策")
     s, _, _ = load(project)
-    task_change(project, s["revision"], "add", {"task_id": "T1", "title": "验证输出5",
+    task_change(project, s["revision"], "add", {"deliverables": [], "task_id": "T1", "title": "验证输出5",
                 "acceptance_criteria": ["演示实际输出5"],
                 "checks": [{"criterion": 1, "kind": "command", "inputs": ["demo.py"],
                             "argv": [sys.executable, "demo.py"]}]}, "合成验收任务")
@@ -80,7 +80,7 @@ def fixture(project):
     snapshot(project, "synthetic-old-checkpoint")
     s, content, _ = load(project)
     current = content["CURRENT.md"] + "\n最新工作断点 CURRENT-9462：任务T1尚未完成。\n"
-    doc_change(project, s["revision"], "CURRENT.md", current, "合成最新工作断点")
+    doc_change(project, s["revision"], "CURRENT.md", current, "合成最新工作断点", task_ids=['T1'])
 
 
 def logs(home, tid):
@@ -118,7 +118,7 @@ def case(folder, home, automatic):
         s, content, _ = load(project)
         doc_change(project, s["revision"], "CURRENT.md", content["CURRENT.md"]
                    + "\n接续验收的最新断点 CURRENT-NEW-7214：以这一新状态为准，T1仍未完成。\n",
-                   "验收已批准：在旧快照及旧会话信息之后保存更新的断点")
+                   "验收已批准：在旧快照及旧会话信息之后保存更新的断点", task_ids=['T1'])
         before = protect(project)
         if not automatic:
             count = sum(is_compaction(e) for e in client.events)

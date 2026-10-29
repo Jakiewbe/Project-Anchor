@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 247,
+  "entries": [
+    {
+      "revision": 112,
+      "action": "task:update",
+      "reason": "保留真实未完成审核与需用户操作的验收，不因发布标为全部完成",
+      "timestamp": "2026-10-09T08:36:30.353518+00:00"
+    }
+  ]
+}

@@ -125,7 +125,13 @@ export function createKit(config = {}, env = process.env) {
     const version = spawnSync(chosen.command, ['-X', 'utf8', kit, '--version'], {
       encoding: 'utf8', windowsHide: true, timeout: 10000,
     })
-    if (version.error || version.status !== 0 || version.stdout.trim() !== '1.5.0'
+    if (version.error) {
+      throw new KitRunError(`无法启动工具箱版本查询: ${version.error.message}`, { kind: 'start' })
+    }
+    if (version.status !== 0) {
+      throw new KitRunError(`工具箱版本查询失败 (${version.status}): ${(version.stderr || '').trim()}`, { kind: 'exit' })
+    }
+    if (version.stdout.trim() !== '1.5.1'
         || (locator && locator.version !== version.stdout.trim())) {
       throw new KitRunError('工具箱版本或安装版本不匹配，请检查安装')
     }
