@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 289,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 241,
+      "file": "CURRENT.md",
+      "previous_sha256": "3f45a1187d60f9a782e6d5dee514c72945fd64994728fcca423a4363b6bc2d73",
+      "content": "# 当前断点\n\n## 当前阶段\n1.5.0候选及README准备提交推送；尚未完成远程写入。\n\n## 当前任务\n本轮README150 doing；focus仅指向该任务。\nIMP150历史done，代码检查材料未变；README改变后已重新自查。\n\n## 已完成工作\nREADME重写：产品定位、本轮范围、Git/Python安装、自然语言使用、升级与能力边界。\n文档链接、只读命令与已有证据一致性检查3通过0失败。\n1.5.0完整回归凭据253通过0失败仍绑定当前源码；真实接续2通过0失败。\n用户确认连同已验证实现一起推送main，不创建Release或新分支/worktree。\n\n## 当前阻塞\n远程CI待推送触发；Hook自动注入与DSH真实宿主仍未验证。\n\n## 下一步动作\n核对提交文件及敏感内容，提交并正常推送main，读回远程结果后结项。\n\n## 状态修订\n本页对齐最新任务账本；本轮检查记录在.agent/runtime/readme150。\n\n## Git 检查\n原分支feat/universal-agent-skills，main基线7395325；保留已有改动，不强推或改写历史。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-26T09:51:10.021824+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "69a8faebb6a780495563d8cd3674bfa4e149f61a353cae5876d6c7f4b4bce8c2",
+      "user_approved": false,
+      "timestamp": "2026-10-10T04:59:02.264367+00:00",
+      "content_pruned": true
+    },
+    {
+      "revision": 141,
+      "action": "state:update",
+      "reason": "改用stdin输入恢复CURRENT原CRLF换行，内容不变",
+      "timestamp": "2026-10-10T04:59:02.281367+00:00"
+    }
+  ]
+}

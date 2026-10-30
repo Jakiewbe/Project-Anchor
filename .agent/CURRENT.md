@@ -1,25 +1,27 @@
 # 当前断点
 
 ## 当前阶段
-1.5.1发布闸门修复完成，准备推送最终修正提交重新验CI；尚未公开发布。
+Project Anchor 1.5.1已正式发布，公开下载与标签核验通过。
 
 ## 当前任务
-IMP151 doing，标准1/2通过；REL151 approved/todo，须等最终Windows CI通过和固定提交包核验。
+IMP151 done、REL151 done；保留本轮完成结果，不自动接续旧任务。
 
 ## 已完成工作
-六项优化及schema4；最终本地275通过0失败，凭据d98dc9db81b34ebf806975576a153b30。
-实际项目副本27通过0失败，原生接续2通过0失败；全局安装1.5.1，1363个其他文件未变。
-修复源码包漏初始化模板；CI首轮277592f的5项短路径fixture失败已修正，未放宽断言。
-验证报告docs/ITERATION_1_5_1_VALIDATION.md；运行记录.agent/runtime/release151。
+六项优化和schema4；本地及远程Windows均275通过0失败。
+实际项目副本27通过0失败，原生新会话/压缩接续2通过0失败。
+全局安装1.5.1，1363个其他技能/登录/配置文件未变。
+固定提交62e1418bfa7335e1d6e4d88ebb25edf1fae8b8dd；远程CI40991434214成功。
+源码包102项；三份公开资产下载SHA256一致，记录.agent/runtime/release151/published-summary.json。
+发布页https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.5.1。
 
 ## 当前阻塞
-最终提交的远程CI及固定提交源码包待核验；不把首轮失败CI报为通过。
+本轮无阻塞。业务原件未迁移；Hook自动注入与DSH真实宿主未验证，不作为已通过声明。
 
 ## 下一步动作
-正常提交推送，等待最终Windows CI通过后打包、发布并逐资产核对公开下载哈希。
+本轮结束，不自动升级业务项目或接续历史任务。
 
 ## 状态修订
-已获用户明确发布授权；原始业务项目未迁移。
+本轮执行凭据、自查、发布核验及复盘已保存；实际源文件精确绑定，未过滤已选目录。
 
 ## Git 检查
-现有feat/universal-agent-skills，未建分支/worktree，不强推。
+现有feat/universal-agent-skills，无新分支/worktree、无强推；版本标签固定在通过CI的发布提交。

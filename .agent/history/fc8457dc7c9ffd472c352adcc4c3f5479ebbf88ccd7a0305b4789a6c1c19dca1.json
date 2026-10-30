@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 290,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 244,
+      "file": "CURRENT.md",
+      "previous_sha256": "670986594f31dcc8a7c96b0f5ae15dce2970dbecb65333160e6804f5a867b950",
+      "content": "# 当前断点\n\n## 当前阶段\nREADME与已验证1.5.0候选实现已正常推送GitHub main；未创建Release。\n\n## 当前任务\n本轮README150 done，验收pass；focus保留该任务。\nIMP150保持历史done，README变更后已重新自查，验收pass。\n\n## 已完成工作\nREADME按定位、Git/Python安装、日常使用、升级、边界重写。\n文档核对3通过0失败；源码仍绑定253项通过回归凭据；原生接续2通过0失败。\n代码/文档提交f76a6aa1ca9ec3cfec80f99c249771e6ba322bde，main读回一致。\nGitHub README blob 7d913cd67bd14cc4f166cd20ba80ff32de97805c与本地提交一致。\n提交排除原始运行日志与秘密；没有创建分支/worktree、强推或升级其他项目。\n\n## 当前阻塞\n远程CI结果未确认；Hook自动注入与DSH真实宿主仍未验证。\n\n## 下一步动作\n本轮交付结束；本记录随治理检查点提交推送，不创建正式Release。\n\n## 状态修订\n本页对齐最新任务账本；本轮原始核对在.agent/runtime/readme150。\n\n## Git 检查\n本地保留feat/universal-agent-skills，目标main正常快进；未改写历史。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-26T09:53:50.614544+00:00"
+    },
+    {
+      "revision": 142,
+      "action": "task:update",
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据",
+      "timestamp": "2026-10-10T06:17:27.544944+00:00"
+    },
+    {
+      "revision": 143,
+      "action": "task:update",
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据",
+      "timestamp": "2026-10-10T06:17:28.523846+00:00"
+    }
+  ]
+}

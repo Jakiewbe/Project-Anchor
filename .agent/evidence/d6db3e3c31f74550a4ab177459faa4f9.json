@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "run_id": "d6db3e3c31f74550a4ab177459faa4f9",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "REL151",
+  "criterion": 1,
+  "kind": "review",
+  "scope_version": 1,
+  "scope_hash": "37e8fdda4d0838098dedf47423e7d774fc14e3d9acd1b0da23c6ca63b969e75f",
+  "criteria_hash": "83adcaee80ab020823946093b44a5b720c7fb89ea91cc33c65fba3b300c94db7",
+  "expected_revision": 284,
+  "input_hash": "9fdccae4aa0c8f75efa73b0992aec8b30d9c79d61def83dd73f813a746dd5746",
+  "inputs": [
+    "docs/RELEASE_1_5_1.md",
+    "docs/ITERATION_1_5_1_VALIDATION.md",
+    "README.md",
+    "tests/prepare_release151.py"
+  ],
+  "started_at": "2026-10-30T02:35:58.028036+00:00",
+  "reason": "正式发布与公开资产独立读回核验完成",
+  "result": "pass",
+  "review": {
+    "criterion": 1,
+    "findings": "核对最终提交CI、v1.5.1标签、正式Release状态、服务端资产digest及匿名下载后的本地SHA256；首个失败CI未用于发布。",
+    "resolution": "正式发布https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.5.1，release_id428592313；标签及资产固定到62e1418bfa7335e1d6e4d88ebb25edf1fae8b8dd，其Windows CI40991434214成功。源码ZIP、release-verification.json及SHA256SUMS.txt三份匿名下载逐一哈希一致；源码包SHA256为785d866d0b817185a22de1cf6d723a3afc942fe432ff477e1998181c1522c16c。记录.agent/runtime/release151/published-summary.json。",
+    "simpler": "复用GitHub正式Release与固定提交源码包，不另建分支或发布服务；未覆盖旧版本、未批量迁移业务原件。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "正式发布https://github.com/Jakiewbe/Project-Anchor/releases/tag/v1.5.1，release_id428592313；标签及资产固定到62e1418bfa7335e1d6e4d88ebb25edf1fae8b8dd，其Windows CI40991434214成功。源码ZIP、release-verification.json及SHA256SUMS.txt三份匿名下载逐一哈希一致；源码包SHA256为785d866d0b817185a22de1cf6d723a3afc942fe432ff477e1998181c1522c16c。记录.agent/runtime/release151/published-summary.json。",
+  "finished_at": "2026-10-30T02:35:58.036038+00:00"
+}

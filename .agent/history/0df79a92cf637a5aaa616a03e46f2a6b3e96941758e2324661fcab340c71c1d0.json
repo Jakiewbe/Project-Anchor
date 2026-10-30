@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 280,
+  "entries": [
+    {
+      "revision": 135,
+      "action": "state:update",
+      "reason": "记录OpenCode新编号复验与真实install-global结果",
+      "timestamp": "2026-10-09T16:05:17.168700+00:00"
+    }
+  ]
+}

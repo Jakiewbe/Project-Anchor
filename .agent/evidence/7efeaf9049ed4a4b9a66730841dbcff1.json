@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "run_id": "7efeaf9049ed4a4b9a66730841dbcff1",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 3,
+  "kind": "review",
+  "scope_version": 3,
+  "scope_hash": "816ce5cb1062d135c76bb2a7ae21bbfff23ecb1210722b841b1ef460d4ecd613",
+  "criteria_hash": "2998c191e3153a83df9752927096d7ebe94c8f91fbf9b64ef60719faa4c98773",
+  "expected_revision": 274,
+  "input_hash": "3bbe6c9d88c1afc2139bcef7d77dbeaca11b7c2e797cc216d072ef8016e44898",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "docs",
+    "README.md",
+    "CHANGELOG.md",
+    "pyproject.toml",
+    "global",
+    "project-template",
+    "AGENTS.md"
+  ],
+  "started_at": "2026-10-30T02:27:51.759785+00:00",
+  "reason": "固定提交、远程CI和源码包验收完成",
+  "result": "pass",
+  "review": {
+    "criterion": 3,
+    "findings": "逐项核对固定提交源码包、必要空白初始化模板、真实解压初始化和安装、版本文档及远程CI；旧277592f失败CI不用于发布。",
+    "resolution": "固定提交62e1418bfa7335e1d6e4d88ebb25edf1fae8b8dd，远程Windows CI40991434214成功且日志275通过0失败0跳过，Linux信息性成功。102项源码ZIP逐项与git archive字节一致，SHA256为785d866d0b817185a22de1cf6d723a3afc942fe432ff477e1998181c1522c16c，真实解压使用4通过0失败，完整性3通过0失败。发布验证清单和SHA256SUMS已生成，正式发布由REL151继续。",
+    "simpler": "源码包固定到通过CI的提交；发布证明与校验文件放包外，避免自引用。仅允许六份空白模板，不放开真实.agent记录或运行日志。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "固定提交62e1418bfa7335e1d6e4d88ebb25edf1fae8b8dd，远程Windows CI40991434214成功且日志275通过0失败0跳过，Linux信息性成功。102项源码ZIP逐项与git archive字节一致，SHA256为785d866d0b817185a22de1cf6d723a3afc942fe432ff477e1998181c1522c16c，真实解压使用4通过0失败，完整性3通过0失败。发布验证清单和SHA256SUMS已生成，正式发布由REL151继续。",
+  "finished_at": "2026-10-30T02:27:51.766785+00:00"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 278,
+  "entries": [
+    {
+      "revision": 134,
+      "action": "state:update",
+      "reason": "任务阻塞说明更新后同步CURRENT修订",
+      "timestamp": "2026-10-09T13:49:41.040461+00:00"
+    }
+  ]
+}

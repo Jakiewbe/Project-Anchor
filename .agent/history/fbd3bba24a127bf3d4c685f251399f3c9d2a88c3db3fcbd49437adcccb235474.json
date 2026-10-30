@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 283,
+  "entries": [
+    {
+      "revision": 137,
+      "action": "state:update",
+      "reason": "按本轮真实CLI证据更新工作断点；验证记录和PR决定留给用户，保留Desktop未验证及原始失败",
+      "timestamp": "2026-10-09T16:29:27.234423+00:00"
+    }
+  ]
+}

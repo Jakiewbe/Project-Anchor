@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "run_id": "546e8fec3a8c40ba9290613c162f0276",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 3,
+  "scope_hash": "816ce5cb1062d135c76bb2a7ae21bbfff23ecb1210722b841b1ef460d4ecd613",
+  "criteria_hash": "4a8d9ffe9217ad9d084f8012a13851e581b86a675ee3e5daab3ecb49a3f189dd",
+  "expected_revision": 275,
+  "input_hash": "cb2aa9ff336a42c62693a26da8fc69634c79e42711dc66ad2a4acd6a44c3a02b",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "global",
+    "project-template",
+    "AGENTS.md"
+  ],
+  "started_at": "2026-10-30T02:30:25.942136+00:00",
+  "reason": "按实际固定提交源文件清单完成最终收尾完整回归",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/546e8fec3a8c40ba9290613c162f0276/stdout.log",
+      "sha256": "af08917dd5db649c729c4bedc5a7ea79418133f4593d122883fc38e79c4500bb",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/546e8fec3a8c40ba9290613c162f0276/stderr.log",
+      "sha256": "4e116bd03c3aef38e3bcbda921294a4ea7c224aafee173f8b4c66975cf9cc865",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-10-30T02:32:39.590653+00:00"
+}
