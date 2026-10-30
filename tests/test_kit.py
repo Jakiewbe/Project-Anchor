@@ -22,7 +22,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class Environment(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(prefix="codex-rules 中文 ")
-        self.base = Path(self.tmp.name)
+        # Product paths are canonical; fault injection must target that same path
+        # even when Windows TEMP is the RUNNER~1 alias on GitHub Actions.
+        self.base = Path(self.tmp.name).resolve()
         self.home = self.base / "用户配置 空格"
         self.project = self.base / "研发 项目"
         self.project.mkdir()

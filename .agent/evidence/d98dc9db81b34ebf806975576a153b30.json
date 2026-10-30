@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "run_id": "d98dc9db81b34ebf806975576a153b30",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 3,
+  "scope_hash": "816ce5cb1062d135c76bb2a7ae21bbfff23ecb1210722b841b1ef460d4ecd613",
+  "criteria_hash": "4a8d9ffe9217ad9d084f8012a13851e581b86a675ee3e5daab3ecb49a3f189dd",
+  "expected_revision": 271,
+  "input_hash": "a0d1b9b14e77b946d9789a0c89d15d6c7f4b2c59caf0465f67b58bd551164c0b",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "global",
+    "project-template",
+    "AGENTS.md"
+  ],
+  "started_at": "2026-10-29T17:12:48.618273+00:00",
+  "reason": "发布前模板打包和Windows路径修复后的完整回归",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/d98dc9db81b34ebf806975576a153b30/stdout.log",
+      "sha256": "5b0ae1b5a0a4df68806fdf0de61ae362f4ee51ed0572a01a59c669270983de0f",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/d98dc9db81b34ebf806975576a153b30/stderr.log",
+      "sha256": "541ca796dc0979b568431d011b909868d756f63a58d70925f4be9350351e494e",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-10-29T17:14:56.633707+00:00"
+}

@@ -13,7 +13,7 @@
 
 ## 自动回归
 
-最终Windows完整回归：通过274、失败0、跳过0。由IMP151标准1的verify run实际执行，run_id为7acc20b6cd15478694d23e832a1b4229，退出码0，结果已附加账本。原始stdout/stderr位于本机.agent/runtime/checks/对应run_id目录；不是手填observed。
+发布前首轮Windows完整回归：通过274、失败0、跳过0。由IMP151标准1的verify run实际执行，run_id为7acc20b6cd15478694d23e832a1b4229，退出码0，结果已附加账本。原始stdout/stderr位于本机.agent/runtime/checks/对应run_id目录；不是手填observed。
 
 只读权限覆盖真实Windows临时目录ACL：只禁止写入权，保留读取和路径解析所需权限；写入探针失败，status/context/verify show/项目诊断能够读取，文件前后不变。另有强制拒绝所有写入入口的检查。
 
@@ -49,6 +49,14 @@
 
 源码打包入口：`python -B tests/prepare_release151.py <输出目录> [--commit SHA]`。未指定提交时明确标记uncommitted-review-candidate，不能称为固定提交发布包。正式发布要求固定提交、对应Windows CI通过、再以--commit打包并校验远程标签与下载内容。
 
-源码包通过目录/扩展名白名单排除.agent、runtime、原始项目副本、业务数据、认证及原始聊天；逐项ZIP往返核对，附SOURCE-MANIFEST.json、SHA256SUMS.txt与package-report.json。校验值在包外保存，避免报告包含自身包哈希造成循环变化。
+源码包通过目录/扩展名白名单排除真实项目.agent、runtime、原始项目副本、业务数据、认证及原始聊天；只保留project-template/.agent下六份明确的空白初始化模板；逐项ZIP往返核对，附SOURCE-MANIFEST.json、SHA256SUMS.txt与package-report.json。校验值在包外保存，避免报告包含自身包哈希造成循环变化。
 
 最终文档链接及JSON示例实际批准检查：通过3、失败0。源码包候选96项（含清单），逐文件ZIP回读与CRC检查通过；具体包校验值见包外SHA256SUMS.txt。早期候选包未绑定提交，不作为正式发布资产。正式资产使用--commit读取Git固定提交；业务项目原件未升级。
+
+## 发布闸门发现与修正
+
+首个候选提交277592f的Windows CI失败5项：GitHub runner的TEMP使用RUNNER~1短名，而旧测试fixture未取规范路径，导致故障注入未命中目标和路径等价断言错误。统一fixture的根路径resolve，保留原短/长路径事务回归，不修改产品行为或放松断言。
+
+实际解压源码包启动初始化发现缺失模板：打包过滤把project-template/.agent也当成了运行状态排除。修正为仅允许六份明确空白模板，其他.agent文件仍拒绝；增加实际ZIP解压初始化及安装Skill回归、模板完整性门禁，并同步空白tasks模板schema4。相关针对性33项通过、0失败；最终新提交回归与CI结果以发布验证清单为准。
+
+最终修正后的本地完整回归：275通过、0失败、0跳过；实际执行凭据d98dc9db81b34ebf806975576a153b30已绑定当前批准范围，包含真实ZIP解压初始化/安装检查。前轮274项和首个失败CI保留为历史，不替代最终发布闸门。

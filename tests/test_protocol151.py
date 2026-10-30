@@ -109,10 +109,33 @@ class Protocol151Tests(unittest.TestCase):
     def test_source_package_filters_runtime_auth_and_business_records(self):
         from tests.prepare_release151 import allowed
         for name in [".agent/state.json", ".agent/runtime/native-events.json", "docs/runtime/raw.txt",
-                     "packages/node_modules/auth.json", "core/.env", "docs/raw.ndax", "docs/key.pem", "auth.json"]:
+                     "packages/node_modules/auth.json", "core/.env", "docs/raw.ndax", "docs/key.pem", "auth.json",
+                     "project-template/.agent/auth.json", "project-template/.agent/runtime/raw.json"]:
             self.assertFalse(allowed(name), name)
-        for name in ["kit.py", "core/tasks.py", "docs/RELEASE_1_5_1.md", "packages/dsh/tools.js"]:
+        for name in ["kit.py", "core/tasks.py", "docs/RELEASE_1_5_1.md", "packages/dsh/tools.js",
+                     "project-template/.agent/GOAL.md", "project-template/.agent/tasks.json"]:
             self.assertTrue(allowed(name), name)
+
+    def test_actual_source_zip_supports_initialization_and_installed_skill(self):
+        from tests.prepare_release151 import build
+        import zipfile
+        output = self.project.parent / "bundle"
+        report = build(output)
+        extracted = self.project.parent / "extracted"
+        with zipfile.ZipFile(output / report["archive"]) as z:
+            z.extractall(extracted)
+        source = extracted / "Project-Anchor-1.5.1"
+        project = self.project.parent / "new-project"
+        home = self.project.parent / "install-home"
+        skills = self.project.parent / "install-skills"
+        for args in [["init-project", str(project), "--name", "actual-zip"],
+                     ["install-client", "agents", "--home", str(home), "--skills-dir", str(skills)]]:
+            result = subprocess.run([sys.executable, "-B", str(source / "kit.py"), *args], capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        result = subprocess.run([sys.executable, "-B", str(skills / "project-anchor/scripts/run.py"),
+                                 "status", str(project), "--brief"], capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)["task_schema"], 4)
 
     def test_concurrent_committed_change_invalidates_status(self):
         original = memory.git_info

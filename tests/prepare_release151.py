@@ -16,9 +16,14 @@ ROOT = Path(__file__).resolve().parents[1]
 PREFIXES = {"core", "hooks", "tests", "packages", "docs", "skills", "project-template", "global", "templates", "knowledge", ".github"}
 ROOT_FILES = {"kit.py", "pyproject.toml", "README.md", "CHANGELOG.md", "LICENSE", "SMOKE_TEST.md", ".gitignore", ".gitattributes"}
 EXTENSIONS = {".py", ".js", ".mjs", ".json", ".yaml", ".yml", ".md", ".toml", ".svg", ".txt"}
+TEMPLATE_FILES = {"project-template/.agent/" + name for name in
+                  ["GOAL.md", "CURRENT.md", "DECISIONS.md", "LESSONS.md", "PROGRESS.md", "tasks.json"]}
 
 
 def allowed(name):
+    # These are shipped blank templates, not a project's live governance data.
+    if name in TEMPLATE_FILES:
+        return True
     p = Path(name)
     return ((len(p.parts) == 1 and name in ROOT_FILES)
             or (p.parts[0] in PREFIXES and p.suffix in EXTENSIONS
@@ -44,7 +49,7 @@ def build(output, commit=None):
                 if not path.resolve().is_relative_to(ROOT):
                     raise ValueError("Source path escapes repository: " + name)
                 files[name] = path.read_bytes()
-    if any(name not in files for name in ["kit.py", "core/__init__.py", "pyproject.toml", "docs/RELEASE_1_5_1.md"]):
+    if any(name not in files for name in ["kit.py", "core/__init__.py", "pyproject.toml", "docs/RELEASE_1_5_1.md", *TEMPLATE_FILES]):
         raise ValueError("Source candidate is incomplete")
     for name, data in files.items():
         if re.search(rb"sk-(?:proj-)?[A-Za-z0-9_-]{40,}", data):

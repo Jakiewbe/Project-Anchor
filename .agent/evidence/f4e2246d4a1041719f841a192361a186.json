@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "run_id": "f4e2246d4a1041719f841a192361a186",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "IMP151",
+  "criterion": 2,
+  "kind": "review",
+  "scope_version": 3,
+  "scope_hash": "816ce5cb1062d135c76bb2a7ae21bbfff23ecb1210722b841b1ef460d4ecd613",
+  "criteria_hash": "a6dfb5e0b592826589918e3a33e28a236ec4d7e18d5e335d728a21bfde1506cb",
+  "expected_revision": 272,
+  "input_hash": "a41e0410246c41a42168151d0fa8d00ab96d0d71534191cb4a36a486f275a8bb",
+  "inputs": [
+    "core",
+    "tests",
+    "kit.py",
+    "skills",
+    "templates",
+    "packages",
+    "docs",
+    "global",
+    "project-template",
+    "AGENTS.md"
+  ],
+  "started_at": "2026-10-30T02:23:38.841801+00:00",
+  "reason": "发布闸门修复后的Bug及简化自查",
+  "result": "pass",
+  "review": {
+    "criterion": 2,
+    "findings": "Review查Bug发现并修复发布源码包误排除六份初始化模板，新增实际ZIP解压初始化/安装回归及模板完整性门禁；CI短路径下旧fixture未规范化致故障注入未命中，已规范fixture并保留生产短/长路径测试。",
+    "resolution": "最终本地275通过0失败，凭据d98dc9db81b34ebf806975576a153b30绑定当前范围；修复相关33通过0失败。原项目副本27通过0失败、原生接续2通过0失败、全局安装1363个其他文件不变；最终CI仍须新提交通过后才发布。",
+    "simpler": "只允许六份明确空白模板，不放开其他.agent；fixture统一真实路径，不改产品路径行为或减弱断言；仍用唯一核心与现有事务，不加兜底。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "最终本地275通过0失败，凭据d98dc9db81b34ebf806975576a153b30绑定当前范围；修复相关33通过0失败。原项目副本27通过0失败、原生接续2通过0失败、全局安装1363个其他文件不变；最终CI仍须新提交通过后才发布。",
+  "finished_at": "2026-10-30T02:23:38.850801+00:00"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 272,
+  "entries": [
+    {
+      "revision": 130,
+      "action": "state:update",
+      "reason": "同步最终156项结果与配置副作用恢复证据，保持CURRENT与任务一致",
+      "timestamp": "2026-10-09T13:42:19.668842+00:00"
+    }
+  ]
+}

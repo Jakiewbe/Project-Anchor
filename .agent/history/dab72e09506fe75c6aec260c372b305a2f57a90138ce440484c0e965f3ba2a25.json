@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 270,
+  "entries": [
+    {
+      "revision": 129,
+      "action": "task:update",
+      "reason": "最终回归通过并保存配置副作用失败与恢复证据；保留人工阻塞",
+      "timestamp": "2026-10-09T13:42:18.707314+00:00"
+    }
+  ]
+}

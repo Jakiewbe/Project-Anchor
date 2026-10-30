@@ -3,84 +3,28 @@
   "kit_version": "1.5.1",
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
   "name": "Project Anchor",
-  "revision": 267,
-  "task_revision": 141,
-  "current_task_revision": 141,
+  "revision": 274,
+  "task_revision": 147,
+  "current_task_revision": 147,
   "goal_version": 6,
   "goal_approved": true,
-  "updated_at": "2026-10-29T17:07:30.324980+00:00",
+  "updated_at": "2026-10-30T02:23:39.489514+00:00",
   "snapshot_keep": 20,
   "log_max_bytes": 65536,
   "hashes": {
     "GOAL.md": "4f1f0f8b9275cdaa5629ea0fbbca67a1b87a69f22239094469200821da154cdf",
-    "CURRENT.md": "83a8714098a8a92512ab2778d0090bfbb4744ed93b0f156122c08973c62c8f57",
+    "CURRENT.md": "c8ebb4d7285bfa74658bb6f09d4eff79f3102bd352b997858ca0cba221c06717",
     "DECISIONS.md": "3d5be84756e8a604562e1d98b30e73bcce56f20697f275783a29cb5ccb8ad494",
     "LESSONS.md": "29aef9ec0632200976c2ea529da31ead8aed14e6f21a3323ac794a5572a2a1a5",
-    "tasks.json": "ecd5da47b1bd8f6003d95d2f763fec17bb229c37a9695e5f85498fbaccbf5369"
+    "tasks.json": "ac46b5d48bd2dc75a37a89f0c766b3ed1496088ded12a055472d146149d92425"
   },
   "history": [
     {
       "action": "history:prune",
-      "dropped": 190,
+      "dropped": 198,
       "dropped_revision_min": 1,
-      "dropped_revision_max": 127,
-      "timestamp": "2026-10-29T17:07:30.324980+00:00"
-    },
-    {
-      "action": "document-version",
-      "file": "LESSONS.md",
-      "previous_sha256": "a1978ce5f398c3653439fb7f2973914558474c10e20ab0469e34a9d0887333dd",
-      "user_approved": false,
-      "timestamp": "2026-10-09T13:42:17.679989+00:00",
-      "content_pruned": true
-    },
-    {
-      "revision": 128,
-      "action": "state:update",
-      "reason": "已验证原生CLI配置副作用与精确撤销，记录失败边界，不把关闭Hook当作配置隔离",
-      "timestamp": "2026-10-09T13:42:17.692992+00:00"
-    },
-    {
-      "revision": 129,
-      "action": "task:update",
-      "reason": "最终回归通过并保存配置副作用失败与恢复证据；保留人工阻塞",
-      "timestamp": "2026-10-09T13:42:18.707314+00:00"
-    },
-    {
-      "action": "document-version",
-      "file": "CURRENT.md",
-      "previous_sha256": "ba718b7524398cfe49d2fddf0282537a44af58931470caa134953cdbade51e83",
-      "user_approved": false,
-      "timestamp": "2026-10-09T13:42:19.657841+00:00",
-      "content_pruned": true
-    },
-    {
-      "revision": 130,
-      "action": "state:update",
-      "reason": "同步最终156项结果与配置副作用恢复证据，保持CURRENT与任务一致",
-      "timestamp": "2026-10-09T13:42:19.668842+00:00"
-    },
-    {
-      "action": "document-version",
-      "file": "CURRENT.md",
-      "previous_sha256": "97e847c559226c7f00200ef906f1e41d5509baf4b15dc884794f3db587bca523",
-      "user_approved": false,
-      "timestamp": "2026-10-09T13:43:12.925964+00:00",
-      "content_pruned": true
-    },
-    {
-      "revision": 131,
-      "action": "state:update",
-      "reason": "同步最终156项结果中的模拟计数说明",
-      "timestamp": "2026-10-09T13:43:12.937190+00:00"
-    },
-    {
-      "action": "document-version",
-      "file": "CURRENT.md",
-      "previous_sha256": "c1a9f0bd7c14650c651890965787928e071370664edd0ba440f2ce8899d9ba0c",
-      "user_approved": false,
-      "timestamp": "2026-10-09T13:48:46.985515+00:00",
-      "content_pruned": true
+      "dropped_revision_max": 131,
+      "timestamp": "2026-10-30T02:23:39.490514+00:00"
     },
     {
       "revision": 132,
@@ -1062,9 +1006,9 @@
       "revision": 234,
       "file": "CURRENT.md",
       "previous_sha256": "d86f1725a8fa76e85c749070f3659be1fe64238dbb4623e98f189507004919d2",
-      "content": "# 当前断点\n\n## 当前阶段\n1.5.0候选的本地实施与本机验收完成；源码和本机安装已更新，尚未发布。\n\n## 当前任务\n本轮IMP150 done，验收pass；focus保留IMP150，不接续历史未结项。\n\n## 已完成工作\nschema3迁移、明确本轮指针、程序凭据、自查、材料过期与完整依赖链检查。\n裁剪前持久归档及只读查询；CLI/Skill/DSH统一查询与严格安装定位。\nREADME、升级、历史、故障、接口及验证说明已更新；pi原记录保留。\n完整回归253通过0失败0跳过；真实Codex接续2通过0失败。\n程序凭据85f53b9b855e4165a45674669842405e；自查8907f27166624f499a9f3936c996ccda。\n工具箱自身预检、备份迁移；原安装器更新1.5.0候选，其他114技能文件、6个项目与配置保持。\n\n## 当前阻塞\n远程CI未触发；Hook自动注入及DSH真实宿主未验证，本机结果不替代这些验收。\n\n## 下一步动作\n本轮停止在候选交付；提交、推送、发布和其他项目部署未获本轮授权。\n\n## 状态修订\n本页与最新任务修订对齐；细节见docs/ITERATION_1_5_VALIDATION.md第八节。\n原始输出与保留核对在.agent/runtime/implementation150；凭据与冷历史在.agent/evidence和history。\n\n## Git 检查\n保留原分支feat/universal-agent-skills与既有路径修正，未提交、推送、改写历史或创建worktree。\n",
       "user_approved": false,
-      "timestamp": "2026-10-26T09:34:43.830403+00:00"
+      "timestamp": "2026-10-26T09:34:43.830403+00:00",
+      "content_pruned": true
     },
     {
       "revision": 234,
@@ -1350,6 +1294,57 @@
       "action": "state:update",
       "reason": "保存已获准发布与下一步CI断点",
       "timestamp": "2026-10-29T17:07:30.324980+00:00"
+    },
+    {
+      "revision": 268,
+      "action": "task:revise",
+      "reason": "补齐原批准计划中的全局规则和初始化模板交付绑定",
+      "timestamp": "2026-10-29T17:12:47.252765+00:00"
+    },
+    {
+      "revision": 269,
+      "action": "task:update",
+      "reason": "实际交付覆盖与批准计划一致",
+      "timestamp": "2026-10-29T17:12:47.495089+00:00"
+    },
+    {
+      "revision": 270,
+      "action": "task:approve",
+      "reason": "用户要求修完所有问题再正式发布；保留原验收范围并补齐交付绑定",
+      "timestamp": "2026-10-29T17:12:47.751146+00:00"
+    },
+    {
+      "revision": 271,
+      "action": "task:update",
+      "reason": "继续修复发布门槛发现问题",
+      "timestamp": "2026-10-29T17:12:48.015115+00:00"
+    },
+    {
+      "revision": 272,
+      "action": "verify:record",
+      "reason": "发布前模板打包和Windows路径修复后的完整回归",
+      "timestamp": "2026-10-29T17:14:56.910002+00:00"
+    },
+    {
+      "revision": 273,
+      "action": "verify:record",
+      "reason": "发布闸门修复后的Bug及简化自查",
+      "timestamp": "2026-10-30T02:23:39.207498+00:00"
+    },
+    {
+      "action": "document-version",
+      "revision": 274,
+      "file": "CURRENT.md",
+      "previous_sha256": "83a8714098a8a92512ab2778d0090bfbb4744ed93b0f156122c08973c62c8f57",
+      "content": "# 当前断点\n\n## 当前阶段\n1.5.1发布闸门修复完成，准备推送最终修正提交重新验CI；尚未公开发布。\n\n## 当前任务\nIMP151 doing，标准1/2通过；REL151 approved/todo，须等最终Windows CI通过和固定提交包核验。\n\n## 已完成工作\n六项优化及schema4；最终本地275通过0失败，凭据d98dc9db81b34ebf806975576a153b30。\n实际项目副本27通过0失败，原生接续2通过0失败；全局安装1.5.1，1363个其他文件未变。\n修复源码包漏初始化模板；CI首轮277592f的5项短路径fixture失败已修正，未放宽断言。\n验证报告docs/ITERATION_1_5_1_VALIDATION.md；运行记录.agent/runtime/release151。\n\n## 当前阻塞\n最终提交的远程CI及固定提交源码包待核验；不把首轮失败CI报为通过。\n\n## 下一步动作\n正常提交推送，等待最终Windows CI通过后打包、发布并逐资产核对公开下载哈希。\n\n## 状态修订\n已获用户明确发布授权；原始业务项目未迁移。\n\n## Git 检查\n现有feat/universal-agent-skills，未建分支/worktree，不强推。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-30T02:23:39.477516+00:00"
+    },
+    {
+      "revision": 274,
+      "action": "state:update",
+      "reason": "保存发布闸门修复与最终CI待验状态",
+      "timestamp": "2026-10-30T02:23:39.489514+00:00"
     }
   ],
   "focus": {
@@ -1364,6 +1359,6 @@
       "IMP151"
     ],
     "goal_version": 6,
-    "task_revision": 141
+    "task_revision": 147
   }
 }

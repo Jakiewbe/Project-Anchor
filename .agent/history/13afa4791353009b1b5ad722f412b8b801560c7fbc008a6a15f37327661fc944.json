@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 269,
+  "entries": [
+    {
+      "revision": 128,
+      "action": "state:update",
+      "reason": "已验证原生CLI配置副作用与精确撤销，记录失败边界，不把关闭Hook当作配置隔离",
+      "timestamp": "2026-10-09T13:42:17.692992+00:00"
+    }
+  ]
+}

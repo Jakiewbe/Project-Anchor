@@ -1,25 +1,25 @@
 # 当前断点
 
 ## 当前阶段
-用户已授权正式发布1.5.1；本地代码与安装验证通过，准备推送并运行远程CI。
+1.5.1发布闸门修复完成，准备推送最终修正提交重新验CI；尚未公开发布。
 
 ## 当前任务
-IMP151 doing：标准1命令通过、标准2自查通过；标准3等待固定提交与远程CI。
-REL151 approved/todo，待IMP151完成后发布及核对资产。
+IMP151 doing，标准1/2通过；REL151 approved/todo，须等最终Windows CI通过和固定提交包核验。
 
 ## 已完成工作
-六项优化及schema4兼容已实现。完整回归274通过0失败；项目副本27通过0失败；原生接续2通过0失败。
-全局Skill已更新1.5.1；1363个其他技能/登录/配置文件未变，重复安装无变化，Skill读回通过。
-报告docs/ITERATION_1_5_1_VALIDATION.md；本机证据.agent/runtime/release151及implementation151。
+六项优化及schema4；最终本地275通过0失败，凭据d98dc9db81b34ebf806975576a153b30。
+实际项目副本27通过0失败，原生接续2通过0失败；全局安装1.5.1，1363个其他文件未变。
+修复源码包漏初始化模板；CI首轮277592f的5项短路径fixture失败已修正，未放宽断言。
+验证报告docs/ITERATION_1_5_1_VALIDATION.md；运行记录.agent/runtime/release151。
 
 ## 当前阻塞
-无权限阻塞；远程Windows CI与固定提交包尚待执行。Hook及DSH真实宿主仍未验证，不扩大声明。
+最终提交的远程CI及固定提交源码包待核验；不把首轮失败CI报为通过。
 
 ## 下一步动作
-正常提交推送main，核对CI，固定提交打包并公开v1.5.1；核对下载与标签后结项。
+正常提交推送，等待最终Windows CI通过后打包、发布并逐资产核对公开下载哈希。
 
 ## 状态修订
-关联IMP151；正式业务项目原件未迁移。
+已获用户明确发布授权；原始业务项目未迁移。
 
 ## Git 检查
-现有feat/universal-agent-skills；未新建分支/worktree，计划正常快进推送，不强推。
+现有feat/universal-agent-skills，未建分支/worktree，不强推。

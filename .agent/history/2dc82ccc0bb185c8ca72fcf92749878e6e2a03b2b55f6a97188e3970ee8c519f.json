@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 274,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 234,
+      "file": "CURRENT.md",
+      "previous_sha256": "d86f1725a8fa76e85c749070f3659be1fe64238dbb4623e98f189507004919d2",
+      "content": "# 当前断点\n\n## 当前阶段\n1.5.0候选的本地实施与本机验收完成；源码和本机安装已更新，尚未发布。\n\n## 当前任务\n本轮IMP150 done，验收pass；focus保留IMP150，不接续历史未结项。\n\n## 已完成工作\nschema3迁移、明确本轮指针、程序凭据、自查、材料过期与完整依赖链检查。\n裁剪前持久归档及只读查询；CLI/Skill/DSH统一查询与严格安装定位。\nREADME、升级、历史、故障、接口及验证说明已更新；pi原记录保留。\n完整回归253通过0失败0跳过；真实Codex接续2通过0失败。\n程序凭据85f53b9b855e4165a45674669842405e；自查8907f27166624f499a9f3936c996ccda。\n工具箱自身预检、备份迁移；原安装器更新1.5.0候选，其他114技能文件、6个项目与配置保持。\n\n## 当前阻塞\n远程CI未触发；Hook自动注入及DSH真实宿主未验证，本机结果不替代这些验收。\n\n## 下一步动作\n本轮停止在候选交付；提交、推送、发布和其他项目部署未获本轮授权。\n\n## 状态修订\n本页与最新任务修订对齐；细节见docs/ITERATION_1_5_VALIDATION.md第八节。\n原始输出与保留核对在.agent/runtime/implementation150；凭据与冷历史在.agent/evidence和history。\n\n## Git 检查\n保留原分支feat/universal-agent-skills与既有路径修正，未提交、推送、改写历史或创建worktree。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-26T09:34:43.830403+00:00"
+    },
+    {
+      "revision": 131,
+      "action": "state:update",
+      "reason": "同步最终156项结果中的模拟计数说明",
+      "timestamp": "2026-10-09T13:43:12.937190+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "CURRENT.md",
+      "previous_sha256": "c1a9f0bd7c14650c651890965787928e071370664edd0ba440f2ce8899d9ba0c",
+      "user_approved": false,
+      "timestamp": "2026-10-09T13:48:46.985515+00:00",
+      "content_pruned": true
+    }
+  ]
+}
