@@ -1,21 +1,75 @@
 ---
 name: project-anchor
-description: "用自然语言管理项目目标、任务、进度、决策、交接、规则诊断和复盘。Use for project governance, planning/status, decisions, handoff and rule/Hook diagnostics. 在用户要求治理或可信全局规则授权的首次实际项目工作时接入；只读问答和指定文件修改不初始化项目。"
+description: "用自然语言管理项目的长期目标(GOAL)、工作断点(CURRENT)、任务账本与交付验收(tasks/verify/review)、决策教训(DECISIONS/LESSONS)、会话交接(snapshot)、诊断(doctor)与复盘(retro)。Use for file-based AI project governance, planning/focus status, deliverable-bound verification, decisions, handoff and diagnostics. 当用户明确要求治理、规划、接续或可信全局规则授权首次实际项目工作时接入；纯只读问答、代码解释或仅改指定文件不初始化也不额外写治理记录。"
 metadata:
-  version: "1.5.1"
+  version: "1.6.0"
 ---
 
-# project-anchor
+# Project Anchor
 
-按用户当前意图调用唯一 `kit.py` 核心，项目事实来源是 `.agent/`。日常用户无需输入命令；不依赖 Codex 安装，客户端能力见 [CLIENTS.md](references/CLIENTS.md)。
+通过唯一 Python 核心 `kit.py` 维护项目磁盘事实（`.agent/`）。日常使用无需用户手输命令，不依赖 Codex 客户端，不复制核心逻辑或第二份账本。
 
-1. **定位与读取。** 默认使用用户指向的当前项目，先核对 Git 根目录与 `.agent/state.json`。不能把 Skill、工具箱、主目录或磁盘根目录当目标项目。读取本 Skill 的 `runtime.json`，用其中绝对 Python 路径运行本目录 `scripts/run.py`；路径作为独立参数，不依赖 PATH、不猜安装位置。已有项目先 `status PATH --brief --focus`（没有本轮指针不猜任务），完整读取目标和断点；按明确任务 ID/里程碑查细节，按需读决策与教训。历史任务不凭更新时间升级为本轮任务。
-2. **判断范围与阶段。** 用户已明确授权的局部任务可单独登记，不因总目标待确认而重复询问，也不替用户批准总目标。全项目规划或目标变更须有相应批准。批准目标不等于要求制定计划；只评估、只看、只做计划、确认后继续时停在指定阶段。路线已确定与允许执行是两件事：允许治理写入时当回合保存决定，明确全部只读或限定修改文件时不额外写记录。
-3. **选择流程。** 初始化、计划、任务、决策、交接、诊断或复盘时，读 [WORKFLOWS.md](references/WORKFLOWS.md) 对应节；参数与输入格式见 [COMMANDS.md](references/COMMANDS.md)。只读请求不初始化或顺便写入。首次治理接入只在用户或可信全局规则授权且未被当前范围限制时执行；旧业务初始化限制与治理写入按原文区分。
-4. **受控写入。** 写前取得最新项目 revision；task/state 复用程序的锁、校验和事务，不直接编辑受保护状态。`task add` 只建立草案，批准必须用 `task approve`（`--source` 只是调用者声明，不是身份认证）；修改已批准任务的描述、验收标准或依赖必须先 `task revise`，再重新批准。描述、标准、依赖、checks和deliverables都属批准范围。命令验收用 `verify run`，Agent 先 Review 查 Bug 再检查实现是否简单稳健，用 `task review` 留下自查依据；两者不能互换或手填 observed。done 必须有当前范围与材料对应的结果；旧 schema 1/2/3 账本只读，写入前先 `migrate`。损坏、修订冲突或事务中断即停止相关写入，不自动重试到成功。优先用 UTF-8 stdin 的 `--json-input`/`--text-input`；需草稿文件时放 `.agent/runtime/skill-input/`，未初始化项目放临时目录。CURRENT 保留必要章节、50 行以内。
-对明确获准的新工作登记任务后，用 `focus set` 设置本轮指针；设置指针不等于批准。
-5. **核对结果。** 检查退出码并重新读状态；`changed=false` 表示内容无变化、未写入，不能报告新增保存。区分程序校验、真实客户端行为与未验证结果。安装版本不一致先查看具体差异，不自动重装或修改信任；程序不可用就如实说明，不绕过程序直接写文件。
+## 1. 定位与调用
 
-本 Skill 不替代 Hook，不自动提交、推送或批准知识入库。自动选择没有确定性保证；可显式使用 `$project-anchor`（Codex）、`/project-anchor`（支持该入口的客户端）或点名该技能。
+1. **确认目标项目根目录**：优先取用户指向的项目（有 `.git` 则核对仓库根），确认 `.agent/state.json`。严禁把 Skill 目录、工具箱目录、用户主目录或磁盘根目录当目标项目。
+2. **读取安装定位**：读取本 Skill 根目录 `runtime.json`，取得 `python` 绝对路径。
+3. **以独立参数调用 `scripts/run.py`**（保留目标项目工作目录，不依赖 PATH，不拼接 shell 字符串）：
 
-1.5.1接续：先核对current_alignment，未关联或关联变化时按真实授权核对任务，不按关键词补猜。保存CURRENT必须--task ID（可重复）或--no-task。先列实际交付物deliverables，再配置覆盖它们的checks.inputs；无本地交付显式填[]。可执行检查用verify run，自查不替代运行；完成报告分别说明历史状态、当前验收、交付覆盖、已验收范围与缺项。只读查询不写锁；诊断失败立即说明，不重试绕过。
+```powershell
+# Windows PowerShell
+& $python '-X' 'utf8' $runner 'status' $project '--brief' '--focus'
+```
+
+```bash
+# macOS / Linux
+"$python" -X utf8 "$runner" status "$project" --brief --focus
+```
+
+4. **串联修订号**：每次成功写入都会返回最新 `revision`。可直接将返回的 `revision` 传入下一步 `--expected-revision`；遇冲突、损坏或未完成事务立即停止并重读状态，不自动重试覆盖。
+
+## 2. 范围与阶段门禁
+
+先按当前请求与已有明确授权判断停止位置，不用关键词硬猜权限：
+
+| 用户意图 | 允许动作 | 停止边界 |
+| --- | --- | --- |
+| 只读问答 / 评估 / 确认后再继续 | `status` / `doctor` / `history` / `verify show` | 不初始化、不建任务、不写治理或业务文件 |
+| 仅批准或变更总目标 | `state update GOAL.md --approved` | 不顺便拆任务、不开始实施 |
+| 制定计划，先不执行 | `task add` 创建 `draft` | 不自动 `approve`、不转 `doing`、不改业务 |
+| 明确局部任务授权（即使总目标待确认） | 登记局部任务、`task approve`、`focus set` 并执行 | `description`/`reason` 写清授权范围，不替用户批总目标 |
+| 已确定技术路线（如“改用 JSON，先看模板”） | 允许治理写入时当回合写 `DECISIONS.md` | 停在所要求动作，不顺便实施代码 |
+| 仅修改指定业务文件 | 按指定范围改文件 | 不初始化项目，不额外写 `.agent/` 记录 |
+| 首次接入（用户要求或可信全局规则授权） | `init-project`（默认不传 `--git-init`） | 仅创建 `.agent/` 与追加 `AGENTS.md` / `.gitignore` / `.gitattributes` |
+
+## 3. 接续与主链路
+
+1. **接续必先读盘**：执行 `status PATH --brief --focus`，读取完整 `goal`、`current` 与 `current_alignment`（`unknown` / `changed` / `aligned`）。
+   - `focus_missing=true` 时不按更新时间猜历史任务：先 `status PATH --brief`（或 `--all`）核对任务并确认本轮范围，再 `focus set`。
+   - 关注 `verification_state`（`pass` / `stale` / `pending` / `failed` / `invalid` / `legacy`）与 `deliverable_coverage`（`covered` / `uncovered` / `undeclared`）。
+2. **任务与验收闭环**：
+   - `task add` 建草案（显式声明 `deliverables`——无本地文件填 `[]`，且每项须被 `checks.inputs` 覆盖）。
+   - 用户批准或授权实施具体方案后，`task approve --source user|policy` 锁定批准快照，再 `focus set` 设为本轮任务。
+   - 实施前 `task update` 转 `doing`；完成后按检查类型验收：`command` 走 `verify run`（程序采集 `observed` 凭据），`review` 先查 Bug 再做第一性原理简化自查后走 `task review`（固定记录 `claimed/self`）。
+   - 全部当前检查通过且交付物存在，才 `task update` 转 `done`。
+3. **交接与复盘**：
+   - 更新 `CURRENT.md` 必须传 `--task ID`（可重复）或互斥 `--no-task`，保持 7 个必要章节且不超过 50 行；随后可 `snapshot` 留档。
+   - 项目收尾用 `retro` 生成索引草案；跨项目经验需用户确认具体条目后才 `knowledge-add --approved`。
+
+## 4. 核心铁律
+
+- **不手改受保护状态**：禁止直接编辑 `tasks.json`、`state.json`、`PROGRESS.md`；外部编辑了 Markdown 文档需审核后 `state adopt`。
+- **不混用证明层级**：`--source user` 只是调用声明；退出码 0 不自动等于语义满足；自查（`claimed/self`）与命令（`observed`）不可互换；未实测内容不能报通过。
+- **不静默改范围或重写历史**：改已批准任务的描述、标准、依赖、`checks` 或 `deliverables` 必须先 `task revise` 再重新 `task approve`；schema 1/2/3 旧账本写入前先 `migrate`；旧任务继续或作依赖前须补齐声明并重批。
+- **不擅自操作 Git**：未获用户明确要求，不提交、不新建分支或工作树、不推送。
+- **核对真实写入**：写入后核对退出码与返回值；`changed=false` 表示内容和元数据无变化未写入，不能报告为新增保存。
+
+## 5. 按需参考（渐进加载）
+
+仅在需要对应细节时读取 `references/`：
+
+| 需要什么 | 读取文件 |
+| --- | --- |
+| 各场景完整 SOP（初始化、规划、更新任务、迁移、交接、诊断、复盘） | [references/WORKFLOWS.md](references/WORKFLOWS.md) |
+| 全部 CLI 参数、schema 4 约束、筛选规则与故障恢复手册 | [references/COMMANDS.md](references/COMMANDS.md) |
+| 可直接复制的 JSON / Markdown 模板与 PowerShell UTF-8 输入写法 | [references/TEMPLATES.md](references/TEMPLATES.md) |
+| 客户端能力边界、安装入口（Codex / 通用 / DSH / Claude）与信任说明 | [references/CLIENTS.md](references/CLIENTS.md) |

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "run_id": "bd3852ef32bd4fa6862ae90ecadd584a",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "MIG151ALL",
+  "criterion": 1,
+  "kind": "review",
+  "scope_version": 1,
+  "scope_hash": "ed10a2de55fc3872e198ba656814e3fcecf1df64845fc17a5e6ac8fb6254e13c",
+  "criteria_hash": "f35faf7161f0338bb8b743b3440f76eee162594c078e613480b8f47ec128888e",
+  "expected_revision": 295,
+  "input_hash": "ac95057e353d325059d7fb6b1a52665fd869fefbfd39a8f3ce22a6d4ae19676c",
+  "inputs": [
+    "docs/PROJECT_MIGRATION_1_5_1.md"
+  ],
+  "started_at": "2026-10-30T03:47:31.415469+00:00",
+  "reason": "用户授权全部已接入正式项目升级迁移1.5.1",
+  "result": "pass",
+  "review": {
+    "criterion": 1,
+    "findings": "已核对9个正式项目的真实状态、官方迁移备份、22个旧任务全部字段和历史、7616个业务文件哈希、规则自定义前缀、Git分支HEAD及已安装Skill入口。OriginMaster并发变化单列；FGS不可访问、JEV未接入及历史测试均未误计迁移。未发现迁移引入的数据丢失或业务改写。",
+    "resolution": "7个旧项目迁移成功，2个原已新版核对通过；9通过0失败。不可访问范围明确未验证；旧验收和交付缺口不补造。",
+    "simpler": "使用既有migrate和共享Skill，只替换明确管理的规则段；不新建核心副本、不推断关联、不重批业务任务。",
+    "result": "pass"
+  },
+  "reviewer_kind": "self",
+  "summary": "7个旧项目迁移成功，2个原已新版核对通过；9通过0失败。不可访问范围明确未验证；旧验收和交付缺口不补造。",
+  "finished_at": "2026-10-30T03:47:31.424845+00:00"
+}

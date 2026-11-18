@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 293,
+  "entries": [
+    {
+      "revision": 145,
+      "action": "state:update",
+      "reason": "保存用户批准的通用Skill验收边界与范围外非阻塞决定；不修改GOAL",
+      "timestamp": "2026-10-10T06:17:30.533567+00:00"
+    }
+  ]
+}

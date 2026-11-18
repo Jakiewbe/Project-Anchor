@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "run_id": "f9553c22d6fa40ff951988ca5cd56736",
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "task_id": "SKL160",
+  "criterion": 1,
+  "kind": "command",
+  "scope_version": 1,
+  "scope_hash": "d04d711615bb5f204e8a761fdc44f91985e995d687d5581210bd629dcda2c3e8",
+  "criteria_hash": "eaba7b22e5b34e1d7583f720927df1da9625299860d93aec111cdbcdca9db9b7",
+  "expected_revision": 302,
+  "input_hash": "b63f18e939950efdf86346f990ed4a840a10a3ee2134f925c93541a0d4b4f759",
+  "inputs": [
+    "core/__init__.py",
+    "pyproject.toml",
+    "packages/dsh/package.json",
+    "packages/dsh/kit.js",
+    "global/AGENTS.md",
+    "global/CLIENT_RULES.md",
+    "skills/project-anchor/SKILL.md",
+    "skills/project-anchor/agents/openai.yaml",
+    "skills/project-anchor/scripts/run.py",
+    "skills/project-anchor/references/WORKFLOWS.md",
+    "skills/project-anchor/references/COMMANDS.md",
+    "skills/project-anchor/references/CLIENTS.md",
+    "skills/project-anchor/references/TEMPLATES.md",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/RELEASE_1_6_0.md",
+    "docs/assets/hero.svg",
+    "docs/assets/workflow.svg",
+    "docs/assets/architecture.svg",
+    "docs/assets/verification.svg",
+    "docs/assets/badge-version.svg",
+    "docs/assets/badge-python.svg",
+    "docs/assets/badge-runtime.svg",
+    "docs/assets/badge-license.svg",
+    "tests/prepare_release.py",
+    "tests/test_protocol151.py",
+    "tests/test_skill.py",
+    "tests/test_dsh_plugin.py"
+  ],
+  "started_at": "2026-11-18T09:14:09.436363+00:00",
+  "reason": "运行全量单元测试以验收SKL160全部改动与版本一致性",
+  "result": "pass",
+  "argv": [
+    "C:\\Users\\chs\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-q"
+  ],
+  "exit_code": 0,
+  "logs": {
+    "stdout.log": {
+      "path": ".agent/runtime/checks/f9553c22d6fa40ff951988ca5cd56736/stdout.log",
+      "sha256": "af216a838dc67470e63f9ff9a969c3e80de246515e664ebeb0262a2e5b274f97",
+      "bytes": 2747
+    },
+    "stderr.log": {
+      "path": ".agent/runtime/checks/f9553c22d6fa40ff951988ca5cd56736/stderr.log",
+      "sha256": "65a32ab2b4afc0c1259cb410deac1f6ef3515e3803372fc41774899094264fb7",
+      "bytes": 304
+    }
+  },
+  "finished_at": "2026-11-18T09:16:52.498280+00:00"
+}

@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 import kit
-from core import atomic_io, memory, tasks, verification
+from core import VERSION, atomic_io, memory, tasks, verification
 from core.hook_runtime import context
 from core.diagnostics import _project_checks
 from tests.test_migration import old_archive
@@ -107,7 +107,7 @@ class Protocol151Tests(unittest.TestCase):
         self.assertFalse(list(self.project.rglob("__pycache__")))
 
     def test_source_package_filters_runtime_auth_and_business_records(self):
-        from tests.prepare_release151 import allowed
+        from tests.prepare_release import allowed
         for name in [".agent/state.json", ".agent/runtime/native-events.json", "docs/runtime/raw.txt",
                      "packages/node_modules/auth.json", "core/.env", "docs/raw.ndax", "docs/key.pem", "auth.json",
                      "project-template/.agent/auth.json", "project-template/.agent/runtime/raw.json"]:
@@ -117,14 +117,14 @@ class Protocol151Tests(unittest.TestCase):
             self.assertTrue(allowed(name), name)
 
     def test_actual_source_zip_supports_initialization_and_installed_skill(self):
-        from tests.prepare_release151 import build
+        from tests.prepare_release import build
         import zipfile
         output = self.project.parent / "bundle"
         report = build(output)
         extracted = self.project.parent / "extracted"
         with zipfile.ZipFile(output / report["archive"]) as z:
             z.extractall(extracted)
-        source = extracted / "Project-Anchor-1.5.1"
+        source = extracted / f"Project-Anchor-{VERSION}"
         project = self.project.parent / "new-project"
         home = self.project.parent / "install-home"
         skills = self.project.parent / "install-skills"

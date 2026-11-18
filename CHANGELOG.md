@@ -1,5 +1,14 @@
 # 更新记录
 
+## 1.6.0 — 2026-11-18：Skill 底层重构、模板化参考与视觉说明升级
+
+- **Skill 体系从底层重构**：重写 `skills/project-anchor/SKILL.md` 与 `references/WORKFLOWS.md`、`COMMANDS.md`、`CLIENTS.md`，消除历史版本补丁式拼接段落，改为严格渐进加载的阶段门禁、主链路与错误恢复手册。
+- **新增结构化载荷模板**：新增 `skills/project-anchor/references/TEMPLATES.md`，提供可直接复制的 `task add`、`task review`、`GOAL.md`（6 章节）、`CURRENT.md`（7 章节 ≤ 50 行）、`knowledge-add` 模板以及 Windows PowerShell UTF-8 文件写入示例。
+- **底层运行器与插件版本解耦**：`skills/project-anchor/scripts/run.py` 在 Codex 模式下同时清理 `PROJECT_ANCHOR_CLIENT_HOME`，在非 Codex 模式下清理 `CODEX_HOME`，增强缺失 `runtime.json` 报错提示并放宽版本探针超时与解码容错；`packages/dsh/kit.js` 改为动态读取 `package.json` 版本号，消除硬编码版本漂移。
+- **全局/客户端规则同步**：`global/AGENTS.md`（更新至 `1.6.0`）与 `global/CLIENT_RULES.md` 整合 `CURRENT --task/--no-task`、`deliverables` 覆盖及双轨验收约定为统一正文。
+- **README 与全套 SVG 插图重绘**：重写 `README.md`；重绘 `hero.svg`、`workflow.svg`、`architecture.svg` 与 4 枚徽章，新增 `verification.svg` 图解防漂移交付校验模型。
+- **打包脚本通用化**：新增版本感知的 `tests/prepare_release.py`（读取 `core.VERSION`），同步完善 Skill 文档/模板/SVG/README 链接与版本一致性自动化测试。
+
 ## 1.5.1 — 2026-10-30：交付覆盖与只读查询
 
 - 真正只读的status/context/verify show/项目诊断不创建锁或目录；读取前后核对治理状态及事务，变化明确失败。

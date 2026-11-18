@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 291,
+  "entries": [
+    {
+      "revision": 144,
+      "action": "task:update",
+      "reason": "用户2026-10-10批准通用Skill边界收口；范围外客户端非阻塞，保留任务状态及历史证据",
+      "timestamp": "2026-10-10T06:17:29.578257+00:00"
+    }
+  ]
+}

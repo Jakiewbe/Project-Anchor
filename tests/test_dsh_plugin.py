@@ -73,8 +73,10 @@ def schema_violations(node, path, out):
 
 class ManifestTests(unittest.TestCase):
     def test_manifest_and_patch_agree(self):
+        from core import VERSION
         manifest = json.loads((BUNDLE / "package.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["name"], "@local/project-anchor-dsh")
+        self.assertEqual(manifest["version"], VERSION)
         self.assertTrue(manifest["private"])
         self.assertEqual(manifest["type"], "module")
         self.assertEqual(manifest["dsh"]["bundle"]["patch"], "./cordis.patch.yml")

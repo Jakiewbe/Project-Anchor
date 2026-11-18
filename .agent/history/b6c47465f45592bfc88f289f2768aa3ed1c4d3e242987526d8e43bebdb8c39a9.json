@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 304,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 260,
+      "file": "CURRENT.md",
+      "previous_sha256": "87e57d59d6058b4be9a3d303e28064dee62b4be4fb0a4d5d09bf007987a42762",
+      "content": "# 当前断点\n\n## 当前阶段\n1.5.1本地实现和验收完成；候选包就绪，未提交推送或公开发布。\n\n## 当前任务\nIMP151 blocked：标准1实际执行通过，标准2自查通过；标准3等待固定提交与远程CI。\n\n## 已完成工作\n六项优化、schema4及兼容、只读权限和精简复盘已实现。\n完整回归274通过0失败；项目副本27通过0失败；Codex新会话/原生压缩接续2通过0失败。\n文档3通过0失败；候选源码包96项逐文件回读通过。证据见docs/ITERATION_1_5_1_VALIDATION.md。\n发布材料在.agent/runtime/implementation151/release-candidate；候选未绑定提交，不冒充正式包。\n\n## 当前阻塞\n需明确批准提交并推送运行候选提交的远程Windows CI，然后生成固定提交源码包。\n全局安装仍1.5.0，工具箱源码1.5.1，调用旧适配器会明确版本不匹配；未擅自全局重装。\n\n## 下一步动作\n获准后提交推送、核对远程CI、以固定提交打包；正式项目迁移及公开发布另行确认。\n\n## 状态修订\n断点关联IMP151，程序保存目标版本和当前任务修订。\n\n## Git 检查\n现有feat/universal-agent-skills；未新建分支/worktree；本轮修改未提交推送。\n",
+      "user_approved": false,
+      "timestamp": "2026-10-29T17:00:29.639929+00:00"
+    },
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "76d30646d7260f3d067f8eda8927f83d5093649101417a578f2ee86b5cc9ba16",
+      "user_approved": false,
+      "timestamp": "2026-10-10T06:31:01.516560+00:00",
+      "content_pruned": true
+    },
+    {
+      "revision": 153,
+      "action": "state:update",
+      "reason": "记录GitHub已合并与Git树一致性证据，保留旧验收边界",
+      "timestamp": "2026-10-10T06:31:01.527557+00:00"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 296,
+  "entries": [
+    {
+      "revision": 147,
+      "action": "state:update",
+      "reason": "记录用户追加的README产品说明边界，保留既有决策字节",
+      "timestamp": "2026-10-10T06:21:32.798857+00:00"
+    }
+  ]
+}

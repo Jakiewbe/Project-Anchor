@@ -1,6 +1,6 @@
 interface:
   display_name: "Project Anchor"
-  short_description: "用自然语言管理项目目标、任务、进度、记忆、会话交接与复盘"
-  default_prompt: "使用 $project-anchor 检查当前项目状态，并执行我要求的项目治理操作。"
+  short_description: "管理项目目标、任务账本、交付验收、决策记忆、断点交接与环境诊断"
+  default_prompt: "使用 $project-anchor 读取当前项目磁盘状态，并按当前授权执行项目治理操作。"
 policy:
   allow_implicit_invocation: true

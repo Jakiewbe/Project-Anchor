@@ -1,54 +1,117 @@
-# 工作流（按当前意图读取）
+# 工作流手册（按当前意图按需读取）
 
-## 范围、阶段与已确认决定
-先依据当前请求及已有明确授权判断，不用关键词脚本替用户推断权限。项目总目标批准、局部任务批准、执行阶段和治理写入分别判断。
+## 1. 范围、阶段与权限判断
+
+依据当前用户请求与已确认授权判断，不用关键词脚本替用户推断权限；总目标批准、局部任务批准、执行阶段和治理写入四者分别判断。
 
 | 用户意图 | 允许动作与停止位置 |
 | --- | --- |
-| 仅评估、全部只读、确认后再继续 | 读取与报告；不创建任务、不写治理或业务文件 |
-| 只批准项目目标 | 通过程序登记 GOAL；不顺便生成任务或执行 |
-| 制定计划，先不执行 | 按授权范围创建 draft；不转 doing、不修改业务 |
-| 按刚才明确的方案修改 | 创建/更新草案，用 task approve 记录批准后执行；不重复确认、不扩大范围 |
-| 路线改 JSON，先看看模板 | 已有治理写入授权时当回合保存决定，只看模板，不实施路线 |
-| 仅修改指定文件 | 按指定范围处理，不额外写治理文件 |
+| 仅评估、全部只读、确认后再继续 | 只读查询与报告；不创建任务、不写治理或业务文件 |
+| 只批准项目总目标 | `state update GOAL.md --approved`；不顺便生成任务或执行 |
+| 制定计划，先不执行 | 按授权范围 `task add` 创建 `draft`；不转 `approved`/`doing`，不改业务 |
+| 按刚才明确的方案实施 | 创建/更新草案 → `task approve` → `focus set` → 实施与验收；不重复确认、不扩大范围 |
+| 路线已确定，先看某模板（如“路线改 JSON，先看看模板”） | 允许治理写入时当回合写 `DECISIONS.md`；只展示或核对模板，不开始实施 |
+| 仅修改指定文件 | 按指定范围修改业务文件；不初始化项目，不额外写治理记录 |
 
-局部任务可在项目总目标待确认时按用户明确请求登记；description 和 task approve 的 reason/source 记录批准来源及范围，不把该任务当作总目标获批。任务既有草案没有批准时仍不能开始。历史验收缺口保留原状态，CURRENT 明确本轮任务 ID、阶段和下一步，不根据更新时间猜测本轮。
+- **局部任务独立推进**：总目标仍为待确认草案时，若用户明确授权了某个局部任务，可单独登记并在 `description` 与 `task approve --reason` 中记录授权来源与范围，不把该局部授权当成总目标获批。
+- **未批准草案不得执行**：已有草案在未取得批准前不能转 `doing` 或修改对应业务代码。
 
-## 初始化项目管理
-用户“启用项目管理”，或可信全局规则明确授权首次实际项目工作时接入，允许新增治理记录，不授权重建业务工程或 Git 初始化。确认目录和名称；名称可采用目录名。从仓库子目录启动时先找到 Git 根目录；非 Git 项目采用用户明确指向的项目目录，不扫描接管其他目录。
+---
 
-先查看旧约束的原文与上下文。“继续已有工程，不要重新初始化项目、不要重构正常模块”若针对业务骨架、依赖和模块，则保留这些内容，同时执行全局已授权的治理接入；不能把一句旧记忆摘要扩展成禁止所有新增文件。用户明确禁止新增 `.agent/`、治理接入、修改 AGENTS/ignore/attributes，或要求仅修改指定文件时，不接入。确实无法判断限制范围才澄清，不自行认定所有旧约束失效。
+## 2. 初始化项目管理（Onboarding）
 
-调用 init-project，不传 --git-init，除非用户明确要求。实际写入仅有：创建 `.agent/` 及运行锁/事务记录；保留现有字节并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`。不重建业务目录，不修改业务源码、依赖、Git仓库、分支或提交。未知 .agent 文件会报错，不能覆盖。已有治理状态先 status，名称不同不能强行重新接入。
+1. **前置核查**：
+   - 触发条件：用户明确要求启用项目管理，或可信全局规则授权在首次实际项目工作时接入。纯只读问答、代码解释或限定单文件修改不接入。
+   - 目录定位：仓库子目录启动时先定位 Git 根目录；非 Git 目录只使用用户明确指向的项目目录，不扫描接管其他目录。
+   - 旧约束辨析：结合原文与上下文判断。若旧约定说“继续已有工程，不要重新初始化项目、不要重构正常模块”是指保留业务骨架、依赖与正常模块，则可同时执行治理接入；若明确禁止新增 `.agent/`、禁止治理接入、禁止修改 `AGENTS.md`/`.gitignore`/`.gitattributes` 或仅限修改指定文件，则不接入。确实无法判断时先澄清。
+   - 已有状态优先：若目标已存在 `.agent/state.json`，先 `status`，名称不同不得强行重接。
+2. **执行写入**：
+   - 调用 `init-project PATH --name NAME`，**不要传 `--git-init`**（除非用户明确要求初始化 Git）。
+   - 实际写入范围固定为 4 处：创建 `.agent/`（含运行锁与事务目录），保留既有字节并追加 `AGENTS.md`、`.gitignore`、`.gitattributes`。不会修改业务源码、依赖或 Git 提交/分支；存在未知 `.agent/` 文件会拒绝覆盖。
+   - 若工具审批被拒绝，禁止改换参数或路径绕过；可只读核查原因并如实等待用户澄清。
+3. **收尾核对**：
+   - 核对业务文件与 Git 状态未被意外修改；说明新增/追加了哪些文件；告知 `GOAL.md` 仍为待确认草案。
 
-需要审批时，说明目标绝对路径、以上完整写入范围、当前全局授权及旧限制的原文含义；不能声称“仅写 .agent/ 和 AGENTS.md”。自动审批明确拒绝后，不改命令或换入口绕过；可以只读核查授权和实际代码，仍有冲突则报告原始拒绝原因并等待用户澄清。修改规则不会自动撤销其他会话已经作出的拒绝。
+---
 
-完成后核对现有业务文件和Git未被改动，说明新增记录及追加文件；目标模板仍是草案，不擅自编造或批准。若用户另有明确局部任务可处理该任务；全项目规划须先确认总目标。只读问答不接入。
+## 3. 只读进度、本轮接续与目标核对
 
-## 根据目标制定任务
-全项目规划读取 GOAL/CURRENT/相关 DECISIONS，目标仍是空模板时先确认；明确局部请求仅规划该范围，不要求用户先补项目总目标。将里程碑拆为有验收条件、依赖和唯一 ID 的 task add 草案（plan=draft）。制定计划不等于批准执行；只批准目标不自动制定计划。重大范围取舍先澄清；不要删除已有任务、创建重复计划或修改顶层目标。依赖先添加，随后任务逐次使用最新项目 revision。用户批准计划或明确要求实施已有具体方案后用 `task approve` 记录批准范围，再进入 doing；不要用 task update 直接转 approved。
+1. **接续起点**：运行 `status PATH --brief --focus`，读取完整 `goal`、`current`、`current_alignment` 与本轮任务列表。
+2. **指针缺失或关联变化**：
+   - 若 `focus_missing=true`（未设置本轮指针），**不得按更新时间猜测历史任务**；可运行 `status PATH --brief`（或 `--all`）向用户汇报待办与历史状态，确认本轮任务后执行 `focus set`。
+   - 若 `current_alignment` 为 `unknown` 或 `changed`，先按真实授权核对任务范围，不凭印象补猜。
+3. **筛选与完整信息**：
+   - `--brief` 折叠终结任务（`done`/`cancelled`）至 `summary.folded_final` 并省略长描述/长证据；查全量传 `--all`，查验收条件/证据细节不带 `--brief`。
+   - 显式 `--task ID` 或 `--milestone NAME` 永不折叠已完成项，同时单列筛选范围外的直接依赖（`external_dependencies`）。
+   - 只读查询严禁组合 `--rebuild`；重建视图须单独授权执行 `status PATH --rebuild`。
+4. **目标偏离检查**：将当前任务与已确认决策逐项对照 `GOAL.md`，如实报告符合、偏离或资料不足，不凭完成率擅自改目标。
 
-## 只读进度与目标偏离
-先 status PATH --brief --focus 读取完整目标、断点和明确本轮任务；focus_missing时不猜历史任务；本轮查询使用明确 --task ID 或 --milestone NAME，默认简洁结果折叠已完成/取消项，--all读取全部；显式任务、里程碑或本轮指针不折叠。需验收条件与证据时用原 status 或不带 --brief 的筛选查询。摘要统计草案和已批准有效任务，筛选范围外的直接依赖单列，不能漏掉真实阻塞；原 PROGRESS 口径不变。查看进度不自动 rebuild，更不改任务。目标偏离检查将当前任务和已确认决策逐项对照 GOAL；报告符合/偏离/资料不足，不凭完成率改变目标。
+---
 
-## 更新任务
-用 ID 或唯一匹配标题定位任务；不唯一先问。先 status 检查依赖、计划状态及验收。新增任务只建立 draft；用户明确批准后才用 `task approve` 记录批准范围，`--source` 是调用者声明，不是身份验证。已批准任务的描述、验收标准或依赖发生实质变化时，先 `task revise` 回到草案，修改后重新 `task approve`；不要用 `task update` 改 plan、approved_scope 或旧证据。实现后用 `task update` 进入 doing/done；一次 update 不能同时改范围并完成，也不能删依赖并同时开始。按 checks 的类型逐项验收：command 用 verify run，review 由Agent自查后 task review；不手填证据，不把自查写成用户或独立审核。完成前检查 verification_state=pass 以及依赖结果，输入改变后的旧结果不能继续当通过。描述、标准、依赖或checks变化需revise重批。明确本轮后focus set；接续不自动改指针。旧任务显示legacy，继续前补齐checks并重批。参数、JSON、迁移与回退见COMMANDS.md。
+## 4. 任务规划、范围批准与闭环验收
 
-## 迁移旧账本
-先只读 status/doctor 确认项目；schema 1/2/3 只能读，写入前用 `migrate PATH --expected-revision N --reason TEXT --dry-run` 校验转换结果，再显式执行不带 `--dry-run` 的迁移。未知旧字段会报错，不自动丢弃。迁移备份受影响治理文件并写清单；旧任务原状态、批准快照与证据保留；schema1/2标记 verification_legacy，schema3保留原凭据并显示交付undeclared。schema1另保留legacy_unverified，不补造批准或执行记录。旧任务重新开始或完成前，按用户确认的范围 `task revise`、补齐 checks 后 `task approve`；不要删除 schema 字段或让旧版客户端继续写 schema 4。迁移失败时先核对原因；仅存在未完成事务时才使用 recover，不重复试到成功。
+1. **规划草案（Draft）**：
+   - 全项目规划前须确保 `GOAL.md` 已确认；局部规划仅规划授权范围。
+   - 每个任务须包含唯一 `task_id`、清晰 `description`、可核查 `acceptance_criteria`、`deliverables`（相对文件/目录，无本地交付显式填 `[]`）及逐条对应的 `checks`（`command` 或 `review`）。
+   - **交付覆盖铁律**：`deliverables` 中每一项必须等于某个 `checks.inputs` 或位于其子目录下；不支持通配符、项目根目录、`.agent` 或 `.git`。
+   - 存在依赖时先添加被依赖任务，后续任务逐次使用最新 `revision`。
+2. **批准与锁定范围（Approve & Focus）**：
+   - 取得用户批准或明确实施授权后，执行 `task approve PATH --task-id ID --source user|policy --expected-revision N --reason TEXT`。
+   - 用 `focus set PATH --task ID --expected-revision N --reason TEXT` 设定本轮指针（设置指针不等于批准）。
+   - 已批准任务的 `description`、`acceptance_criteria`、`dependencies`、`checks` 或 `deliverables` 任一发生实质改变，必须先 `task revise` 回到草案，修改后重新 `task approve`；禁止用 `task update` 篡改批准范围。
+3. **实施与双轨验收（Execute & Verify）**：
+   - 确认所有前置依赖及上游依赖链均处于有效 `pass` 状态后，通过 `task update` 将任务转为 `doing`。
+   - **生成交付物后再验收**：`deliverables` 声明的文件/目录缺失时不得验收。
+   - **command 型标准**：调用 `verify run` 执行批准的 `argv`，生成 `observed` 凭据。
+   - **review 型标准**：Agent 亲自执行 Code Review（先查 Bug，再做第一性原理简化检查），再调用 `task review` 提交结构化自查结论，固定记录 `level=claimed, reviewer_kind=self`。未实际检查的图面、实机或生产环境不得列为通过。
+   - 全部检查结果均对应当前材料指纹（`verification_state=pass`）后，再调用 `task update` 置为 `done`。
+   - 完成汇报须分别说明：历史完成状态、当前验收状态、交付覆盖（`deliverable_coverage`）、`observed` 命令结果与 `claimed/self` 自查及未验缺项。
 
-## 保存决策/长期记忆
-确认讨论已经形成决策，而不是临时猜测；按本页首节判断执行阶段和写入范围。允许治理写入时当回合保存，不等待用户再说“继续”；全部只读或限定文件时不写，报告本次决定未落盘。重要路线写 DECISIONS：背景、选择、原因和适用范围；缺少理由不补造。已验证失败写 LESSONS：根因、证据、方法、局限。完整读取原文，保留已有条目，通过 state update 提交新全文；CURRENT 保持精简。总目标/约束/验收变化先获批准，再 GOAL --approved。记录文件不构成高级规则。
+---
 
-## 主动会话交接
-先 status，按账本核对已完成工作、证据、阻塞与下一步；不得把尚未完成任务升级为 done。保存刚确认且未落盘的决策；更新 CURRENT 的七个必要章节，使用新的 revision。然后 snapshot 并再次 status/doctor 核对一致性。snapshot 不会提交 Git；如用户未授权，不创建提交、分支、工作树或推送。返回阶段、任务、阻塞、下一步和快照位置。主动交接不依赖压缩触发，Hook 继续独立运行。
+## 5. 迁移旧账本（Schema 1/2/3 → 4）
 
-## 规则与环境诊断
-先读取 runtime.json 的安装来源。Codex 安装执行 doctor <目标绝对路径> --json --native-hooks --native-skills，使用 codex_home；agents/claude/dsh 安装执行 doctor <目标绝对路径> --json，由适配器设置对应 client/home，禁止附加 Codex 专属 --native-*。独立 CLI 可显式使用 --client agents/claude/dsh --client-home DIR。正确展示 PASS/WARN/FAIL/UNVERIFIED；通用和 DSH 安装不配置 Hook，不把未验证项当失败或已执行。DSH 的规则完整性与模板版本分别检查，文件检查不能证明原生加载。原生查询只读取定义、启用和审核状态，不会设置信任；查询失败明确为 UNVERIFIED。文件存在、Hook 配置、信任、脚本运行和模型遵从不同。Codex/Claude 本会话漏执行检查另需 --session-id 和已确认应触发的 --expect-event；agents/dsh 不提供生命周期检查。发现错误只解释真实诊断；没有授权不自动改全局配置或重装。Skill 更新/缺失可提示用户安装，显式入口不保证损坏程序可运行。
+1. 先只读 `status` / `doctor` 确认当前 `task_schema` 与 `revision`。
+2. 执行预检：`migrate PATH --expected-revision N --reason TEXT --dry-run`，确认待迁移任务数与格式兼容性（未知字段会在预检即报错，不会静默丢弃）。
+3. 正式执行：`migrate PATH --expected-revision N --reason TEXT`。程序会自动备份所有受影响治理文件并生成清单，原任务状态、批准快照与证据完整保留：
+   - schema 1/2 旧任务保留 `verification_legacy`（schema 1 另保留 `legacy_unverified`）。
+   - schema 3 保留原执行凭据，但 `deliverable_coverage` 为 `undeclared`。
+4. **旧任务继续规则**：未声明交付或处于 legacy 的旧任务，在重新执行、重新结项或作为新任务依赖前，须先 `task revise`、补齐 `deliverables` 与 `checks`、再重新 `task approve`。
+5. 迁移中途崩溃只用 `recover` 排查；确需撤回且迁移后尚无新修改时，方可使用 `migrate --rollback`。
 
-## 项目复盘
-核对目标与交付、DECISIONS/LESSONS 和验收证据，运行 retro 生成草案。已有 RETRO 时先读取，不能强行覆盖；需要补充时仅编辑不受状态哈希保护的 RETRO.md，并保留原内容。指出未实现或未验证项目，不为“项目完成了”一语跳过实际检查。筛选跨项目候选，包含适用条件、证据、局限、来源项目；获得用户对具体内容的确认后才 knowledge-add --approved。
+---
 
-## 1.5.1交付与断点
+## 6. 保存决策、教训与目标修订
 
-批准前显式声明deliverables（相对文件/目录；无本地文件交付填[]），全部由checks.inputs覆盖，交付物应先生成再正式验收；变更须revise重批。schema3迁移保留原凭据，但未声明交付的任务不可继续、重新结项或用作依赖。CURRENT保存用--task明确列出本轮任务，空闲用--no-task；保存目标版本和任务修订，不能用修订号相同声称内容对应。先核对本轮工作是否已登记，发现漏记如实说明。只读查询不更改文件，旧focus可保留已完成任务。自查与命令分别报告；未验收图面、实机、生产等不列为通过。复盘只提供索引，人工归纳有证据的错误、原因及更早发现方法；不生成重复长文。
+- 确认讨论已收敛为决定（非临时猜测），并在允许治理写入的当前回合落盘；全部只读或限定文件修改时不在本回合写入，而是向用户说明决定未落盘。
+- 先完整读取原 `DECISIONS.md` / `LESSONS.md`，保留全部已有条目后追加新内容（`DECISIONS` 写清背景、选择、原因、适用范围；`LESSONS` 写清根因、证据、方法、局限），通过 `state update` 提交新全文。
+- `GOAL.md` 的任何变更须先取得用户明确批准，再带 `--approved` 提交。
+
+---
+
+## 7. 主动会话交接（Handoff）
+
+1. 先 `status PATH --brief --focus` 核对账本真实状态，不得将未验收任务口头或书面升级为 `done`。
+2. 将本轮已确认但未落盘的决策/教训写入磁盘。
+3. 编写 `CURRENT.md`（保留 7 个必要章节，总行数 ≤ 50 行），通过 `state update PATH CURRENT.md --task ID ...`（空闲无活动任务时用 `--no-task`）保存，同步目标版本、任务修订与焦点关联。
+4. 运行 `snapshot PATH`，再运行 `status PATH --brief --focus` 与 `doctor PATH --json` 核对一致性。
+5. 向用户返回：当前阶段、本轮任务及验收/覆盖状态、阻塞项、下一步动作、快照位置。
+
+---
+
+## 8. 规则与环境诊断（Doctor）
+
+1. 先读 `runtime.json` 确认安装来源：
+   - Codex 安装（含 `codex_home`）：执行 `doctor PATH --json --native-hooks --native-skills`。
+   - 通用 / Claude / DSH 安装（含 `client`）：执行 `doctor PATH --json`（禁止附加 Codex 专属 `--native-*`）。
+   - 本会话 Hook 漏触发核对：仅在客户端证据确认应触发某事件时，传 `--session-id ID --expect-event SessionStart|PreCompact`（`agents`/`dsh` 不支持生命周期检查）。
+2. 如实区分 `PASS` / `WARN` / `FAIL` / `UNVERIFIED`：不把 `UNVERIFIED` 当失败或已执行；文件存在、Hook 配置、原生信任、脚本执行和模型遵守是五个独立层级。
+3. 发现安装漂移或错误时只解释真实诊断结果；未获授权不自动重装或修改全局配置。
+
+---
+
+## 9. 项目复盘与知识入库
+
+1. 执行 `retro PATH` 生成 `.agent/RETRO.md` 索引草案（若已存在会拒绝覆盖；补充内容时仅人工编辑 `RETRO.md` 保留原稿）。
+2. 对照 `GOAL.md`、任务凭据索引、`DECISIONS.md` 与 `LESSONS.md`，由人工归纳有证据支撑的根因、经验与遗留未验项，不生成重复长文或把未验项标为完成。
+3. 筛选可复用的跨项目经验候选（含标题、适用条件、证据、局限、来源项目），向用户展示具体内容并获得明确确认后，才执行 `knowledge-add --file JSON --approved`。

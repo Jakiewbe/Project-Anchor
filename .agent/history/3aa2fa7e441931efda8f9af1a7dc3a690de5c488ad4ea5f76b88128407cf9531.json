@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 294,
+  "entries": [
+    {
+      "action": "document-version",
+      "file": "DECISIONS.md",
+      "previous_sha256": "462a1422355337535aaae03cbb916bc37ad95e8e4ecea455ee1b6a6a075b592d",
+      "user_approved": false,
+      "timestamp": "2026-10-10T06:19:36.028692+00:00",
+      "content_pruned": true
+    }
+  ]
+}

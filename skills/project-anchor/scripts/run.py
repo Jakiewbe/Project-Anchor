@@ -8,8 +8,11 @@ import sys
 
 def main():
     folder = Path(__file__).resolve().parents[1]
+    runtime_path = folder / "runtime.json"
     try:
-        runtime = json.loads((folder / "runtime.json").read_text(encoding="utf-8-sig"))
+        if not runtime_path.is_file():
+            raise ValueError("未找到安装定位文件 runtime.json；请先在工具箱目录运行 install-global 或 install-client 生成定位信息")
+        runtime = json.loads(runtime_path.read_text(encoding="utf-8-sig"))
         if not isinstance(runtime, dict) or runtime.get("schema") != 1:
             raise ValueError("不支持的定位文件版本")
         codex = "codex_home" in runtime
@@ -20,20 +23,26 @@ def main():
             raise ValueError("安装定位信息必须使用绝对路径")
         if not kit.is_file() or not interpreter.is_file():
             raise ValueError("工具箱或 Python 已迁移/缺失，请重新运行原安装命令")
-        version = subprocess.run([str(interpreter), "-X", "utf8", str(kit), "--version"],
-                                 capture_output=True, encoding="utf-8", timeout=10)
+        version = subprocess.run(
+            [str(interpreter), "-X", "utf8", str(kit), "--version"],
+            capture_output=True, encoding="utf-8", errors="replace", timeout=15,
+        )
         if version.returncode or version.stdout.strip() != runtime["version"]:
-            raise ValueError(f"安装版本 {runtime['version']} 与工具箱版本 {version.stdout.strip() or '查询失败'} 不同；"
-                             "先用 runtime.json 指定的 Python/kit 运行 doctor 查看差异，再执行原安装命令")
+            raise ValueError(
+                f"安装版本 {runtime['version']} 与工具箱版本 {version.stdout.strip() or '查询失败'} 不同；"
+                "先用 runtime.json 指定的 Python/kit 运行 doctor 查看差异，再执行原安装命令"
+            )
         if len(sys.argv) > 1 and sys.argv[1] == "--locate":
             print(json.dumps(runtime, ensure_ascii=False))
             return 0
         if codex:
             env = dict(os.environ, CODEX_HOME=str(home), PYTHONUTF8="1")
             env.pop("PROJECT_ANCHOR_CLIENT", None)
+            env.pop("PROJECT_ANCHOR_CLIENT_HOME", None)
         else:
             env = dict(os.environ, PROJECT_ANCHOR_CLIENT=runtime["client"],
                        PROJECT_ANCHOR_CLIENT_HOME=str(home), PYTHONUTF8="1")
+            env.pop("CODEX_HOME", None)
         # Preserve the target project's cwd, UTF-8 stdin and native return code.
         return subprocess.run([str(interpreter), "-X", "utf8", str(kit), *sys.argv[1:]], env=env).returncode
     except (OSError, ValueError, KeyError, TypeError, subprocess.TimeoutExpired) as exc:

@@ -233,9 +233,64 @@ class SkillTests(unittest.TestCase):
 
     def test_codex_adapter_ignores_inherited_client_selection(self):
         self.env["PROJECT_ANCHOR_CLIENT"] = "claude"
+        self.env["PROJECT_ANCHOR_CLIENT_HOME"] = str(self.root / "wrong-client-home")
         result=self.run_skill("doctor",self.project,"--json")
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn("全局安装路径",[c["check"] for c in json.loads(result.stdout)])
+
+    def test_missing_runtime_gives_actionable_error(self):
+        (self.skill / "runtime.json").unlink()
+        result = self.run_skill("--locate")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("install-global", result.stderr)
+
+    def test_skill_docs_templates_svg_and_readme_consistency(self):
+        import re
+        import xml.etree.ElementTree as ET
+        from core.memory import validate_doc
+        from core.tasks import deliverable_coverage, validate_checks
+
+        skill_root = ROOT / "skills/project-anchor"
+        skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        for target in re.findall(r"\[[^\]]+\]\((references/[^)#]+)\)", skill_text):
+            self.assertTrue((skill_root / target).is_file(), target)
+
+        templates_text = (skill_root / "references/TEMPLATES.md").read_text(encoding="utf-8")
+        json_blocks = re.findall(r"```json\n(.*?)\n```", templates_text, re.S)
+        self.assertGreaterEqual(len(json_blocks), 6)
+        parsed = [json.loads(block) for block in json_blocks]
+        task_tpl = parsed[0]
+        validate_checks(task_tpl["checks"], task_tpl["acceptance_criteria"], complete=True)
+        self.assertEqual(deliverable_coverage({**task_tpl, "approved_scope": task_tpl}), "covered")
+        review_tpl = parsed[4]
+        self.assertEqual(set(review_tpl), {"criterion", "findings", "resolution", "simpler", "result"})
+        knowledge_tpl = parsed[5]
+        for key in ("title", "conditions", "evidence", "limitations", "source_project", "lesson"):
+            self.assertTrue(knowledge_tpl[key].strip())
+
+        md_blocks = re.findall(r"```markdown\n(.*?)\n```", templates_text, re.S)
+        self.assertEqual(len(md_blocks), 2)
+        validate_doc("GOAL.md", md_blocks[0])
+        validate_doc("CURRENT.md", md_blocks[1])
+        self.assertLessEqual(len(md_blocks[1].splitlines()), 50)
+
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        anchors = set(re.findall(r'<a\s+id="([^"]+)"', readme))
+        for link in re.findall(r'(?:href|src)="([^"]+)"', readme) + re.findall(r'\]\(([^)]+)\)', readme):
+            if link.startswith(("http://", "https://")):
+                continue
+            if link.startswith("#"):
+                self.assertIn(link[1:], anchors, link)
+            else:
+                path_part = link.split("#", 1)[0]
+                self.assertTrue((ROOT / path_part).exists(), link)
+
+        assets = list((ROOT / "docs/assets").glob("*.svg"))
+        self.assertGreaterEqual(len(assets), 8)
+        for svg in assets:
+            ET.fromstring(svg.read_text(encoding="utf-8"))
+        self.assertIn(VERSION, (ROOT / "docs/assets/badge-version.svg").read_text(encoding="utf-8"))
+        self.assertIn(VERSION, (ROOT / "docs/assets/hero.svg").read_text(encoding="utf-8"))
 
     def test_shell_metacharacters_are_literal_arguments(self):
         name="任务 $x `echo nope` & other"

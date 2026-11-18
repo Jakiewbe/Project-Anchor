@@ -1,16 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="282" viewBox="0 0 1200 282" role="img" aria-labelledby="title desc">
-  <title id="title">From intent to a resumable project</title>
-  <desc id="desc">Confirm goals. Approve the task plan. Build and verify with evidence. Save context and hand off. Each session resumes from the latest project files.</desc>
-  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#0F766E" stroke-width="1.5"/></marker></defs>
-  <rect width="1200" height="282" rx="16" fill="#F3F7F6"/>
-  <g font-family="Segoe UI,Arial,sans-serif">
-    <text x="48" y="46" font-size="13" letter-spacing="2" font-weight="600" fill="#0F766E">A RESUMABLE WORKFLOW</text>
-    <path d="M62 96H1117" stroke="#B5D4CC" stroke-width="2" marker-end="url(#arrow)"/>
-    <g fill="#0F766E"><circle cx="62" cy="96" r="18"/><circle cx="350" cy="96" r="18"/><circle cx="638" cy="96" r="18"/><circle cx="926" cy="96" r="18"/></g>
-    <g fill="white" font-size="13" text-anchor="middle" font-weight="600"><text x="62" y="101">01</text><text x="350" y="101">02</text><text x="638" y="101">03</text><text x="926" y="101">04</text></g>
-    <g fill="#153D43" font-size="22" font-weight="600"><text x="48" y="151">Confirm goals</text><text x="336" y="151">Approve the plan</text><text x="624" y="151">Build + verify</text><text x="912" y="151">Save + hand off</text></g>
-    <g fill="#526B6E" font-size="14"><text x="48" y="181">Scope, constraints, acceptance</text><text x="336" y="181">Tasks, dependencies, milestones</text><text x="624" y="181">Progress backed by evidence</text><text x="912" y="181">Decisions and current context</text></g>
-    <path d="M48 214H1152" stroke="#D4E1DE"/>
-    <text x="48" y="251" font-size="14" fill="#526B6E">Next session: read the latest project files before continuing. Snapshots never restore automatically.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+  <title id="title">Project Anchor Closed-Loop Governance Workflow</title>
+  <desc id="desc">Five-step resumable workflow: Confirm Goal, Draft and Approve Scope, Build and Verify, Handoff Context, and Resume from Disk.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8" fill="none" stroke="#0F766E" stroke-width="1.8"/>
+    </marker>
+    <marker id="arrowLoop" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8" fill="none" stroke="#0284C7" stroke-width="1.8"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="380" rx="16" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+
+  <g font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="44" y="42" font-size="12.5" font-weight="700" letter-spacing="1.8" fill="#0F766E">CONTROLLED GOVERNANCE LOOP</text>
+    <text x="44" y="72" font-size="24" font-weight="700" fill="#0F172A">从明确意图到可核对交接的五步闭环</text>
+
+    <!-- 5 Step Cards -->
+    <!-- Card 1 -->
+    <rect x="44" y="102" width="202" height="162" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="60" y="118" width="38" height="24" rx="12" fill="#0F766E"/>
+    <text x="79" y="134.5" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">01</text>
+    <text x="108" y="135" font-size="16" font-weight="700" fill="#0F172A">定界目标</text>
+    <text x="60" y="164" font-size="13" font-weight="600" fill="#0F766E">GOAL.md --approved</text>
+    <text x="60" y="190" font-size="12.5" fill="#475569">明确核心目标、约束与非目标</text>
+    <text x="60" y="212" font-size="12.5" fill="#475569">局部任务可单独登记范围</text>
+    <rect x="60" y="228" width="170" height="22" rx="6" fill="#F1F5F9"/>
+    <text x="145" y="243" text-anchor="middle" font-size="11.5" fill="#334155">不替用户擅自批准总目标</text>
+
+    <path d="M248 183H272" stroke="#0F766E" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Card 2 -->
+    <rect x="275" y="102" width="202" height="162" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="291" y="118" width="38" height="24" rx="12" fill="#0F766E"/>
+    <text x="310" y="134.5" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">02</text>
+    <text x="339" y="135" font-size="16" font-weight="700" fill="#0F172A">草案与锁范围</text>
+    <text x="291" y="164" font-size="13" font-weight="600" fill="#0F766E">task add → approve</text>
+    <text x="291" y="190" font-size="12.5" fill="#475569">声明 deliverables 与 checks</text>
+    <text x="291" y="212" font-size="12.5" fill="#475569">approve 冻结范围快照与哈希</text>
+    <rect x="291" y="228" width="170" height="22" rx="6" fill="#F1F5F9"/>
+    <text x="376" y="243" text-anchor="middle" font-size="11.5" fill="#334155">改范围须先 revise 再重批</text>
+
+    <path d="M479 183H503" stroke="#0F766E" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Card 3 -->
+    <rect x="506" y="102" width="202" height="162" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.8"/>
+    <rect x="522" y="118" width="38" height="24" rx="12" fill="#0F766E"/>
+    <text x="541" y="134.5" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">03</text>
+    <text x="570" y="135" font-size="16" font-weight="700" fill="#0F172A">双轨验收</text>
+    <text x="522" y="164" font-size="13" font-weight="600" fill="#0F766E">verify run + review</text>
+    <text x="522" y="190" font-size="12.5" fill="#475569">命令执行采集 observed 凭据</text>
+    <text x="522" y="212" font-size="12.5" fill="#475569">自查记录 claimed/self 依据</text>
+    <rect x="522" y="228" width="170" height="22" rx="6" fill="#CCFBF1"/>
+    <text x="607" y="243" text-anchor="middle" font-size="11.5" font-weight="600" fill="#115E59">绑定交付物与材料指纹</text>
+
+    <path d="M710 183H734" stroke="#0F766E" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Card 4 -->
+    <rect x="737" y="102" width="202" height="162" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <rect x="753" y="118" width="38" height="24" rx="12" fill="#0F766E"/>
+    <text x="772" y="134.5" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">04</text>
+    <text x="801" y="135" font-size="16" font-weight="700" fill="#0F172A">交接与归档</text>
+    <text x="753" y="164" font-size="13" font-weight="600" fill="#0F766E">CURRENT --task / history</text>
+    <text x="753" y="190" font-size="12.5" fill="#475569">显式绑定本轮任务与版本</text>
+    <text x="753" y="212" font-size="12.5" fill="#475569">热历史先归档 history/ 再裁剪</text>
+    <rect x="753" y="228" width="170" height="22" rx="6" fill="#F1F5F9"/>
+    <text x="838" y="243" text-anchor="middle" font-size="11.5" fill="#334155">决定当回合落盘 · 断点≤50行</text>
+
+    <path d="M941 183H965" stroke="#0284C7" stroke-width="2" marker-end="url(#arrowLoop)"/>
+
+    <!-- Card 5 -->
+    <rect x="968" y="102" width="188" height="162" rx="12" fill="#EFF6FF" stroke="#7DD3FC" stroke-width="1.5"/>
+    <rect x="984" y="118" width="38" height="24" rx="12" fill="#0284C7"/>
+    <text x="1003" y="134.5" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF">05</text>
+    <text x="1032" y="135" font-size="16" font-weight="700" fill="#0F172A">跨会话接续</text>
+    <text x="984" y="164" font-size="13" font-weight="600" fill="#0369A1">status --brief --focus</text>
+    <text x="984" y="190" font-size="12.5" fill="#334155">只读查询不写锁或目录</text>
+    <text x="984" y="212" font-size="12.5" fill="#334155">核对 alignment 与 stale</text>
+    <rect x="984" y="228" width="156" height="22" rx="6" fill="#DBEAFE"/>
+    <text x="1062" y="243" text-anchor="middle" font-size="11.5" font-weight="600" fill="#075985">无指针不猜历史任务</text>
+
+    <!-- Bottom resume feedback bar -->
+    <path d="M1062 264V292H145V268" fill="none" stroke="#0284C7" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#arrowLoop)"/>
+    <rect x="330" y="279" width="540" height="26" rx="13" fill="#E0F2FE" stroke="#7DD3FC"/>
+    <text x="600" y="296" text-anchor="middle" font-size="12" font-weight="600" fill="#0369A1">新会话 / 压缩后先读磁盘最新状态，快照仅作只读核对，永不自动覆盖现状</text>
+
+    <path d="M44 326H1156" stroke="#E2E8F0"/>
+    <text x="44" y="354" font-size="13" fill="#475569">全部写入共享 OS 文件锁、期望修订号（expected_revision）与原子事务；任意环节发生修订冲突或损坏立即中止，绝不静默覆盖。</text>
   </g>
 </svg>

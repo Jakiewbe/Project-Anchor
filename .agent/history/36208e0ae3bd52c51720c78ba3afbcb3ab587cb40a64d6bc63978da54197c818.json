@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 302,
+  "entries": [
+    {
+      "revision": 151,
+      "action": "state:update",
+      "reason": "用户授权发布后同步任务修订和执行断点，保留验收限制",
+      "timestamp": "2026-10-10T06:26:26.143878+00:00"
+    }
+  ]
+}

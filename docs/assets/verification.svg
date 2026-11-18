@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+  <title id="title">Project Anchor Deliverable-Bound Verification and Anti-Drift</title>
+  <desc id="desc">How deliverables, input fingerprints, observed command runs, claimed self-reviews, and stale detection prevent silent verification drift.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0L8 4L0 8" fill="none" stroke="#475569" stroke-width="1.8"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="380" rx="16" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.5"/>
+
+  <g font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <text x="44" y="42" font-size="12.5" font-weight="700" letter-spacing="1.8" fill="#0F766E">ANTI-DRIFT VERIFICATION MODEL</text>
+    <text x="44" y="72" font-size="24" font-weight="700" fill="#0F172A">为什么“写着通过”不再算数：交付覆盖与材料指纹绑定</text>
+
+    <!-- Left: Approved Scope -->
+    <rect x="44" y="102" width="320" height="206" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="64" y="132" font-size="16" font-weight="700" fill="#0F172A">1. 批准范围快照 (approved_scope)</text>
+    <rect x="64" y="148" width="280" height="44" rx="8" fill="#F0FDFA" stroke="#99F6E4"/>
+    <text x="80" y="168" font-size="13" font-weight="700" fill="#115E59">deliverables ⊆ checks.inputs</text>
+    <text x="80" y="185" font-size="11.5" fill="#0F766E">交付物漏出检查范围时，禁止 task approve</text>
+
+    <text x="64" y="216" font-size="12.5" fill="#475569">• 绑定标准原文哈希 (criteria_hash)</text>
+    <text x="64" y="238" font-size="12.5" fill="#475569">• 绑定批准版本 (scope_version)</text>
+    <text x="64" y="260" font-size="12.5" fill="#475569">• 改范围必须 task revise → 重新批准</text>
+    <text x="64" y="282" font-size="12.5" fill="#475569">• 交付文件缺失时，拒绝启动验收</text>
+
+    <path d="M366 164H406M366 246H406" stroke="#475569" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+    <!-- Middle: Two Tracks -->
+    <rect x="410" y="102" width="360" height="96" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.6"/>
+    <rect x="428" y="118" width="96" height="22" rx="6" fill="#0F766E"/>
+    <text x="476" y="133" text-anchor="middle" font-size="11.5" font-weight="700" fill="#FFFFFF">OBSERVED</text>
+    <text x="536" y="134" font-size="15.5" font-weight="700" fill="#0F172A">verify run（命令验收）</text>
+    <text x="428" y="160" font-size="12.5" fill="#475569">只运行已批准 argv，采集退出码、日志与输入 SHA-256</text>
+    <text x="428" y="180" font-size="12" fill="#0F766E">超限、超时、中途改输入或修订冲突均不计通过</text>
+
+    <rect x="410" y="212" width="360" height="96" rx="12" fill="#FFFFFF" stroke="#0284C7" stroke-width="1.6"/>
+    <rect x="428" y="228" width="114" height="22" rx="6" fill="#0284C7"/>
+    <text x="485" y="243" text-anchor="middle" font-size="11.5" font-weight="700" fill="#FFFFFF">CLAIMED / SELF</text>
+    <text x="554" y="244" font-size="15.5" font-weight="700" fill="#0F172A">task review（Agent 自查）</text>
+    <text x="428" y="270" font-size="12.5" fill="#475569">结构化记录 findings / resolution / simpler 与材料哈希</text>
+    <text x="428" y="290" font-size="12" fill="#0369A1">来源固定标记为自查，不可替代命令运行或独立审核</text>
+
+    <path d="M772 150H812M772 260H812" stroke="#475569" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+    <!-- Right: Live State -->
+    <rect x="816" y="102" width="340" height="206" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="836" y="132" font-size="16" font-weight="700" fill="#0F172A">3. 动态有效性核对 (status)</text>
+
+    <rect x="836" y="148" width="300" height="38" rx="8" fill="#ECFDF5" stroke="#A7F3D0"/>
+    <text x="852" y="171" font-size="12.5" font-weight="700" fill="#065F46">pass — 指纹与批准范围完全一致</text>
+
+    <rect x="836" y="194" width="300" height="44" rx="8" fill="#FEF3C7" stroke="#FDE68A"/>
+    <text x="852" y="213" font-size="12.5" font-weight="700" fill="#92400E">stale — 检查后输入或交付发生改动</text>
+    <text x="852" y="230" font-size="11" fill="#B45309">保留历史 done 不抹除，但阻断下游依赖</text>
+
+    <rect x="836" y="246" width="300" height="44" rx="8" fill="#EFF6FF" stroke="#BFDBFE"/>
+    <text x="852" y="265" font-size="12.5" font-weight="700" fill="#1E40AF">current_alignment — 断点关联核对</text>
+    <text x="852" y="282" font-size="11" fill="#1D4ED8">报告 unknown / changed / aligned</text>
+
+    <path d="M44 330H1156" stroke="#E2E8F0"/>
+    <text x="44" y="356" font-size="13" fill="#475569">按需只对可见任务与传递依赖链计算单次共享文件哈希；未验收的图面、实机与生产环境不纳入自动通过。</text>
+  </g>
+</svg>

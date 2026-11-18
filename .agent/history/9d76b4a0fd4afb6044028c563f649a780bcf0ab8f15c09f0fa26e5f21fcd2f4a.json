@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 300,
+  "entries": [
+    {
+      "revision": 150,
+      "action": "state:update",
+      "reason": "记录用户明确的提交推送与PR合并授权",
+      "timestamp": "2026-10-10T06:26:24.982857+00:00"
+    }
+  ]
+}

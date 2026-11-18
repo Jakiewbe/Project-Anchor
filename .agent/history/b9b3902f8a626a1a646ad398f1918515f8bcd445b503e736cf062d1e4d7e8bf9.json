@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
+  "source_revision": 298,
+  "entries": [
+    {
+      "action": "document-version",
+      "revision": 255,
+      "file": "CURRENT.md",
+      "previous_sha256": "d1cf3826337b2646310371c6182dffde425694af2fa4c2a1955bf65f59d6a489",
+      "content": "# 当前断点\r\n\r\n## 当前阶段\r\n实施1.5.1六项优化与发布准备；正式业务项目迁移、公开发布待单独批准。\r\n\r\n## 当前任务\r\nIMP151 doing；计划docs/plans/1.5.1.md。\r\n\r\n## 已完成工作\r\n只读查询、任务关联、schema4交付声明、筛选查询及精简复盘已实现初版；正在回归与自查。\r\n旧安装仍1.5.0，源码1.5.1；未重装全局Skill，测试使用隔离安装。\r\n\r\n## 当前阻塞\r\n最终回归、副本验收、原生接续和发布包待验证；远程CI未运行。\r\n\r\n## 下一步动作\r\n查Bug、完成验收和发布材料；不修改业务项目原件。\r\n\r\n## 状态修订\r\n由工具同步本轮任务关联。\r\n\r\n## Git 检查\r\n现有分支feat/universal-agent-skills；无新分支/worktree，未提交推送。\r\n",
+      "user_approved": false,
+      "timestamp": "2026-10-29T16:41:57.073662+00:00"
+    },
+    {
+      "revision": 148,
+      "action": "state:update",
+      "reason": "按用户批准范围及README追加要求保存最终断点；测试157/0，保留任务状态与未验证层",
+      "timestamp": "2026-10-10T06:21:33.793950+00:00"
+    },
+    {
+      "revision": 149,
+      "action": "task:update",
+      "reason": "用户明确授权全部提交推送与合并PR #1（包含README），开始发布收尾",
+      "timestamp": "2026-10-10T06:26:23.946406+00:00"
+    }
+  ]
+}

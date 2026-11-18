@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="174" height="22" role="img" aria-label="runtime: standard library">
-  <rect width="174" height="22" rx="3" fill="#64748B"/><path d="M3 0H57V22H3Q0 22 0 19V3Q0 0 3 0" fill="#475569"/>
-  <g font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="white" text-anchor="middle"><text x="28" y="15">runtime</text><text x="115" y="15">standard library</text></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="22" role="img" aria-label="deps: stdlib only">
+  <rect width="144" height="22" rx="4" fill="#475569"/>
+  <path d="M4 0H46V22H4Q0 22 0 18V4Q0 0 4 0" fill="#334155"/>
+  <g font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">
+    <text x="23" y="15">deps</text>
+    <text x="95" y="15">stdlib only</text>
+  </g>
 </svg>

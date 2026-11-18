@@ -15,6 +15,7 @@ import { isAbsolute, join, resolve } from 'node:path'
 
 /** Hard cap on captured output; kit writes JSON, so anything larger is a fault. */
 const OUTPUT_LIMIT = 1 << 20
+const PACKAGE_VERSION = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version
 
 /** A failed or unreachable kit invocation, carrying the child's diagnostics. */
 export class KitRunError extends Error {
@@ -131,7 +132,7 @@ export function createKit(config = {}, env = process.env) {
     if (version.status !== 0) {
       throw new KitRunError(`工具箱版本查询失败 (${version.status}): ${(version.stderr || '').trim()}`, { kind: 'exit' })
     }
-    if (version.stdout.trim() !== '1.5.1'
+    if (version.stdout.trim() !== PACKAGE_VERSION
         || (locator && locator.version !== version.stdout.trim())) {
       throw new KitRunError('工具箱版本或安装版本不匹配，请检查安装')
     }
