@@ -1,7 +1,7 @@
 {
   "schema": 4,
   "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
-  "revision": 168,
+  "revision": 170,
   "tasks": [
     {
       "task_id": "A",
@@ -2830,7 +2830,7 @@
       ],
       "dependencies": [],
       "blocker": "",
-      "status": "doing",
+      "status": "done",
       "plan": "approved",
       "evidence": [
         {
@@ -2845,10 +2845,24 @@
           "scope_version": 1,
           "criteria_hash": "eaba7b22e5b34e1d7583f720927df1da9625299860d93aec111cdbcdca9db9b7",
           "recorded_at": "2026-11-18T09:16:52.728549+00:00"
+        },
+        {
+          "type": "review",
+          "criterion": 2,
+          "detail": "本地 277 项回归通过（run_id f9553c22d6fa40ff951988ca5cd56736），提交 c9b27eeefae1e5a73681b08c969c45f058de839b 推送 main 后 GitHub Actions #44275814427 Windows/Linux 全通过，v1.6.0 Release（id 449764963）及三份资产已创建并回读校验 SHA-256 一致。",
+          "level": "claimed",
+          "run_id": "584a23f84c03451c8094d77bdadeedb3",
+          "receipt_sha256": "6a7dc54b860d52f6f07f46ce0d279017c7929524f7fa9bfc698d6b5334303833",
+          "input_hash": "d102db3865bf0e9e48d773b406b47452c850ba4826050187f496cb04b11fd713",
+          "result": "pass",
+          "scope_version": 1,
+          "criteria_hash": "ad52b83ae864021fa929b47e7eed06c9a60a9d195edf3612bd9b0704ca30e9e0",
+          "recorded_at": "2026-11-18T09:36:00.349563+00:00",
+          "reviewer_kind": "self"
         }
       ],
       "legacy_unverified": false,
-      "updated_at": "2026-11-18T09:16:52.728549+00:00",
+      "updated_at": "2026-11-18T09:36:01.381598+00:00",
       "approved_scope": {
         "project_id": "5fbd4ee8-798e-4e7d-a919-4cde784ade75",
         "task_id": "SKL160",
@@ -2964,7 +2978,8 @@
           "tests/test_skill.py",
           "tests/test_dsh_plugin.py"
         ]
-      }
+      },
+      "completed_at": "2026-11-18T09:36:01.381598+00:00"
     }
   ],
   "history": [
@@ -7326,6 +7341,23 @@
       "timestamp": "2026-11-18T09:16:52.728549+00:00",
       "run_id": "f9553c22d6fa40ff951988ca5cd56736",
       "reason": "运行全量单元测试以验收SKL160全部改动与版本一致性"
+    },
+    {
+      "action": "verify:review",
+      "revision": 169,
+      "timestamp": "2026-11-18T09:36:00.349563+00:00",
+      "run_id": "584a23f84c03451c8094d77bdadeedb3",
+      "reason": "记录SKL160 Bug/第一性原理自查及远程CI与v1.6.0发布核验"
+    },
+    {
+      "revision": 170,
+      "timestamp": "2026-11-18T09:36:01.381598+00:00",
+      "action": "update",
+      "payload": {
+        "task_id": "SKL160",
+        "status": "done"
+      },
+      "reason": "SKL160全部交付与验收完成"
     }
   ]
 }
